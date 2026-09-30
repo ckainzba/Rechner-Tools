@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cost-Average-Effekt – Rechner &amp; Tools</title>
+    <meta name="description" content="Simulieren Sie den Cost-Average-Effekt bei Sparplänen in verschiedenen Marktszenarien.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .card-panel {
+            background-color: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 2px 12px rgba(2, 62, 132, 0.05);
+            border: 1px solid #f1f5f9;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e5e7eb;
+            outline: none;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #023e84;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(2, 62, 132, 0.25);
+            transition: all 0.15s ease;
+        }
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.12);
+            box-shadow: 0 3px 6px rgba(2, 62, 132, 0.35);
+        }
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #023e84;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(2, 62, 132, 0.25);
+            transition: all 0.15s ease;
+        }
+        .slider::-moz-range-thumb:hover {
+            transform: scale(1.12);
+            box-shadow: 0 3px 6px rgba(2, 62, 132, 0.35);
+        }
+
+        .scenario-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: left;
+            background: white;
+            color: #64748b;
+        }
+        .scenario-btn.active {
+            border-color: #006fb9;
+            color: #006fb9;
+            background: #f0f7ff;
+            font-weight: 600;
+        }
+        .scenario-btn:hover:not(.active) {
+            border-color: #006fb9;
+            color: #006fb9;
+            background: #f8fafc;
+        }
+
+        .value-update {
+            animation: pulse-blue 0.3s ease-out;
+        }
+        @keyframes pulse-blue {
+            0% { color: #006fb9; transform: scale(1); }
+            50% { color: #00a0ff; transform: scale(1.05); }
+            100% { color: #023e84; transform: scale(1); }
+        }
+
+        /* Tooltip styling matching Zinseszinsrechner */
+        #cae-tooltip {
+            position: fixed;
+            pointer-events: none;
+            background: white;
+            border: 1px solid #f1f5f9;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 20px rgba(2, 62, 132, 0.15);
+            font-size: 0.875rem;
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.1s;
+            min-width: 200px;
+        }
+        #cae-tooltip .tt-title {
+            font-weight: 700;
+            color: #023e84;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+        #cae-tooltip .tt-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 6px;
+        }
+        #cae-tooltip .tt-row:last-child {
+            margin-bottom: 0;
+        }
+        #cae-tooltip .tt-key {
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #cae-tooltip .tt-val {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        canvas {
+            display: block;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 font-sans selection:bg-[#006fb9] selection:text-white pb-12">
+    <!-- Header -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-10">
+        <a href="../../index.html" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-[#023e84] transition-colors mb-6 group">
+            <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Zurück zur Übersicht
+        </a>
+        
+        <div class="text-center">
+            <div class="inline-block px-4 py-1.5 rounded-full bg-[#e8f0fa] text-[#006fb9] text-xs font-bold uppercase tracking-wider mb-4">
+                Investment
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-[#023e84] tracking-tight">
+                Cost-Average-Effekt
+            </h1>
+            <p class="text-sm text-gray-500 mt-2 max-w-xl mx-auto">
+                Simulieren Sie den Cost-Average-Effekt bei Sparplänen in verschiedenen Marktszenarien und vergleichen Sie ihn mit einer Einmalanlage.
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 lg:items-stretch min-w-0">
+
+            <!-- Left Column: Inputs -->
+            <div class="flex flex-col gap-6 min-w-0">
+                <!-- Eingabe Card -->
+                <div class="card-panel p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <line x1="4" x2="20" y1="21" y2="21"/><line x1="4" x2="20" y1="14" y2="14"/><line x1="4" x2="20" y1="7" y2="7"/><polyline points="14 17 14 21 18 21"/><polyline points="8 10 8 14 12 14"/><polyline points="14 3 14 7 18 7"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-bold text-[#023e84]">Eingabe</h2>
+                    </div>
+
+                    <div class="space-y-8">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-sm font-semibold text-slate-700">Monatliche Sparrate</label>
+                                <div class="font-bold text-slate-900 bg-slate-100 px-3 py-1 rounded-lg" id="val-sparrate">100 €</div>
+                            </div>
+                            <input type="range" id="sl-sparrate" min="25" max="1000" step="25" value="100" class="slider w-full mb-1">
+                            <div class="flex justify-between text-xs text-slate-400 font-medium">
+                                <span>25 €</span>
+                                <span>1.000 €</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-sm font-semibold text-slate-700">Laufzeit</label>
+                                <div class="font-bold text-slate-900 bg-slate-100 px-3 py-1 rounded-lg" id="val-months">24 Monate</div>
+                            </div>
+                            <input type="range" id="sl-months" min="12" max="60" step="1" value="24" class="slider w-full mb-1">
+                            <div class="flex justify-between text-xs text-slate-400 font-medium">
+                                <span>12 Monate</span>
+                                <span>60 Monate</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Szenario Card -->
+                <div class="card-panel p-6 flex-1">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                                <polyline points="16 7 22 7 22 13" />
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-bold text-[#023e84]">Marktszenario</h2>
+                    </div>
+
+                    <p class="text-[13px] font-medium text-slate-500 mb-4 px-1">Wählen Sie ein Marktszenario aus:</p>
+
+                    <div class="flex flex-col gap-6" id="scenario-btns">
+                        <button class="scenario-btn active" data-key="v">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                                <polyline points="16 7 22 7 22 13" />
+                            </svg>
+                            Aufwärtstrend (Dip)
+                        </button>
+                        <button class="scenario-btn" data-key="linear">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="22 17 13.5 8.5 8.5 13.5 2 7" />
+                                <polyline points="16 17 22 17 22 11" />
+                            </svg>
+                            Abwärtstrend
+                        </button>
+                        <button class="scenario-btn" data-key="bear">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="18 8 22 12 18 16" />
+                                <polyline points="6 8 2 12 6 16" />
+                                <line x1="2" y1="12" x2="22" y2="12" />
+                            </svg>
+                            Seitwärts (Volatil)
+                        </button>
+                        <button class="scenario-btn" data-key="bull">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 2L11 13" />
+                                <path d="M22 2l-7 20-4-9-9-4 20-7z" />
+                            </svg>
+                            Linearer Anstieg
+                        </button>
+                    </div>
+
+                    <div class="mt-8 text-xs leading-relaxed text-slate-500 bg-[#f8fafc] p-3.5 rounded-xl border border-slate-100">
+                        <span class="font-semibold text-slate-700">Hinweis:</span> Bei diesen Marktszenarien handelt es sich um stark vereinfachte mathematische Muster, um den Effekt anschaulich zu machen – nicht um echte historische oder zukünftige Börsenkurse.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Results & Charts -->
+            <div class="flex flex-col gap-6 min-w-0">
+                <!-- Charts Grid -->
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="card-panel p-6 flex flex-col justify-between h-full">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-base font-bold text-[#023e84] m-0">Kursverlauf &amp; Ø Kaufkurs</h3>
+                            <div class="flex items-center gap-4 text-xs font-medium text-slate-500">
+                                <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#006fb9]"></div>Kurs</div>
+                                <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#d97706]"></div>Ø Kaufkurs</div>
+                            </div>
+                        </div>
+                        <div class="relative w-full h-[200px]">
+                            <canvas id="chart-price" class="absolute inset-0 w-full h-full"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card-panel p-6 flex flex-col justify-between h-full">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-base font-bold text-[#023e84] m-0">Monatlich gekaufte Anteile</h3>
+                                <div class="text-xs font-medium text-slate-500 mt-2">
+                                    Hoher Balken = Niedriger Kurs
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wide block mb-0.5">Gesamte Anteile</span>
+                                <span class="text-lg font-bold text-[#006fb9]" id="ch-total-shares">–</span>
+                            </div>
+                        </div>
+                        <div class="relative w-full h-[200px]">
+                            <canvas id="chart-shares" class="absolute inset-0 w-full h-full"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3 Top Result Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-4">
+                    <!-- Aktueller Depotwert -->
+                    <div class="card-panel p-5 relative overflow-hidden group">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-sm font-medium text-slate-500">Aktueller Depotwert</span>
+                            <div class="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg transition-transform group-hover:scale-110">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                    <path d="M3 3v18h18" />
+                                    <polyline points="19 9 13 15 9 11 3 17" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-[#023e84]" id="rc-depot">–</div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-xs">
+                            <span class="text-slate-500">Gewinn:</span>
+                            <span class="font-bold" id="rc-gewinn">–</span>
+                        </div>
+                    </div>
+
+                    <!-- Investiertes Kapital -->
+                    <div class="card-panel p-5 relative overflow-hidden group">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-sm font-medium text-slate-500">Investiertes Kapital</span>
+                            <div class="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg transition-transform group-hover:scale-110">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                    <rect x="2" y="6" width="20" height="12" rx="2" />
+                                    <circle cx="12" cy="12" r="2" />
+                                    <path d="M6 12h.01M18 12h.01" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-[#023e84]" id="rc-invested">–</div>
+                        <div class="text-xs text-[#006fb9] mt-1 font-medium" id="rc-months-sub">–</div>
+                    </div>
+
+                    <!-- vs. Einmalanlage -->
+                    <div class="card-panel p-5 relative overflow-hidden group">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-sm font-medium text-slate-500">vs. Einmalanlage</span>
+                            <div class="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg transition-transform group-hover:scale-110">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                                    <polyline points="16 7 22 7 22 13" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-[#023e84]" id="rc-vorteil">–</div>
+                        <div class="text-xs mt-1 font-medium" id="rc-vorteil-sub">–</div>
+                    </div>
+                </div>
+
+                <!-- Info Box -->
+                <div class="card-panel p-5 mt-2 flex items-start sm:items-center gap-4 bg-[#f8fafc]">
+                    <div class="w-10 h-10 rounded-xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center flex-shrink-0 mt-1 sm:mt-0">
+                        <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="16" x2="12" y2="12" />
+                            <line x1="12" y1="8" x2="12.01" y2="8" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm text-[#023e84] leading-relaxed" id="info-box">
+                            –
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div id="cae-tooltip">
+        <div class="tt-title" id="tt-title"></div>
+        <div id="tt-rows"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-8 text-center text-xs text-gray-400 py-6 border-t border-gray-100 max-w-7xl mx-auto">
+        Internes Beratungstool &nbsp;·&nbsp; Nur für den internen Gebrauch
+    </footer>
+
+    <script>
+        (function () {
+            'use strict';
+            function mulberry32(seed) {
+                return function () {
+                    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+                    var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+                    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+                    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+                };
+            }
+            function buildPrices(months, scenario) {
+                var seeds = { v: 42, linear: 137, bear: 271, bull: 512 };
+                var rand = mulberry32(seeds[scenario] || 42);
+                function randn() { var u = 1 - rand(), v = rand(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+                var vol = 0.038, prices = [100];
+                for (var i = 1; i < months; i++) {
+                    var t = i / (months - 1), base;
+                    if (scenario === 'v') {
+                        var dipAt = 0.38, dipLevel = 65, endLevel = 142;
+                        base = t <= dipAt ? 100 - (100 - dipLevel) * (t / dipAt) : dipLevel + (endLevel - dipLevel) * ((t - dipAt) / (1 - dipAt));
+                    } else if (scenario === 'linear') {
+                        if (t <= 0.4) base = 100 - 75 * t;
+                        else if (t <= 0.65) base = 70 + 60 * (t - 0.4);
+                        else base = 85 - 57 * (t - 0.65);
+                    } else if (scenario === 'bull') {
+                        base = 100 + 60 * t;
+                        prices.push(Math.max(base * (1 + 0.004 * randn()), 1));
+                        continue;
+                    } else {
+                        base = 100 - 32 * Math.sin(3 * Math.PI * t);
+                    }
+                    prices.push(Math.max(base * (1 + vol * randn()), 1));
+                }
+                var targets = { v: 140, linear: 65, bull: 160, bear: 100 };
+                var scale = (targets[scenario] || 100) / prices[months - 1];
+                return prices.map(function (p) { return Math.max(p * scale, 1); });
+            }
+            function calcCAE(sparrate, months, scenario) {
+                var prices = buildPrices(months, scenario);
+                var totalShares = 0, totalInvested = 0, data = [];
+                for (var i = 0; i < months; i++) {
+                    var price = prices[i], shares = sparrate / price;
+                    totalShares += shares; totalInvested += sparrate;
+                    data.push({ monat: i + 1, kurs: +price.toFixed(2), avg: +(totalInvested / totalShares).toFixed(2), anteile: +shares.toFixed(4) });
+                }
+                var endKurs = prices[months - 1], depotwert = totalShares * endKurs, avgKauf = totalInvested / totalShares, lumpWert = (totalInvested / 100) * endKurs;
+                return { data: data, totalInvested: totalInvested, totalShares: totalShares, avgKauf: avgKauf, depotwert: depotwert, lumpWert: lumpWert };
+            }
+            var fmtEur = function (v) { return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v); };
+            var fmtNum = function (v, d) { return new Intl.NumberFormat('de-DE', { minimumFractionDigits: d || 2, maximumFractionDigits: d || 2 }).format(v); };
+            var fmtDE = function (v) { return new Intl.NumberFormat('de-DE').format(v); };
+
+            var sparrate = 100, months = 24, scenario = 'v', chartData = null;
+            var slSparrate = document.getElementById('sl-sparrate');
+            var slMonths = document.getElementById('sl-months');
+            var canvasPrice = document.getElementById('chart-price');
+            var canvasShares = document.getElementById('chart-shares');
+            var ctxPrice = canvasPrice.getContext('2d');
+            var ctxShares = canvasShares.getContext('2d');
+            var tooltip = document.getElementById('cae-tooltip');
+
+            function updateTrack(inp) {
+                var pct = ((inp.value - inp.min) / (inp.max - inp.min)) * 100;
+                inp.style.background = 'linear-gradient(to right, #023e84 0%, #023e84 ' + pct + '%, #e5e7eb ' + pct + '%, #e5e7eb 100%)';
+            }
+
+            function setupCanvas(canvas) {
+                var dpr = window.devicePixelRatio || 1;
+                var rect = canvas.getBoundingClientRect();
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                var ctx = canvas.getContext('2d');
+                ctx.scale(dpr, dpr);
+                return { w: rect.width, h: rect.height };
+            }
+
+            function drawPriceChart(data) {
+                var dim = setupCanvas(canvasPrice), ctx = ctxPrice;
+                var w = dim.w, h = dim.h;
+                var pad = { top: 10, right: 16, bottom: 30, left: 58 };
+                var cw = w - pad.left - pad.right, ch = h - pad.top - pad.bottom;
+                var prices = data.map(function (d) { return d.kurs; });
+                var avgs = data.map(function (d) { return d.avg; });
+                var all = prices.concat(avgs);
+                var minV = Math.min.apply(null, all) * 0.97, maxV = Math.max.apply(null, all) * 1.03;
+                function xOf(i) { return pad.left + (i / (data.length - 1)) * cw; }
+                function yOf(v) { return pad.top + ch - ((v - minV) / (maxV - minV)) * ch; }
+                ctx.clearRect(0, 0, w, h);
+                ctx.strokeStyle = '#f1f5f9'; ctx.lineWidth = 1;
+                for (var ti = 0; ti <= 5; ti++) {
+                    var val = minV + (maxV - minV) * (ti / 5), y = yOf(val);
+                    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + cw, y); ctx.stroke();
+                    ctx.fillStyle = '#94a3b8'; ctx.font = '10px Inter,sans-serif'; ctx.textAlign = 'right';
+                    ctx.fillText(val.toFixed(0) + ' €', pad.left - 5, y + 4);
+                }
+                ctx.fillStyle = '#94a3b8'; ctx.font = '10px Inter,sans-serif'; ctx.textAlign = 'center';
+                var step = Math.ceil(data.length / 8);
+                for (var xi = 0; xi < data.length; xi += step) ctx.fillText(data[xi].monat, xOf(xi), h - pad.bottom + 14);
+                ctx.fillText('Monat', pad.left + cw / 2, h - 2);
+                ctx.strokeStyle = '#d97706'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]);
+                ctx.beginPath();
+                avgs.forEach(function (v, i) { i === 0 ? ctx.moveTo(xOf(i), yOf(v)) : ctx.lineTo(xOf(i), yOf(v)); });
+                ctx.stroke(); ctx.setLineDash([]);
+                ctx.strokeStyle = '#1e40af'; ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                prices.forEach(function (v, i) { i === 0 ? ctx.moveTo(xOf(i), yOf(v)) : ctx.lineTo(xOf(i), yOf(v)); });
+                ctx.stroke();
+                ctx.beginPath();
+                prices.forEach(function (v, i) { i === 0 ? ctx.moveTo(xOf(i), yOf(v)) : ctx.lineTo(xOf(i), yOf(v)); });
+                ctx.lineTo(xOf(prices.length - 1), pad.top + ch); ctx.lineTo(xOf(0), pad.top + ch); ctx.closePath();
+                var grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + ch);
+                grad.addColorStop(0, 'rgba(30,64,175,0.12)'); grad.addColorStop(1, 'rgba(30,64,175,0)');
+                ctx.fillStyle = grad; ctx.fill();
+                canvasPrice._meta = { data: data, pad: pad, cw: cw, ch: ch, minV: minV, maxV: maxV, w: w, h: h };
+            }
+
+            function drawSharesChart(data) {
+                var dim = setupCanvas(canvasShares), ctx = ctxShares;
+                var w = dim.w, h = dim.h;
+                var pad = { top: 8, right: 16, bottom: 22, left: 50 };
+                var cw = w - pad.left - pad.right, ch = h - pad.top - pad.bottom;
+                var shares = data.map(function (d) { return d.anteile; });
+                var maxS = Math.max.apply(null, shares) * 1.05;
+                var barW = Math.max(1, cw / data.length - 1.5);
+                ctx.clearRect(0, 0, w, h);
+                ctx.strokeStyle = '#f1f5f9'; ctx.lineWidth = 1;
+                for (var ti = 0; ti <= 3; ti++) {
+                    var y = pad.top + ch * (1 - ti / 3);
+                    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + cw, y); ctx.stroke();
+                    ctx.fillStyle = '#94a3b8'; ctx.font = '10px Inter,sans-serif'; ctx.textAlign = 'right';
+                    ctx.fillText(fmtNum(maxS * (ti / 3), 2), pad.left - 4, y + 4);
+                }
+                ctx.fillStyle = '#94a3b8'; ctx.font = '10px Inter,sans-serif'; ctx.textAlign = 'center';
+                var step = Math.ceil(data.length / 8);
+                for (var xi = 0; xi < data.length; xi += step) {
+                    var x = pad.left + (xi / data.length) * cw + barW / 2;
+                    ctx.fillText(data[xi].monat, x, h - pad.bottom + 14);
+                }
+                shares.forEach(function (s, i) {
+                    var barH = (s / maxS) * ch, bx = pad.left + (i / data.length) * cw, by = pad.top + ch - barH;
+                    ctx.fillStyle = 'rgba(30,64,175,0.72)';
+                    ctx.beginPath(); ctx.roundRect(bx, by, barW, barH, [Math.min(3, barW / 2), Math.min(3, barW / 2), 0, 0]); ctx.fill();
+                });
+                canvasShares._meta = { data: data, pad: pad, cw: cw, ch: ch, maxS: maxS, barW: barW };
+            }
+
+            function showTooltip(e, canvas, isBar) {
+                var meta = canvas._meta; if (!meta) return;
+                var rect = canvas.getBoundingClientRect(), mx = e.clientX - rect.left;
+                var idx, d, html;
+                if (isBar) {
+                    idx = Math.min(meta.data.length - 1, Math.max(0, Math.floor((mx - meta.pad.left) / meta.cw * meta.data.length)));
+                    if (mx < meta.pad.left) { hideTooltip(); return; }
+                    d = meta.data[idx];
+                    html = '<div class="tt-row"><span class="tt-key"><div class="w-2.5 h-2.5 rounded-sm bg-[#1e40af] opacity-70"></div>Anteile:</span><span class="tt-val">' + fmtNum(d.anteile, 4) + '</span></div><div class="tt-row"><span class="tt-key"><div class="w-2.5 h-2.5 rounded-sm bg-[#94a3b8]"></div>Kurs:</span><span class="tt-val">' + fmtEur(d.kurs) + '</span></div>';
+                } else {
+                    idx = Math.min(meta.data.length - 1, Math.max(0, Math.round((mx - meta.pad.left) / meta.cw * (meta.data.length - 1))));
+                    if (mx < meta.pad.left) { hideTooltip(); return; }
+                    d = meta.data[idx];
+                    html = '<div class="tt-row"><span class="tt-key"><div class="w-2.5 h-2.5 rounded-sm bg-[#006fb9]"></div>Kurs:</span><span class="tt-val">' + fmtEur(d.kurs) + '</span></div><div class="tt-row"><span class="tt-key"><div class="w-2.5 h-2.5 rounded-sm bg-[#d97706]"></div>Ø Kaufkurs:</span><span class="tt-val">' + fmtEur(d.avg) + '</span></div>';
+                }
+                document.getElementById('tt-title').textContent = 'Nach ' + d.monat + (d.monat === 1 ? ' Monat' : ' Monaten');
+                document.getElementById('tt-rows').innerHTML = html;
+                tooltip.style.opacity = '1';
+                tooltip.style.top = Math.max(e.clientY - 120, 6) + 'px';
+                tooltip.style.left = Math.min(e.clientX + 16, window.innerWidth - 220) + 'px';
+            }
+            function hideTooltip() { tooltip.style.opacity = '0'; }
+
+            canvasPrice.addEventListener('mousemove', function (e) { showTooltip(e, canvasPrice, false); });
+            canvasPrice.addEventListener('mouseleave', hideTooltip);
+            canvasShares.addEventListener('mousemove', function (e) { showTooltip(e, canvasShares, true); });
+            canvasShares.addEventListener('mouseleave', hideTooltip);
+
+            function updateCards(res) {
+                var gewinn = res.depotwert - res.totalInvested, vorteil = res.depotwert - res.lumpWert;
+                
+                var depotEl = document.getElementById('rc-depot');
+                depotEl.textContent = fmtEur(res.depotwert);
+                
+                var gEl = document.getElementById('rc-gewinn');
+                gEl.textContent = (gewinn >= 0 ? '+' : '') + fmtEur(gewinn);
+                gEl.style.color = gewinn >= 0 ? '#047857' : '#9f1239';
+                
+                var invEl = document.getElementById('rc-invested');
+                invEl.textContent = fmtEur(res.totalInvested);
+                document.getElementById('rc-months-sub').textContent = months + ' × ' + fmtDE(sparrate) + ' €';
+                
+                document.getElementById('ch-total-shares').textContent = fmtNum(res.totalShares, 2);
+                
+                var vEl = document.getElementById('rc-vorteil');
+                vEl.textContent = (vorteil >= 0 ? '+' : '') + fmtEur(vorteil);
+                
+                var vSubEl = document.getElementById('rc-vorteil-sub');
+                vSubEl.textContent = 'Sparplan ' + (vorteil >= 0 ? 'besser' : 'schlechter') + ' als Einmalanlage';
+                vSubEl.style.color = vorteil >= 0 ? '#047857' : '#9f1239';
+
+                // animate
+                [depotEl, gEl, invEl, vEl].forEach(el => {
+                    el.classList.remove('value-update');
+                    void el.offsetWidth;
+                    el.classList.add('value-update');
+                });
+
+                var lumpShares = res.totalInvested / 100;
+                var comparisonText = '';
+                if (vorteil > 0) {
+                    comparisonText = 'Eine Einmalanlage von ' + fmtEur(res.totalInvested) + ' zum Startkurs (100 €) hätte nur ' + fmtNum(lumpShares, 2) + ' Anteile gebracht. Der Sparplan ist um <span class="font-bold text-[#047857]">' + fmtEur(vorteil) + ' besser</span> – der Cost-Average-Effekt wirkt!';
+                } else {
+                    comparisonText = 'Eine Einmalanlage von ' + fmtEur(res.totalInvested) + ' zum Startkurs (100 €) hätte hingegen ' + fmtNum(lumpShares, 2) + ' Anteile gebracht. Im Aufwärtstrend profitiert die Einmalanlage mehr – das gesamte Kapital war früher investiert.';
+                }
+                document.getElementById('info-box').innerHTML = '<strong>Ø Kaufkurs: ' + fmtEur(res.avgKauf) + '</strong> — Sie haben ' + fmtNum(res.totalShares, 2) + ' Anteile erworben. ' + comparisonText;
+            }
+
+            function render() {
+                var res = calcCAE(sparrate, months, scenario);
+                chartData = res.data;
+                drawPriceChart(chartData);
+                drawSharesChart(chartData);
+                updateCards(res);
+            }
+
+            slSparrate.addEventListener('input', function () {
+                sparrate = +this.value;
+                document.getElementById('val-sparrate').textContent = fmtDE(sparrate) + ' €';
+                updateTrack(this); render();
+            });
+            slMonths.addEventListener('input', function () {
+                months = +this.value;
+                document.getElementById('val-months').textContent = months + ' Monate';
+                updateTrack(this); render();
+            });
+            document.getElementById('scenario-btns').addEventListener('click', function (e) {
+                var btn = e.target.closest('.scenario-btn');
+                if (!btn) return;
+                document.querySelectorAll('.scenario-btn').forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                scenario = btn.dataset.key;
+                render();
+            });
+
+            var resizeTimer;
+            window.addEventListener('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () { if (chartData) { drawPriceChart(chartData); drawSharesChart(chartData); } }, 100);
+            });
+
+            updateTrack(slSparrate); updateTrack(slMonths); render();
+        })();
+    </script>
+</body>
+</html>

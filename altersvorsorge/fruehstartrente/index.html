@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frühstart-Renten-Rechner – Rechner & Tools</title>
+    <meta name="description"
+        content="Berechnen Sie, wie Eltern durch Eigenbeiträge das staatliche Startkapital für die Rente ihrer Kinder vervielfachen können.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1a1a2e;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Back Navigation */
+        .back-nav {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 20px 24px 0;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: #646464;
+            text-decoration: none;
+            padding: 6px 0;
+            transition: color 0.15s;
+        }
+
+        .back-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: transform 0.15s;
+        }
+
+        .back-btn:hover {
+            color: #023e84;
+        }
+
+        .back-btn:hover svg {
+            transform: translateX(-2px);
+        }
+
+        /* Eyebrow Badge */
+        .page-eyebrow {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #006fb9;
+            background: #e8f0fa;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* Info Tooltip */
+        .info-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #e0e7ff;
+            color: #023e84;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+
+        .info-btn:hover {
+            background: #c7d2fe;
+        }
+
+        .info-btn .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e3a5f;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.5;
+            padding: 8px 12px;
+            border-radius: 8px;
+            width: 240px;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 20;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            text-align: left;
+        }
+
+        .info-btn .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #1e3a5f;
+        }
+
+        .info-btn:hover .tooltip,
+        .info-btn:focus .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Custom Slider Styling */
+        .slider {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(to right, #023e84 0%, #023e84 50%, #e5e7eb 50%, #e5e7eb 100%);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #023e84;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(2, 62, 132, 0.25);
+            transition: all 0.15s ease;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.12);
+            box-shadow: 0 3px 6px rgba(2, 62, 132, 0.35);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #023e84;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(2, 62, 132, 0.25);
+            transition: all 0.15s ease;
+        }
+
+        .slider::-moz-range-thumb:hover {
+            transform: scale(1.12);
+            box-shadow: 0 3px 6px rgba(2, 62, 132, 0.35);
+        }
+
+        /* Card shadows */
+        .card-panel {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(2, 62, 132, 0.05);
+            padding: 24px;
+        }
+
+        /* Chart container */
+        #chart-container {
+            min-height: 380px;
+        }
+
+        @media (max-width: 768px) {
+            #chart-container {
+                height: 280px;
+                min-height: 280px;
+            }
+        }
+
+        /* Animation for value changes */
+        .value-update {
+            animation: valueChange 0.3s ease;
+        }
+
+        @keyframes valueChange {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.04);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-6 lg:p-8">
+
+    <!-- Back Navigation -->
+    <nav class="back-nav">
+        <a href="../../index.html" class="back-btn" id="btn-back-home">
+            <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Zurück zur Übersicht
+        </a>
+    </nav>
+
+    <div class="max-w-7xl mx-auto pt-4">
+        <!-- Main Heading -->
+        <div class="text-center mb-8">
+            <div class="page-eyebrow">Altersvorsorge</div>
+            <h1 class="text-3xl md:text-4xl font-bold text-[#023e84] tracking-tight">
+                Frühstart-Renten-Rechner
+            </h1>
+            <p class="text-sm text-gray-500 mt-2 max-w-xl mx-auto">
+                Berechnen Sie, wie Eltern durch eigene Beiträge das staatliche Startkapital für die Altersvorsorge ihrer Kinder vervielfachen können.
+            </p>
+        </div>
+
+        <!-- Info Card Full Width -->
+        <div class="card-panel p-5 mb-6 flex items-start sm:items-center gap-4 bg-[#f8fafc]">
+            <div class="w-10 h-10 rounded-xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center flex-shrink-0 mt-1 sm:mt-0">
+                <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="16" x2="12" y2="12" />
+                    <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-sm text-[#023e84] leading-relaxed">
+                    <strong>Gut zu wissen:</strong> Der Staat steuert ab dem Jahr 2027 für Kinder zwischen dem 6. und 18. Lebensjahr monatlich 10 Euro für den Aufbau einer privaten Altersvorsorge bei. Die Förderung beginnt mit den Jahrgängen 2020 (rückwirkend für 2026) und 2021.
+                </p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 lg:items-stretch min-w-0">
+
+            <!-- Left Column - Input Cards -->
+            <div class="flex flex-col gap-6 min-w-0">
+
+                <!-- Eingabe Card -->
+                <div class="card-panel p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <line x1="4" x2="20" y1="21" y2="21"/><line x1="4" x2="20" y1="14" y2="14"/><line x1="4" x2="20" y1="7" y2="7"/><polyline points="14 17 14 21 18 21"/><polyline points="8 10 8 14 12 14"/><polyline points="14 3 14 7 18 7"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-bold text-[#023e84]">Eingabe</h2>
+                    </div>
+
+                    <div class="space-y-10 mt-6 mb-4">
+                        <!-- Jahrgang Input -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-sm font-semibold text-slate-700">Geburtsjahr Ihres Kindes</label>
+                                <div class="font-bold text-slate-900 bg-slate-100 px-3 py-1 rounded-lg whitespace-nowrap" id="birth-year-display">
+                                    2020
+                                </div>
+                            </div>
+                            <input type="range" id="birth-year-slider" min="2008" max="2026" step="1" value="2020" class="slider w-full mb-1">
+                            <div class="flex justify-between text-xs text-slate-400 font-medium">
+                                <span>2008</span>
+                                <span>2026</span>
+                            </div>
+                        </div>
+
+                        <!-- Zulage vom Staat (Read Only) -->
+                        <div>
+                            <div class="flex justify-between items-center">
+                                <label class="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                                    Zulage vom Staat
+                                </label>
+                                <div class="font-bold text-[#006fb9] bg-[#e8f0fa] px-3 py-1.5 rounded-lg whitespace-nowrap text-sm transition-all duration-300 flex items-center gap-1.5" id="state-allowance-display">
+                                    <span id="state-allowance-value">10 € mtl.</span>
+                                    <span id="state-allowance-start" class="text-xs font-normal opacity-80">ab 2026</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rendite Input -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                                    Rendite p.a.
+                                    <button class="info-btn shrink-0 ml-1" style="width:20px;height:20px;font-size:11px;min-width:20px;min-height:20px;margin:0" tabindex="0" aria-label="Hinweis zur Rendite">
+                                        i
+                                        <span class="tooltip">Das Bundesfinanzministerium rechnet in seiner offiziellen Modellrechnung zur Frühstart-Rente mit einer Rendite von 7 % p.a.</span>
+                                    </button>
+                                </label>
+                                <div class="font-bold text-slate-900 bg-slate-100 px-3 py-1 rounded-lg whitespace-nowrap" id="return-rate-display">
+                                    3 %
+                                </div>
+                            </div>
+                            <input type="range" id="return-rate-slider" min="0" max="10" step="0.5" value="3" class="slider w-full mb-1">
+                            <div class="flex justify-between text-xs text-slate-400 font-medium">
+                                <span>0 %</span>
+                                <span>10 %</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sales Flow Card -->
+                <div class="card-panel flex-1 flex flex-col justify-center p-6 bg-blue-50/50 border-blue-100" id="sales-flow-card">
+                    <!-- Q1 -->
+                    <div id="flow-q1">
+                        <p class="text-sm font-semibold text-[#023e84] mb-4 text-center leading-relaxed">
+                            Sind Sie sicher, dass das für einen sorgenfreien Ruhestand reicht?
+                        </p>
+                        <div class="flex gap-3 justify-center">
+                            <button id="btn-q1-ja" class="px-5 py-2 rounded-lg border border-[#006fb9] text-[#006fb9] hover:bg-[#006fb9] hover:text-white font-medium text-sm transition-colors w-24">Ja</button>
+                            <button id="btn-q1-nein" class="px-5 py-2 rounded-lg border border-[#006fb9] text-[#006fb9] hover:bg-[#006fb9] hover:text-white font-medium text-sm transition-colors w-24">Nein</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Q2A (if Q1 = Ja) -->
+                    <div id="flow-q2a" class="hidden">
+                        <p class="text-sm font-semibold text-[#023e84] mb-4 text-center leading-relaxed">
+                            Wollen Sie Ihrem Kind trotzdem ein solides Startpolster ermöglichen?
+                        </p>
+                        <div class="flex gap-3 justify-center">
+                            <button id="btn-q2a-ja" class="px-5 py-2 rounded-lg border border-[#006fb9] text-[#006fb9] hover:bg-[#006fb9] hover:text-white font-medium text-sm transition-colors w-24">Ja</button>
+                            <button id="btn-q2a-nein" class="px-5 py-2 rounded-lg border border-[#006fb9] text-[#006fb9] hover:bg-[#006fb9] hover:text-white font-medium text-sm transition-colors w-24">Nein</button>
+                        </div>
+                    </div>
+
+                    <!-- Q2B (if Q1 = Nein) -->
+                    <div id="flow-q2b" class="hidden">
+                        <p class="text-sm font-semibold text-[#023e84] mb-4 text-center leading-relaxed">
+                            Würden Sie Ihr Kind beim Aufbau eines soliden Grundsteins unterstützen?
+                        </p>
+                        <div class="flex gap-3 justify-center">
+                            <button id="btn-q2b-ja" class="px-5 py-2 rounded-lg border border-[#006fb9] text-[#006fb9] hover:bg-[#006fb9] hover:text-white font-medium text-sm transition-colors w-24">Ja</button>
+                            <button id="btn-q2b-nein" class="px-5 py-2 rounded-lg border border-[#006fb9] text-[#006fb9] hover:bg-[#006fb9] hover:text-white font-medium text-sm transition-colors w-24">Nein</button>
+                        </div>
+                    </div>
+
+                    <!-- Completion Message -->
+                    <div id="flow-end" class="hidden">
+                        <p class="text-sm font-semibold text-[#023e84] text-center leading-relaxed">
+                            Alles klar. Die staatliche Basis bleibt weiterhin voll erhalten!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Ihr Eigenbeitrag Card -->
+                <div class="card-panel flex-1 flex flex-col justify-between p-6 hidden" id="eigenbeitrag-card">
+                    <div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                    <path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/>
+                                </svg>
+                            </div>
+                            <h2 class="text-base font-semibold text-[#023e84]">Ihr Eigenbeitrag</h2>
+                        </div>
+                        <p class="text-sm text-slate-500 leading-relaxed">
+                            So viel bin ich bereit, für die Zukunft meines Kindes zu investieren.
+                        </p>
+                    </div>
+
+                    <div class="mt-auto pt-2">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <label class="text-sm text-gray-600">Eigenbeitrag pro Monat</label>
+                            <span class="text-2xl font-bold text-[#023e84]" id="contribution-display">0 €</span>
+                        </div>
+                        <input type="range" id="contribution-slider" min="0" max="200" step="5" value="0"
+                            class="slider w-full mb-1.5">
+                        <div class="flex justify-between text-xs text-gray-400">
+                            <span>0 €</span>
+                            <span>200 €</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column - Results and Chart Cards -->
+            <div class="flex flex-col gap-6 min-w-0">
+
+                <!-- Top 3 Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Gesamte Einzahlungen -->
+                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-sm font-medium text-slate-500">Einzahlungen</span>
+                            <div class="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.5-1 2-2h2v-4h-2c0-1-.5-1.5-1-2h0V6c0-.5-.5-1-1-1z"/><path d="M2 9v1c0 1.1.9 2 2 2h1"/><path d="M16 11h.01"/></svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-[#023e84]" id="result-total-ein">1.440 €</div>
+                        
+                        <!-- Breakdown below -->
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-1.5">
+                            <div class="flex justify-between items-center text-xs">
+                                <div class="flex items-center gap-1.5 text-slate-500">
+                                    <div class="w-2 h-2 rounded-full bg-[#006fb9]"></div>
+                                    vom Staat
+                                </div>
+                                <span class="font-medium text-[#006fb9]" id="result-state-info">1.440 €</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs opacity-0 pointer-events-none transition-opacity duration-300" id="eigenbeitrag-info-row">
+                                <div class="flex items-center gap-1.5 text-slate-500">
+                                    <div class="w-2 h-2 rounded-full bg-[#646464]"></div>
+                                    selbst eingezahlt
+                                </div>
+                                <span class="font-medium text-[#646464]" id="result-contributed-info">0 €</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ertrag -->
+                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-sm font-medium text-slate-500">Ertrag</span>
+                            <div class="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" /></svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-[#023e84]" id="result-profit-info">83.744 €</div>
+                        <div class="text-xs text-[#006fb9] mt-1 font-medium" id="result-profit-percent">0% des Endkapitals</div>
+                    </div>
+
+                    <!-- Endkapital -->
+                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-sm font-medium text-slate-500">Endkapital</span>
+                            <div class="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-[#023e84]" id="result-total-main">85.184 €</div>
+                        <div class="text-xs text-[#006fb9] mt-1 font-medium">mit 70 Jahren</div>
+                    </div>
+                </div>
+
+                <!-- Chart Card (Clean White Card) -->
+                <div class="card-panel p-6 sm:p-7 flex-1 flex flex-col justify-center">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                        <h3 class="text-lg font-bold text-[#023e84] m-0">Vermögensentwicklung</h3>
+                        <div class="flex items-center gap-4 text-xs font-medium text-slate-500">
+                            <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#646464]"></div>Einzahlungen</div>
+                            <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#006fb9]"></div>Ertrag</div>
+                            <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#023e84]"></div>Endkapital</div>
+                        </div>
+                    </div>
+                    <div class="w-full relative min-h-[360px] flex-1">
+                        <canvas id="chart-container"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Info Note -->
+        <div class="card-panel p-5 mt-8 mb-6 flex items-start sm:items-center gap-4 bg-[#f8fafc]">
+            <div class="w-10 h-10 rounded-xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center flex-shrink-0 mt-1 sm:mt-0">
+                <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="16" x2="12" y2="12" />
+                    <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-sm text-[#023e84] leading-relaxed">
+                    Dieser Rechner zeigt, wie Eltern durch eigene Beiträge das staatliche Startkapital für die
+                    Altersvorsorge ihrer Kinder deutlich vervielfachen können. Alle Berechnungen dienen nur zu
+                    Illustrationszwecken und stellen keine Anlageberatung dar.
+                </p>
+            </div>
+        </div>
+
+        <footer class="mt-12 text-center text-xs text-gray-400 py-4 border-t border-gray-100">
+            Internes Beratungstool &nbsp;·&nbsp; Nur für den internen Gebrauch
+        </footer>
+    </div>
+
+    <script>
+        // State management
+        const state = {
+            birthYear: 2020,
+            monthlyContribution: 0,
+            returnRate: 3,
+            stateMonthlyContribution: 10, // Government pays 10€/month from age 6-18
+            stateContributionStartAge: 6,
+            stateContributionEndAge: 18,
+            retirementAge: 70
+        };
+
+        // DOM Elements
+        const elements = {
+            birthYearSlider: document.getElementById('birth-year-slider'),
+            birthYearDisplay: document.getElementById('birth-year-display'),
+            contributionSlider: document.getElementById('contribution-slider'),
+            contributionDisplay: document.getElementById('contribution-display'),
+            returnRateSlider: document.getElementById('return-rate-slider'),
+            returnRateDisplay: document.getElementById('return-rate-display'),
+            resultState: document.getElementById('result-state-info'),
+            resultContributed: document.getElementById('result-contributed-info'),
+            resultTotal: document.getElementById('result-total-main'),
+            resultTotalEin: document.getElementById('result-total-ein'),
+            resultProfit: document.getElementById('result-profit-info'),
+            resultProfitPercent: document.getElementById('result-profit-percent'),
+            eigenbeitragInfoRow: document.getElementById('eigenbeitrag-info-row'),
+            chartContainer: document.getElementById('chart-container')
+        };
+
+        // Chart instance
+        let chartInstance = null;
+
+        // Helper Functions
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('de-DE', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value) + '€';
+        }
+
+        function formatPercent(value) {
+            return Number(value).toLocaleString('de-DE', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + ' %';
+        }
+
+        // Calculation Functions
+        function calculateCurrentAge() {
+            return 2026 - state.birthYear;
+        }
+
+        function calculateYearsUntilRetirement() {
+            return state.retirementAge - calculateCurrentAge();
+        }
+
+        function calculateTotalOwnContributions() {
+            const years = calculateYearsUntilRetirement();
+            return state.monthlyContribution * 12 * years;
+        }
+
+        // Calculate the future value of state contributions (z.B. 10€/month from age 6-18)
+        function calculateStateContributionFutureValue() {
+            const currentAge = calculateCurrentAge();
+            const r = state.returnRate / 100;
+            const retirementAge = state.retirementAge;
+
+            let totalStateValue = 0;
+            const startAge = Math.max(currentAge, state.stateContributionStartAge);
+            const endAge = state.stateContributionEndAge;
+
+            for (let a = startAge; a < endAge; a++) {
+                // Jährliche Zinsperiode: Einzahlung 12x, vorschüssig (6.5 Monate verzinst)
+                const effectiveAnnual = 12 * state.stateMonthlyContribution + state.stateMonthlyContribution * r * 6.5;
+                const yearsToGrow = retirementAge - (a + 1);
+                totalStateValue += effectiveAnnual * Math.pow(1 + r, yearsToGrow);
+            }
+
+            return totalStateValue;
+        }
+
+        function calculateFutureValue(principal, monthlyContribution, annualRate, years) {
+            const r = annualRate / 100;
+            const fvPrincipal = principal * Math.pow(1 + r, years);
+
+            let fvContributions = 0;
+            if (monthlyContribution > 0) {
+                // Jährliche Zinsperiode mit vorschüssiger monatlicher Einzahlung
+                const effectiveAnnualContribution = 12 * monthlyContribution + monthlyContribution * r * 6.5;
+                if (r > 0) {
+                    fvContributions = effectiveAnnualContribution * ((Math.pow(1 + r, years) - 1) / r);
+                } else {
+                    fvContributions = 12 * monthlyContribution * years;
+                }
+            }
+
+            return {
+                principal: fvPrincipal,
+                contributions: fvContributions,
+                total: fvPrincipal + fvContributions
+            };
+        }
+
+        function generateChartData() {
+            const currentAge = calculateCurrentAge();
+            const retirementAge = state.retirementAge;
+            const currentYear = new Date().getFullYear();
+            const birthYear = state.birthYear;
+            const data = [];
+            const r = state.returnRate / 100;
+
+            for (let age = 0; age <= retirementAge; age++) {
+                let stateValue = 0;
+                let stateNominal = 0;
+                
+                // Staatliche Zulagen starten frühestens ab plan start (currentAge) oder 6 Jahren
+                const startAge = Math.max(currentAge, state.stateContributionStartAge);
+                const endAge = state.stateContributionEndAge;
+
+                for (let a = startAge; a < Math.min(age, endAge); a++) {
+                    stateNominal += 12 * state.stateMonthlyContribution;
+                    const effectiveAnnual = 12 * state.stateMonthlyContribution + state.stateMonthlyContribution * r * 6.5;
+                    const yearsToGrow = age - (a + 1);
+                    stateValue += effectiveAnnual * Math.pow(1 + r, yearsToGrow);
+                }
+
+                // Calculate own contributions (only from current age onwards)
+                let ownValue = 0;
+                let ownNominal = 0;
+                if (age >= currentAge) {
+                    const yearsInvested = age - currentAge;
+                    ownNominal = state.monthlyContribution * 12 * yearsInvested;
+
+                    const fv = calculateFutureValue(
+                        0,
+                        state.monthlyContribution,
+                        state.returnRate,
+                        yearsInvested
+                    );
+                    ownValue = fv.contributions;
+                }
+
+                data.push({
+                    age: age,
+                    year: birthYear + age,
+                    staat: Math.round(stateValue),
+                    stateNominal: Math.round(stateNominal),
+                    selbst: Math.round(ownValue),
+                    selbstNominal: Math.round(ownNominal),
+                    total: Math.round(stateValue + ownValue)
+                });
+            }
+
+            return data;
+        }
+
+        function updateResults() {
+            const currentAge = calculateCurrentAge();
+            const years = calculateYearsUntilRetirement();
+            const totalOwnContributions = calculateTotalOwnContributions();
+            const stateContributionFutureValue = calculateStateContributionFutureValue();
+
+            const finalOwnValues = calculateFutureValue(
+                0,
+                state.monthlyContribution,
+                state.returnRate,
+                years
+            );
+
+            const totalCapital = Math.round(stateContributionFutureValue + finalOwnValues.contributions);
+            
+            // Nominal state contribution that actually happened in the plan
+            const activeStateYears = Math.max(0, state.stateContributionEndAge - Math.max(currentAge, state.stateContributionStartAge));
+            const totalStateNominal = state.stateMonthlyContribution * 12 * activeStateYears;
+            
+            const profit = totalCapital - totalOwnContributions - totalStateNominal;
+            const totalEin = totalStateNominal + totalOwnContributions;
+            const profitPercent = totalCapital > 0 ? ((profit / totalCapital) * 100).toFixed(0) : 0;
+
+            // Toggle Eigenbeitrag display
+            if (totalOwnContributions > 0) {
+                elements.eigenbeitragInfoRow.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                elements.eigenbeitragInfoRow.classList.add('opacity-0', 'pointer-events-none');
+            }
+
+            // Update display with animation
+            elements.resultTotalEin.textContent = formatCurrency(totalEin);
+            elements.resultState.textContent = formatCurrency(totalStateNominal);
+            elements.resultContributed.textContent = formatCurrency(totalOwnContributions);
+            elements.resultTotal.textContent = formatCurrency(totalCapital);
+            elements.resultProfit.textContent = formatCurrency(profit);
+            elements.resultProfitPercent.textContent = profitPercent + '% des Endkapitals';
+
+            // Add animation class
+            [elements.resultTotalEin, elements.resultState, elements.resultContributed, elements.resultTotal, elements.resultProfit].forEach(el => {
+                if(el) {
+                    el.classList.add('value-update');
+                    setTimeout(() => el.classList.remove('value-update'), 300);
+                }
+            });
+
+            // Update chart
+            renderChart();
+        }
+
+        function updateSliderProgress(slider) {
+            const min = parseFloat(slider.min);
+            const max = parseFloat(slider.max);
+            const value = parseFloat(slider.value);
+            const percentage = ((value - min) / (max - min)) * 100;
+
+            slider.style.background = `linear-gradient(to right, #023e84 0%, #023e84 ${percentage}%, #e5e7eb ${percentage}%, #e5e7eb 100%)`;
+        }
+
+        // Custom Tooltip HTML Handler
+        const getOrCreateTooltip = (chart) => {
+            let tooltipEl = chart.canvas.parentNode.querySelector('div.custom-chart-tooltip');
+            if (!tooltipEl) {
+                tooltipEl = document.createElement('div');
+                tooltipEl.className = 'custom-chart-tooltip bg-white p-4 rounded-xl shadow-[0_4px_20px_rgba(2,62,132,0.15)] border border-slate-100 min-w-[200px] pointer-events-none absolute transition-all duration-200 z-50';
+                
+                const table = document.createElement('div');
+                tooltipEl.appendChild(table);
+                chart.canvas.parentNode.appendChild(tooltipEl);
+            }
+            return tooltipEl;
+        };
+
+        const externalTooltipHandler = (context) => {
+            const {chart, tooltip} = context;
+            const tooltipEl = getOrCreateTooltip(chart);
+
+            if (tooltip.opacity === 0) {
+                tooltipEl.style.opacity = 0;
+                return;
+            }
+
+            if (tooltip.body) {
+                const titleLines = tooltip.title || [];
+                const bodyLines = tooltip.body.map(b => b.lines);
+
+                const tooltipRoot = tooltipEl.querySelector('div');
+                tooltipRoot.innerHTML = '';
+
+                titleLines.forEach(title => {
+                    const p = document.createElement('p');
+                    p.className = 'font-bold text-[#023e84] mb-3 border-b border-slate-100 pb-2 text-sm';
+                    p.appendChild(document.createTextNode(title));
+                    tooltipRoot.appendChild(p);
+                });
+
+                const bodyColors = tooltip.labelColors;
+
+                bodyLines.forEach((body, i) => {
+                    const colors = bodyColors[i];
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-between items-center gap-4 text-sm mb-1.5';
+
+                    const leftDiv = document.createElement('div');
+                    leftDiv.className = 'flex items-center gap-2 text-slate-600';
+                    
+                    const colorSquare = document.createElement('div');
+                    colorSquare.className = 'w-2.5 h-2.5 rounded-sm';
+                    // Ertrag has transparent backgroundColor, so we grab borderColor
+                    colorSquare.style.backgroundColor = (colors.backgroundColor === 'rgba(0,0,0,0)' || colors.backgroundColor === 'transparent') ? colors.borderColor : colors.borderColor;
+
+                    const textSpan = document.createElement('span');
+                    const split = body[0].split(': ');
+                    textSpan.appendChild(document.createTextNode(split[0]));
+                    
+                    const valSpan = document.createElement('span');
+                    valSpan.className = 'font-semibold text-slate-800';
+                    valSpan.appendChild(document.createTextNode(split[1]));
+
+                    leftDiv.appendChild(colorSquare);
+                    leftDiv.appendChild(textSpan);
+                    div.appendChild(leftDiv);
+                    div.appendChild(valSpan);
+
+                    tooltipRoot.appendChild(div);
+                });
+            }
+
+            const {offsetLeft: positionX, offsetTop: positionY} = chart.canvas;
+            
+            tooltipEl.style.opacity = 1;
+            tooltipEl.style.left = positionX + tooltip.caretX + 'px';
+            tooltipEl.style.top = positionY + tooltip.caretY + 'px';
+            tooltipEl.style.transform = 'translate(-50%, -100%) translateY(-10px)';
+        };
+
+        // Chart Rendering with Chart.js
+        function renderChart() {
+            const chartData = generateChartData();
+            // Destroy existing chart if exists
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            const ctx = elements.chartContainer.getContext('2d');
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.map(d => d.age),
+                    datasets: [
+                        {
+                            label: 'Endkapital',
+                            data: chartData.map(d => d.total),
+                            backgroundColor: 'rgba(2, 62, 132, 0.2)',
+                            borderColor: '#023e84',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 0,
+                            order: 3
+                        },
+                        {
+                            label: 'Einzahlungen',
+                            data: chartData.map(d => d.stateNominal + d.selbstNominal),
+                            borderColor: '#646464',
+                            backgroundColor: 'rgba(100, 100, 100, 0.4)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 0,
+                            order: 2
+                        },
+                        {
+                            label: 'Ertrag',
+                            data: chartData.map(d => d.total - (d.stateNominal + d.selbstNominal)),
+                            borderColor: '#006fb9',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 0,
+                            order: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false,
+                            position: 'nearest',
+                            external: externalTooltipHandler,
+                            callbacks: {
+                                title: function (context) {
+                                    return 'Alter: ' + context[0].label + ' Jahre';
+                                },
+                                label: function (context) {
+                                    return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Alter',
+                                color: '#9ca3af',
+                                padding: { top: 10 }
+                            },
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#9ca3af',
+                                maxRotation: 0,
+                                autoSkip: false,
+                                callback: function (value, index, ticks) {
+                                    const age = this.getLabelForValue(value);
+                                    const retirementAge = state.retirementAge;
+
+                                    if (age == 0 || age == 6 || age == 18 || age == 30 || age == 40 ||
+                                        age == 50 || age == 60 || age == retirementAge) {
+                                        return age;
+                                    }
+                                    return '';
+                                }
+                            }
+                        },
+                        y: {
+                            stacked: false,
+                            beginAtZero: true,
+                            title: {
+                                display: false
+                            },
+                            grid: {
+                                color: '#e5e7eb',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#9ca3af',
+                                callback: function (value) {
+                                    return value >= 1000 ? (value / 1000) + 'k €' : value + ' €';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Event Listeners
+        elements.birthYearSlider.addEventListener('input', (e) => {
+            state.birthYear = parseInt(e.target.value);
+            elements.birthYearDisplay.textContent = state.birthYear;
+            
+            // Dynamic State Allowance logic
+            state.stateMonthlyContribution = state.birthYear >= 2020 ? 10 : 0;
+            const allowanceDisplay = document.getElementById('state-allowance-display');
+            const allowanceValue = document.getElementById('state-allowance-value');
+            const allowanceStart = document.getElementById('state-allowance-start');
+            
+            if (allowanceDisplay && allowanceValue && allowanceStart) {
+                allowanceValue.textContent = state.stateMonthlyContribution + ' € mtl.';
+                if (state.stateMonthlyContribution === 0) {
+                    allowanceDisplay.classList.replace('text-[#006fb9]', 'text-slate-500');
+                    allowanceDisplay.classList.replace('bg-[#e8f0fa]', 'bg-slate-100');
+                    allowanceStart.classList.add('hidden');
+                } else {
+                    allowanceDisplay.classList.replace('text-slate-500', 'text-[#006fb9]');
+                    allowanceDisplay.classList.replace('bg-slate-100', 'bg-[#e8f0fa]');
+                    allowanceStart.textContent = 'ab ' + (state.birthYear + 6);
+                    allowanceStart.classList.remove('hidden');
+                }
+            }
+
+            updateSliderProgress(e.target);
+            updateResults();
+        });
+
+        elements.contributionSlider.addEventListener('input', (e) => {
+            state.monthlyContribution = parseInt(e.target.value);
+            elements.contributionDisplay.textContent = state.monthlyContribution + ' €';
+            updateSliderProgress(e.target);
+            updateResults();
+        });
+
+        elements.returnRateSlider.addEventListener('input', (e) => {
+            state.returnRate = parseFloat(e.target.value);
+            elements.returnRateDisplay.textContent = formatPercent(state.returnRate);
+            updateSliderProgress(e.target);
+            updateResults();
+        });
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            // Sales Flow Logic
+            const flowCard = document.getElementById('sales-flow-card');
+            const flowQ1 = document.getElementById('flow-q1');
+            const flowQ2A = document.getElementById('flow-q2a');
+            const flowQ2B = document.getElementById('flow-q2b');
+            const eigenbeitragCard = document.getElementById('eigenbeitrag-card');
+
+            document.getElementById('btn-q1-ja').addEventListener('click', () => {
+                flowQ1.classList.add('hidden');
+                flowQ2A.classList.remove('hidden');
+            });
+            document.getElementById('btn-q1-nein').addEventListener('click', () => {
+                flowQ1.classList.add('hidden');
+                flowQ2B.classList.remove('hidden');
+            });
+            
+            const showEigenbeitrag = () => {
+                flowCard.classList.add('hidden');
+                eigenbeitragCard.classList.remove('hidden');
+                eigenbeitragCard.classList.add('flex'); // Ensure flex is applied since Tailwind hidden removes it
+            };
+            
+            document.getElementById('btn-q2a-ja').addEventListener('click', showEigenbeitrag);
+            document.getElementById('btn-q2b-ja').addEventListener('click', showEigenbeitrag);
+
+            const showEndMessage = () => {
+                flowQ2A.classList.add('hidden');
+                flowQ2B.classList.add('hidden');
+                document.getElementById('flow-end').classList.remove('hidden');
+            };
+            document.getElementById('btn-q2a-nein').addEventListener('click', showEndMessage);
+            document.getElementById('btn-q2b-nein').addEventListener('click', showEndMessage);
+            // Initialize slider progress bars
+            updateSliderProgress(elements.birthYearSlider);
+            updateSliderProgress(elements.contributionSlider);
+            updateSliderProgress(elements.returnRateSlider);
+
+            // Initial calculation and render
+            updateResults();
+        });
+    </script>
+</body>
+
+</html>

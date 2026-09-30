@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lebenserwartungsrechner – Rechner & Tools</title>
+    <meta name="description" content="Berechnen Sie Ihre statistische Lebenserwartung auf Basis der offiziellen DAV2004R Sterbetafel.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-family: 'Roboto', sans-serif;
+            background: #ffffff;
+            color: #1e293b;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            font-size: 13.5px; font-weight: 500; color: #646464;
+            text-decoration: none; padding: 6px 0; transition: color 0.15s;
+        }
+        .back-btn:hover { color: #023e84; }
+        .back-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.15s; }
+        .back-btn:hover svg { transform: translateX(-2px); }
+
+        .badge-brand {
+            display: inline-block; padding: 4px 14px; border-radius: 20px;
+            background: rgba(0, 111, 185, 0.08); border: 1px solid rgba(0, 111, 185, 0.2);
+            color: #006fb9; font-size: 0.73rem; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 14px;
+        }
+
+        .card-panel {
+            background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03); transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        .card-panel:hover { box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06); }
+
+        .result-card {
+            background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px;
+            padding: 22px 20px; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s;
+        }
+        .result-card:hover { border-color: #cbd5e1; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06); }
+
+        .icon-box {
+            width: 42px; height: 42px; border-radius: 12px; background: #e8f0fa; color: #023e84;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+        }
+
+        /* Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 3px;
+            background: #e5e7eb; outline: none; cursor: pointer; transition: all 0.2s ease;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%;
+            background: #023e84; cursor: pointer; border: none; box-shadow: 0 2px 4px rgba(2, 62, 132, 0.25);
+            transition: transform 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.12); }
+        input[type=range]::-moz-range-thumb {
+            width: 20px; height: 20px; border-radius: 50%;
+            background: #023e84; cursor: pointer; border: none; box-shadow: 0 2px 4px rgba(2, 62, 132, 0.25);
+            transition: transform 0.15s ease;
+        }
+        input[type=range]::-moz-range-thumb:hover { transform: scale(1.12); }
+
+        .gender-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px; border-radius: 10px; border: 2px solid #e2e8f0; background: #ffffff;
+            color: #64748b; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.15s;
+            width: 100%;
+        }
+        .gender-btn:hover { border-color: #cbd5e1; background: #f8fafc; }
+        .gender-btn.active { border-color: #006fb9; color: #006fb9; background: rgba(0, 111, 185, 0.05); }
+        .gender-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+        
+        .loading-overlay {
+            display: none; justify-content: center; align-items: center; flex-direction: column; gap: 16px;
+            padding: 40px; color: #023e84; font-weight: 600; font-size: 1.1rem;
+        }
+        .loading-overlay.visible { display: flex; }
+        
+        .spinner { width: 36px; height: 36px; border: 3px solid rgba(2, 62, 132, 0.2); border-top-color: #023e84; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #result-section { display: none; }
+        #result-section.visible { display: block; animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Donut SVG styling */
+        .donut-wrap { position: relative; width: 64px; height: 64px; margin-bottom: 12px; }
+        .donut-svg { width: 64px; height: 64px; transform: rotate(-90deg); }
+        .donut-bg { fill: none; stroke: #f1f5f9; stroke-width: 6; }
+        .donut-arc { fill: none; stroke: #023e84; stroke-width: 6; stroke-linecap: round; stroke-dasharray: 188.5; stroke-dashoffset: 188.5; transition: stroke-dashoffset 0.9s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        details summary::-webkit-details-marker { display:none; }
+    </style>
+</head>
+<body>
+
+    <div id="advisor-nav" class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 mt-4 flex justify-between items-center">
+        <a href="../../index.html" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-[#023e84] transition-colors mb-6 group" id="btn-back-home">
+            <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Zurück zur Übersicht
+        </a>
+        
+        <button onclick="openCampaignModal()" class="inline-flex items-center gap-2 text-sm font-bold text-[#006fb9] bg-[#e8f0fa] hover:bg-[#cce0f5] px-4 py-2 rounded-xl transition-colors mb-6">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                <path d="M12 12v9"></path>
+                <path d="m8 17 4 4 4-4"></path>
+            </svg>
+            Kampagnen-Material
+        </button>
+    </div>
+
+    <header id="main-header" class="text-center pb-8 pt-4">
+        <div class="badge-brand">Statistische Prognose</div>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-[#023e84] mb-4 tracking-tight">Lebenserwartungs-Rechner</h1>
+        <p class="text-slate-500 max-w-2xl mx-auto text-[15px] leading-relaxed">
+            Berechnen Sie Ihre statistische Lebenserwartung auf Basis der offiziellen DAV2004R Sterbetafel der Deutschen Aktuarvereinigung.
+        </p>
+    </header>
+
+    <div class="max-w-3xl mx-auto px-6">
+        
+        <!-- SALES FLOW -->
+        <div id="sales-flow-wrap" class="card-panel p-8 md:p-12 mb-8 max-w-3xl mx-auto text-center">
+            
+            <!-- STEP 1 -->
+            <div id="sf-step1">
+                <div class="w-16 h-16 bg-[#e8f0fa] rounded-2xl flex items-center justify-center mx-auto mb-6 text-[#023e84]">
+                    <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-[#023e84] mb-3">Wie lange muss Ihre Rente reichen?</h2>
+                <p class="text-slate-500 mb-10 text-[15px]">Bis zu welchem Alter glauben Sie, wird Ihr Erspartes bzw. Ihre Rente voraussichtlich reichen müssen?</p>
+                
+                <div class="max-w-md mx-auto mb-8 bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                    <div class="text-5xl font-extrabold text-[#023e84] mb-4"><span id="sf-age-display">70</span> <span class="text-2xl text-slate-400">Jahre</span></div>
+                    <input type="range" id="sf-age-slider" min="60" max="100" value="70" class="w-full mb-1">
+                    <div class="flex justify-between text-xs text-slate-400 font-medium mt-3 px-1">
+                        <span>60 J</span><span>100 J</span>
+                    </div>
+                </div>
+                
+                <button id="btn-sf-next" class="bg-[#023e84] hover:bg-[#002f66] text-white px-8 py-3.5 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">Weiter</button>
+            </div>
+            
+            <!-- STEP 2 -->
+            <div id="sf-step2" style="display: none;">
+                <div class="w-16 h-16 bg-[#e8f0fa] rounded-2xl flex items-center justify-center mx-auto mb-6 text-[#006fb9]">
+                    <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-[#023e84] mb-3">Wissen Sie eigentlich, wie hoch Ihre tatsächliche statistische Lebenserwartung ist?</h2>
+                <p class="text-slate-500 mb-10 text-[15px]">Die Statistik hält oft Überraschungen bereit.</p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button id="btn-sf-ja" class="btn-secondary w-full sm:w-auto text-[#023e84] border-2 border-[#023e84] bg-white hover:bg-slate-50 px-8 py-3.5 rounded-xl font-bold text-lg transition-colors">Ja, weiß ich</button>
+                    <button id="btn-sf-nein" class="bg-[#023e84] hover:bg-[#002f66] text-white w-full sm:w-auto px-8 py-3.5 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">Jetzt berechnen</button>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- MAIN CALCULATOR WRAPPER -->
+        <div id="main-calc-wrap" style="display: none;">
+
+        
+        <!-- Eingabe Panel -->
+        <div class="card-panel p-6 md:p-8 mb-8" id="input-section">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center flex-shrink-0">
+                    <svg viewBox="0 0 24 24" class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="21" y2="21"/><line x1="4" x2="20" y1="14" y2="14"/><line x1="4" x2="20" y1="7" y2="7"/><polyline points="14 17 14 21 18 21"/><polyline points="8 10 8 14 12 14"/><polyline points="14 3 14 7 18 7"/></svg>
+                </div>
+                <h2 class="text-lg font-bold text-[#023e84]">Eingabe</h2>
+            </div>
+
+            <form id="calc-form" onsubmit="calculate(event)" novalidate>
+                <div class="flex flex-col gap-10">
+                    <!-- Geschlecht -->
+                    <div>
+                        <h3 class="text-xl md:text-2xl font-bold text-[#023e84] text-center mb-8">Das sagt die Statistik dazu</h3>
+                        <div class="grid grid-cols-2 gap-4 max-w-lg mx-auto mb-4">
+                            <label class="gender-card flex flex-col items-center justify-center gap-2 py-8 rounded-xl border border-slate-200 bg-white cursor-pointer transition-all hover:border-[#006fb9] hover:bg-slate-50 relative group">
+                                <input type="radio" name="gender" id="female" value="w" required class="hidden" onchange="updateGenderBtns()">
+                                <svg viewBox="0 0 24 24" class="w-8 h-8 text-[#006fb9] stroke-current fill-none stroke-2 mb-1"><circle cx="12" cy="9" r="6"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="9" y1="19" x2="15" y2="19"/></svg>
+                                <span class="font-bold text-[#006fb9] text-base">weiblich</span>
+                            </label>
+                            <label class="gender-card flex flex-col items-center justify-center gap-2 py-8 rounded-xl border border-slate-200 bg-white cursor-pointer transition-all hover:border-[#006fb9] hover:bg-slate-50 relative group">
+                                <input type="radio" name="gender" id="male" value="m" required class="hidden" onchange="updateGenderBtns()">
+                                <svg viewBox="0 0 24 24" class="w-8 h-8 text-[#006fb9] stroke-current fill-none stroke-2 mb-1"><circle cx="10" cy="14" r="6"/><line x1="14.5" y1="9.5" x2="21" y2="3"/><polyline points="16 3 21 3 21 8"/></svg>
+                                <span class="font-bold text-[#006fb9] text-base">männlich</span>
+                            </label>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-4 flex gap-3 text-sm text-slate-500 max-w-lg mx-auto">
+                            <svg class="w-5 h-5 flex-shrink-0 text-slate-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            <p class="leading-relaxed">Die Lebenserwartung unterscheidet sich statistisch zwischen Geschlechtern. Deshalb wird dieser Faktor berücksichtigt. Daten außerhalb der Geschlechter „männlich“ und „weiblich“ liegen nicht vor.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="h-px bg-slate-100 max-w-xl mx-auto w-full"></div>
+
+                    <!-- Alter -->
+                    <div class="max-w-xl mx-auto w-full">
+                        <div class="flex justify-between items-center mb-6">
+                            <label class="text-[15px] font-semibold text-slate-700">Wie alt sind Sie?</label>
+                            <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-4 py-1.5 rounded-lg text-[15px]" id="ageDisplay">30 Jahre</div>
+                        </div>
+                        <input type="hidden" id="age-input" value="30">
+                        <input type="range" id="age-range" min="0" max="60" value="30" class="w-full mb-3" oninput="syncFromSlider(this); document.getElementById('ageDisplay').innerText = this.value + ' Jahre';">
+                        <div class="flex justify-between text-xs text-slate-400 font-medium">
+                            <span>0 J</span><span>60 J</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-slate-100 flex justify-end">
+                    <button type="submit" class="bg-[#023e84] hover:bg-[#002f66] text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition-colors">Berechnen</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- LOADING -->
+        <div id="loading-section" class="loading-overlay card-panel mb-8">
+            <div class="spinner"></div>
+            <div>Ihre Lebenserwartung wird berechnet…</div>
+        </div>
+
+        <!-- RESULT SECTION -->
+        <div id="result-section" class="mb-12">
+            <!-- Top Summary Box -->
+            <!-- Top Summary Box -->
+            <div class="mb-10 flex flex-col items-center justify-center text-center">
+                <div class="text-lg md:text-xl font-bold text-[#1e293b] mb-2">Ihre Lebenserwartung beträgt:</div>
+                <div class="flex items-baseline justify-center gap-3 mb-6">
+                    <span class="text-[6rem] leading-none md:text-[8rem] font-black text-[#004f98] tracking-tighter" id="result-avg">–</span>
+                    <span class="text-2xl md:text-3xl font-bold text-[#004f98]">Jahre</span>
+                </div>
+                <div class="flex items-center justify-center gap-6 text-[15px] font-bold text-[#004f98] mb-6">
+                    <span class="flex items-center gap-1.5">
+                        <svg id="gender-icon" viewBox="0 0 24 24" class="w-5 h-5" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+                        <span id="gender-label"></span>
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span>Alter: <span id="result-age-label"></span></span>
+                    </span>
+                </div>
+                <p class="text-[15px] leading-relaxed text-slate-500 max-w-2xl mx-auto">
+                    Dieses Ergebnis basiert auf Ihren Angaben zum Geschlecht und zu Ihrem aktuellen Alter, sowie auf statistisch ermittelten Durchschnittswerten.<br>Dabei handelt es sich nicht um eine individuelle Prognose.
+                </p>
+            </div>
+
+            <div id="comparison-box" class="p-5 rounded-xl mb-6 text-[15px] leading-relaxed shadow-sm" style="display: none;"></div>
+            <!-- Result Cards (Donuts) -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                <!-- 80% -->
+                <div class="result-card group flex flex-col items-center text-center">
+                    <div class="donut-wrap">
+                        <svg class="donut-svg" viewBox="0 0 80 80">
+                            <circle class="donut-bg" cx="40" cy="40" r="30" />
+                            <circle class="donut-arc" id="arc-80" cx="40" cy="40" r="30" />
+                        </svg>
+                    </div>
+                    <div class="text-xl font-bold text-[#023e84] mb-2">80%</div>
+                    <div class="text-xs text-slate-500 leading-relaxed">
+                        werden statistisch gesehen<br>mindestens <strong class="text-slate-700" id="result-80">–</strong> Jahre alt.
+                    </div>
+                </div>
+                <!-- 50% -->
+                <div class="result-card group flex flex-col items-center text-center">
+                    <div class="donut-wrap">
+                        <svg class="donut-svg" viewBox="0 0 80 80">
+                            <circle class="donut-bg" cx="40" cy="40" r="30" />
+                            <circle class="donut-arc" style="stroke: #006fb9;" id="arc-50" cx="40" cy="40" r="30" />
+                        </svg>
+                    </div>
+                    <div class="text-xl font-bold text-[#006fb9] mb-2">50%</div>
+                    <div class="text-xs text-slate-500 leading-relaxed">
+                        werden statistisch gesehen<br>mindestens <strong class="text-slate-700" id="result-50">–</strong> Jahre alt.
+                    </div>
+                </div>
+                <!-- 20% -->
+                <div class="result-card group flex flex-col items-center text-center">
+                    <div class="donut-wrap">
+                        <svg class="donut-svg" viewBox="0 0 80 80">
+                            <circle class="donut-bg" cx="40" cy="40" r="30" />
+                            <circle class="donut-arc" style="stroke: #0ea5e9;" id="arc-20" cx="40" cy="40" r="30" />
+                        </svg>
+                    </div>
+                    <div class="text-xl font-bold text-[#0ea5e9] mb-2">20%</div>
+                    <div class="text-xs text-slate-500 leading-relaxed">
+                        werden statistisch gesehen<br>mindestens <strong class="text-slate-700" id="result-20">–</strong> Jahre alt.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-center mb-10">
+                <button type="button" class="flex items-center justify-center gap-2 text-[15px] font-semibold text-white bg-[#023e84] hover:bg-[#002f66] px-6 py-3.5 rounded-xl transition-all shadow-md w-full sm:w-auto" onclick="resetCalc()">
+                    <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    Neue Berechnung starten
+                </button>
+            </div>
+            
+
+        </div>
+
+        </div>
+        <!-- FAQ -->
+        <div class="card-panel p-6 md:p-8 mb-12">
+            <h2 class="text-lg font-bold text-[#023e84] mb-6">Häufige Fragen (FAQ)</h2>
+            <div class="space-y-4">
+                <!-- Item 1 -->
+                <details class="group bg-slate-50 rounded-xl cursor-pointer">
+                    <summary class="flex justify-between items-center font-semibold p-4 text-[#023e84]">
+                        1. Was ist die Lebenserwartung?
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </span>
+                    </summary>
+                    <div class="text-sm text-slate-500 p-4 pt-0 leading-relaxed">
+                        Menschen leben unterschiedlich lange. Manche sterben früher, andere leben länger als erwartet. Die Lebenserwartung ist bei einer Gruppe von Menschen die statistisch bestimmte Anzahl von Jahren, die diese Personen im Durchschnitt noch zu leben haben.
+                    </div>
+                </details>
+                <!-- Item 2 -->
+                <details class="group bg-slate-50 rounded-xl cursor-pointer">
+                    <summary class="flex justify-between items-center font-semibold p-4 text-[#023e84]">
+                        2. Was bedeutet Restlebenserwartung?
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </span>
+                    </summary>
+                    <div class="text-sm text-slate-500 p-4 pt-0 leading-relaxed">
+                        Bei der sog. Restlebenserwartung wird ein anderes Bezugsalter gewählt. Damit ist die erwartete Anzahl von Lebensjahren ab einem beliebigen Bezugsalter gemeint, beispielsweise ab dem Alter 65.
+                    </div>
+                </details>
+                <!-- Item 3 -->
+                <details class="group bg-slate-50 rounded-xl cursor-pointer">
+                    <summary class="flex justify-between items-center font-semibold p-4 text-[#023e84]">
+                        3. Warum sinkt die Restlebenserwartung nicht jedes Jahr um ein Jahr?
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </span>
+                    </summary>
+                    <div class="text-sm text-slate-500 p-4 pt-0 leading-relaxed">
+                        Bei der Berechnung der Lebenserwartung werden die Sterbewahrscheinlichkeiten aller nachfolgenden Altersjahre berücksichtigt. Die Restlebenserwartung sinkt demnach nicht jedes Jahr um ein Jahr, weil sie immer wieder neu anhand der künftigen Sterbewahrscheinlichkeiten berechnet wird, welche sich mit jedem erreichten Alter verändern.
+                    </div>
+                </details>
+                <!-- Item 4 -->
+                <details class="group bg-slate-50 rounded-xl cursor-pointer">
+                    <summary class="flex justify-between items-center font-semibold p-4 text-[#023e84]">
+                        4. Woher stammen die Daten aus dem Lebenserwartungsrechner?
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </span>
+                    </summary>
+                    <div class="text-sm text-slate-500 p-4 pt-0 leading-relaxed">
+                        Der Lebenserwartungsrechner basiert auf der Sterbetafel „Deutsche Aktuarvereinigung 2004 Rentensterbetafel“ (DAV2004R). Dabei handelt es sich um eine von der DAV entwickelte Rechnungsgrundlage, die in Deutschland insbesondere als Basis für private Rentenversicherungen verwendet wird.
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+<script>
+    function updateGenderBtns() {
+        document.querySelectorAll('.gender-card').forEach(btn => {
+            const isChecked = btn.querySelector('input').checked;
+            // Update Border and background of the card
+            btn.style.borderColor = isChecked ? '#006fb9' : '';
+            btn.style.backgroundColor = isChecked ? 'rgba(0, 111, 185, 0.04)' : '';
+            
+            // Text/Icons are always blue now, just add a subtle bold border for active state
+            btn.style.borderWidth = isChecked ? '2px' : '1px';
+            btn.style.padding = isChecked ? '31px 0' : '32px 0'; // Adjust padding to prevent jumping when border changes
+        });
+    }
+
+    // ── SLIDER SYNC ──
+    function syncFromSlider(input) {
+      document.getElementById('age-input').value = input.value;
+      updateTrack(input);
+    }
+    function syncFromInput(input) {
+      let val = parseInt(input.value);
+      if (isNaN(val)) val = 30;
+      let v = Math.min(60, Math.max(0, val));
+      input.value = v;
+      const slider = document.getElementById('age-range');
+      slider.value = v;
+      updateTrack(slider);
+    }
+    function updateTrack(slider) {
+      const minStr = slider.getAttribute('min');
+      const min = minStr !== null ? +minStr : 1;
+      const maxStr = slider.getAttribute('max');
+      const max = maxStr !== null ? +maxStr : 100;
+      const v = +slider.value;
+      const pct = ((v - min) / (max - min)) * 100;
+      slider.style.background = `linear-gradient(to right, #023e84 0%, #023e84 ${pct}%, #e5e7eb ${pct}%, #e5e7eb 100%)`;
+    }
+
+    // ── DONUT ANIMATION ──
+    const CIRC = 188.5; // 2 * π * 30
+    function animateDonut(id, pct) {
+      const arc = document.getElementById(id);
+      if (!arc) return;
+      arc.style.strokeDashoffset = CIRC * (1 - pct);
+    }
+    function resetDonuts() {
+      ['arc-80', 'arc-50', 'arc-20'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.strokeDashoffset = CIRC;
+      });
+    }
+
+    const LIFETIME_DATA = { "m": { "1": { "avg": 92.3, "p80": 85, "p50": 93, "p20": 101 }, "2": { "avg": 92.2, "p80": 85, "p50": 93, "p20": 101 }, "3": { "avg": 92.1, "p80": 85, "p50": 93, "p20": 101 }, "4": { "avg": 92, "p80": 85, "p50": 93, "p20": 101 }, "5": { "avg": 91.9, "p80": 85, "p50": 93, "p20": 101 }, "6": { "avg": 91.8, "p80": 85, "p50": 93, "p20": 101 }, "7": { "avg": 91.7, "p80": 85, "p50": 93, "p20": 100 }, "8": { "avg": 91.6, "p80": 85, "p50": 93, "p20": 100 }, "9": { "avg": 91.5, "p80": 85, "p50": 92, "p20": 100 }, "10": { "avg": 91.4, "p80": 85, "p50": 92, "p20": 100 }, "11": { "avg": 91.3, "p80": 85, "p50": 92, "p20": 100 }, "12": { "avg": 91.2, "p80": 84, "p50": 92, "p20": 100 }, "13": { "avg": 91.1, "p80": 84, "p50": 92, "p20": 100 }, "14": { "avg": 91, "p80": 84, "p50": 92, "p20": 100 }, "15": { "avg": 90.9, "p80": 84, "p50": 92, "p20": 100 }, "16": { "avg": 90.8, "p80": 84, "p50": 92, "p20": 100 }, "17": { "avg": 90.7, "p80": 84, "p50": 92, "p20": 99 }, "18": { "avg": 90.6, "p80": 84, "p50": 92, "p20": 99 }, "19": { "avg": 90.5, "p80": 84, "p50": 92, "p20": 99 }, "20": { "avg": 90.4, "p80": 84, "p50": 92, "p20": 99 }, "21": { "avg": 90.3, "p80": 83, "p50": 92, "p20": 99 }, "22": { "avg": 90.2, "p80": 83, "p50": 91, "p20": 99 }, "23": { "avg": 90.1, "p80": 83, "p50": 91, "p20": 99 }, "24": { "avg": 90, "p80": 83, "p50": 91, "p20": 99 }, "25": { "avg": 90, "p80": 83, "p50": 91, "p20": 99 }, "26": { "avg": 89.9, "p80": 83, "p50": 91, "p20": 99 }, "27": { "avg": 89.8, "p80": 83, "p50": 91, "p20": 98 }, "28": { "avg": 89.7, "p80": 83, "p50": 91, "p20": 98 }, "29": { "avg": 89.6, "p80": 83, "p50": 91, "p20": 98 }, "30": { "avg": 89.5, "p80": 82, "p50": 91, "p20": 98 }, "31": { "avg": 89.4, "p80": 82, "p50": 91, "p20": 98 }, "32": { "avg": 89.4, "p80": 82, "p50": 91, "p20": 98 }, "33": { "avg": 89.3, "p80": 82, "p50": 91, "p20": 98 }, "34": { "avg": 89.2, "p80": 82, "p50": 91, "p20": 98 }, "35": { "avg": 89.1, "p80": 82, "p50": 90, "p20": 98 }, "36": { "avg": 89, "p80": 82, "p50": 90, "p20": 98 }, "37": { "avg": 88.9, "p80": 82, "p50": 90, "p20": 98 }, "38": { "avg": 88.8, "p80": 82, "p50": 90, "p20": 97 }, "39": { "avg": 88.8, "p80": 81, "p50": 90, "p20": 97 }, "40": { "avg": 88.7, "p80": 81, "p50": 90, "p20": 97 }, "41": { "avg": 88.6, "p80": 81, "p50": 90, "p20": 97 }, "42": { "avg": 88.6, "p80": 81, "p50": 90, "p20": 97 }, "43": { "avg": 88.5, "p80": 81, "p50": 90, "p20": 97 }, "44": { "avg": 88.4, "p80": 81, "p50": 90, "p20": 97 }, "45": { "avg": 88.4, "p80": 81, "p50": 90, "p20": 97 }, "46": { "avg": 88.3, "p80": 81, "p50": 90, "p20": 97 }, "47": { "avg": 88.3, "p80": 81, "p50": 90, "p20": 97 }, "48": { "avg": 88.2, "p80": 81, "p50": 89, "p20": 97 }, "49": { "avg": 88.2, "p80": 81, "p50": 89, "p20": 96 }, "50": { "avg": 88.2, "p80": 80, "p50": 89, "p20": 96 }, "51": { "avg": 88.1, "p80": 80, "p50": 89, "p20": 96 }, "52": { "avg": 88.1, "p80": 80, "p50": 89, "p20": 96 }, "53": { "avg": 88.1, "p80": 80, "p50": 89, "p20": 96 }, "54": { "avg": 88.1, "p80": 80, "p50": 89, "p20": 96 }, "55": { "avg": 88, "p80": 80, "p50": 89, "p20": 96 }, "56": { "avg": 88, "p80": 80, "p50": 89, "p20": 96 }, "57": { "avg": 88, "p80": 80, "p50": 89, "p20": 96 }, "58": { "avg": 88, "p80": 80, "p50": 89, "p20": 96 }, "59": { "avg": 88, "p80": 80, "p50": 89, "p20": 96 }, "60": { "avg": 88, "p80": 80, "p50": 89, "p20": 96 }, "61": { "avg": 88, "p80": 80, "p50": 89, "p20": 96 }, "62": { "avg": 88.1, "p80": 80, "p50": 89, "p20": 95 }, "63": { "avg": 88.1, "p80": 80, "p50": 89, "p20": 95 }, "64": { "avg": 88.1, "p80": 80, "p50": 89, "p20": 95 }, "65": { "avg": 88.2, "p80": 80, "p50": 89, "p20": 95 }, "66": { "avg": 88.2, "p80": 80, "p50": 89, "p20": 95 }, "67": { "avg": 88.3, "p80": 81, "p50": 89, "p20": 95 }, "68": { "avg": 88.4, "p80": 81, "p50": 89, "p20": 95 }, "69": { "avg": 88.5, "p80": 81, "p50": 89, "p20": 95 }, "70": { "avg": 88.6, "p80": 81, "p50": 89, "p20": 95 }, "71": { "avg": 88.7, "p80": 81, "p50": 89, "p20": 95 }, "72": { "avg": 88.8, "p80": 82, "p50": 89, "p20": 95 }, "73": { "avg": 89, "p80": 82, "p50": 89, "p20": 95 }, "74": { "avg": 89.1, "p80": 82, "p50": 89, "p20": 95 }, "75": { "avg": 89.3, "p80": 82, "p50": 89, "p20": 95 }, "76": { "avg": 89.5, "p80": 83, "p50": 89, "p20": 95 }, "77": { "avg": 89.7, "p80": 83, "p50": 89, "p20": 95 }, "78": { "avg": 89.9, "p80": 83, "p50": 89, "p20": 95 }, "79": { "avg": 90.2, "p80": 84, "p50": 89, "p20": 95 }, "80": { "avg": 90.5, "p80": 84, "p50": 90, "p20": 95 }, "81": { "avg": 90.8, "p80": 85, "p50": 90, "p20": 95 }, "82": { "avg": 91.1, "p80": 85, "p50": 90, "p20": 96 }, "83": { "avg": 91.5, "p80": 86, "p50": 90, "p20": 96 }, "84": { "avg": 91.9, "p80": 87, "p50": 91, "p20": 96 }, "85": { "avg": 92.3, "p80": 87, "p50": 91, "p20": 96 }, "86": { "avg": 92.8, "p80": 88, "p50": 92, "p20": 96 }, "87": { "avg": 93.4, "p80": 89, "p50": 92, "p20": 97 }, "88": { "avg": 93.9, "p80": 89, "p50": 93, "p20": 97 }, "89": { "avg": 94.5, "p80": 90, "p50": 93, "p20": 97 }, "90": { "avg": 95.2, "p80": 91, "p50": 94, "p20": 98 }, "91": { "avg": 95.8, "p80": 92, "p50": 94, "p20": 98 }, "92": { "avg": 96.5, "p80": 93, "p50": 95, "p20": 99 }, "93": { "avg": 97.3, "p80": 94, "p50": 96, "p20": 99 }, "94": { "avg": 98, "p80": 95, "p50": 97, "p20": 100 }, "95": { "avg": 98.8, "p80": 96, "p50": 97, "p20": 101 } }, "w": { "1": { "avg": 97.3, "p80": 90, "p50": 97, "p20": 105 }, "2": { "avg": 97.2, "p80": 90, "p50": 97, "p20": 105 }, "3": { "avg": 97.1, "p80": 90, "p50": 97, "p20": 105 }, "4": { "avg": 97, "p80": 90, "p50": 97, "p20": 105 }, "5": { "avg": 96.9, "p80": 90, "p50": 97, "p20": 105 }, "6": { "avg": 96.8, "p80": 90, "p50": 97, "p20": 105 }, "7": { "avg": 96.7, "p80": 90, "p50": 97, "p20": 105 }, "8": { "avg": 96.6, "p80": 90, "p50": 97, "p20": 105 }, "9": { "avg": 96.5, "p80": 90, "p50": 97, "p20": 104 }, "10": { "avg": 96.4, "p80": 90, "p50": 97, "p20": 104 }, "11": { "avg": 96.3, "p80": 90, "p50": 97, "p20": 104 }, "12": { "avg": 96.2, "p80": 89, "p50": 97, "p20": 104 }, "13": { "avg": 96.1, "p80": 89, "p50": 97, "p20": 104 }, "14": { "avg": 96, "p80": 89, "p50": 96, "p20": 104 }, "15": { "avg": 95.8, "p80": 89, "p50": 96, "p20": 104 }, "16": { "avg": 95.7, "p80": 89, "p50": 96, "p20": 104 }, "17": { "avg": 95.6, "p80": 89, "p50": 96, "p20": 104 }, "18": { "avg": 95.5, "p80": 89, "p50": 96, "p20": 104 }, "19": { "avg": 95.4, "p80": 89, "p50": 96, "p20": 103 }, "20": { "avg": 95.3, "p80": 89, "p50": 96, "p20": 103 }, "21": { "avg": 95.2, "p80": 89, "p50": 96, "p20": 103 }, "22": { "avg": 95.1, "p80": 89, "p50": 96, "p20": 103 }, "23": { "avg": 95, "p80": 88, "p50": 96, "p20": 103 }, "24": { "avg": 94.9, "p80": 88, "p50": 96, "p20": 103 }, "25": { "avg": 94.8, "p80": 88, "p50": 96, "p20": 103 }, "26": { "avg": 94.7, "p80": 88, "p50": 95, "p20": 103 }, "27": { "avg": 94.6, "p80": 88, "p50": 95, "p20": 103 }, "28": { "avg": 94.5, "p80": 88, "p50": 95, "p20": 103 }, "29": { "avg": 94.4, "p80": 88, "p50": 95, "p20": 102 }, "30": { "avg": 94.3, "p80": 88, "p50": 95, "p20": 102 }, "31": { "avg": 94.2, "p80": 88, "p50": 95, "p20": 102 }, "32": { "avg": 94.1, "p80": 87, "p50": 95, "p20": 102 }, "33": { "avg": 94, "p80": 87, "p50": 95, "p20": 102 }, "34": { "avg": 93.9, "p80": 87, "p50": 95, "p20": 102 }, "35": { "avg": 93.8, "p80": 87, "p50": 95, "p20": 102 }, "36": { "avg": 93.7, "p80": 87, "p50": 95, "p20": 102 }, "37": { "avg": 93.6, "p80": 87, "p50": 94, "p20": 102 }, "38": { "avg": 93.5, "p80": 87, "p50": 94, "p20": 102 }, "39": { "avg": 93.5, "p80": 87, "p50": 94, "p20": 101 }, "40": { "avg": 93.4, "p80": 87, "p50": 94, "p20": 101 }, "41": { "avg": 93.3, "p80": 87, "p50": 94, "p20": 101 }, "42": { "avg": 93.2, "p80": 86, "p50": 94, "p20": 101 }, "43": { "avg": 93.1, "p80": 86, "p50": 94, "p20": 101 }, "44": { "avg": 93.1, "p80": 86, "p50": 94, "p20": 101 }, "45": { "avg": 93, "p80": 86, "p50": 94, "p20": 101 }, "46": { "avg": 92.9, "p80": 86, "p50": 94, "p20": 101 }, "47": { "avg": 92.8, "p80": 86, "p50": 94, "p20": 101 }, "48": { "avg": 92.8, "p80": 86, "p50": 94, "p20": 101 }, "49": { "avg": 92.7, "p80": 86, "p50": 93, "p20": 101 }, "50": { "avg": 92.6, "p80": 86, "p50": 93, "p20": 100 }, "51": { "avg": 92.6, "p80": 86, "p50": 93, "p20": 100 }, "52": { "avg": 92.5, "p80": 86, "p50": 93, "p20": 100 }, "53": { "avg": 92.5, "p80": 85, "p50": 93, "p20": 100 }, "54": { "avg": 92.4, "p80": 85, "p50": 93, "p20": 100 }, "55": { "avg": 92.3, "p80": 85, "p50": 93, "p20": 100 }, "56": { "avg": 92.3, "p80": 85, "p50": 93, "p20": 100 }, "57": { "avg": 92.2, "p80": 85, "p50": 93, "p20": 100 }, "58": { "avg": 92.2, "p80": 85, "p50": 93, "p20": 100 }, "59": { "avg": 92.2, "p80": 85, "p50": 93, "p20": 100 }, "60": { "avg": 92.1, "p80": 85, "p50": 93, "p20": 100 }, "61": { "avg": 92.1, "p80": 85, "p50": 93, "p20": 99 }, "62": { "avg": 92, "p80": 85, "p50": 92, "p20": 99 }, "63": { "avg": 92, "p80": 85, "p50": 92, "p20": 99 }, "64": { "avg": 92, "p80": 85, "p50": 92, "p20": 99 }, "65": { "avg": 92, "p80": 85, "p50": 92, "p20": 99 }, "66": { "avg": 92, "p80": 85, "p50": 92, "p20": 99 }, "67": { "avg": 92, "p80": 85, "p50": 92, "p20": 99 }, "68": { "avg": 92, "p80": 85, "p50": 92, "p20": 99 }, "69": { "avg": 92, "p80": 85, "p50": 92, "p20": 99 }, "70": { "avg": 92, "p80": 85, "p50": 92, "p20": 99 }, "71": { "avg": 92, "p80": 85, "p50": 92, "p20": 99 }, "72": { "avg": 92.1, "p80": 85, "p50": 92, "p20": 99 }, "73": { "avg": 92.1, "p80": 85, "p50": 92, "p20": 98 }, "74": { "avg": 92.2, "p80": 85, "p50": 92, "p20": 98 }, "75": { "avg": 92.3, "p80": 85, "p50": 92, "p20": 98 }, "76": { "avg": 92.4, "p80": 85, "p50": 92, "p20": 98 }, "77": { "avg": 92.5, "p80": 86, "p50": 92, "p20": 98 }, "78": { "avg": 92.6, "p80": 86, "p50": 92, "p20": 98 }, "79": { "avg": 92.7, "p80": 86, "p50": 92, "p20": 98 }, "80": { "avg": 92.9, "p80": 86, "p50": 92, "p20": 98 }, "81": { "avg": 93.1, "p80": 87, "p50": 92, "p20": 98 }, "82": { "avg": 93.3, "p80": 87, "p50": 92, "p20": 98 }, "83": { "avg": 93.5, "p80": 87, "p50": 92, "p20": 98 }, "84": { "avg": 93.8, "p80": 88, "p50": 93, "p20": 98 }, "85": { "avg": 94.1, "p80": 88, "p50": 93, "p20": 99 }, "86": { "avg": 94.5, "p80": 89, "p50": 93, "p20": 99 }, "87": { "avg": 94.9, "p80": 90, "p50": 94, "p20": 99 }, "88": { "avg": 95.3, "p80": 90, "p50": 94, "p20": 99 }, "89": { "avg": 95.8, "p80": 91, "p50": 94, "p20": 100 }, "90": { "avg": 96.4, "p80": 92, "p50": 95, "p20": 100 }, "91": { "avg": 97, "p80": 92, "p50": 96, "p20": 100 }, "92": { "avg": 97.6, "p80": 93, "p50": 96, "p20": 101 }, "93": { "avg": 98.2, "p80": 94, "p50": 97, "p20": 101 }, "94": { "avg": 98.9, "p80": 95, "p50": 98, "p20": 102 }, "95": { "avg": 99.7, "p80": 96, "p50": 98, "p20": 102 } } };
+
+    // ── CALCULATE ──
+    function calculate(event) {
+      if (event) event.preventDefault();
+
+      const gender = document.querySelector('input[name="gender"]:checked')?.value;
+      if (!gender) { alert('Bitte wählen Sie Ihr Geschlecht aus.'); return; }
+      let parsedAge = parseInt(document.getElementById('age-input').value);
+      if (isNaN(parsedAge)) parsedAge = 30;
+      const age = String(parsedAge);
+
+      // Show loading
+      document.getElementById('input-section').style.display = 'none';
+      document.getElementById('loading-section').classList.add('visible');
+      document.getElementById('result-section').classList.remove('visible');
+      resetDonuts();
+
+      // If 0 is selected, use data for 1 since DAV tables usually start at 1
+      const dataAge = age === "0" ? "1" : age;
+      const r = LIFETIME_DATA[gender][dataAge];
+
+      // Fill result
+      const avgAge = Math.round(r.avg);
+      document.getElementById('result-avg').textContent = avgAge.toLocaleString('de-DE');
+
+      const estimatedAge = parseInt(document.getElementById('sf-age-slider').value) || 70;
+      const diff = avgAge - estimatedAge;
+      const compBox = document.getElementById('comparison-box');
+      
+      if (diff > 1) {
+        compBox.innerHTML = `Sie haben <strong>${estimatedAge} Jahre</strong> geschätzt. Die Statistik sagt jedoch <strong>${avgAge} Jahre</strong>. Das sind <strong>${diff} Jahre länger</strong>, für die Ihre Vorsorge reichen muss!`;
+        compBox.style.backgroundColor = '#FEF3C7';
+        compBox.style.color = '#92400E';
+        compBox.style.border = '1px solid #FDE68A';
+      } else if (diff < -1) {
+        compBox.innerHTML = `Sie haben <strong>${estimatedAge} Jahre</strong> geschätzt. Die Statistik geht im Durchschnitt von <strong>${avgAge} Jahren</strong> aus. Sie planen also bereits mit einem sehr guten Puffer!`;
+        compBox.style.backgroundColor = '#D1FAE5';
+        compBox.style.color = '#065F46';
+        compBox.style.border = '1px solid #A7F3D0';
+      } else {
+        compBox.innerHTML = `Punktlandung! Ihre Schätzung von <strong>${estimatedAge} Jahren</strong> entspricht exakt dem statistischen Durchschnitt.`;
+        compBox.style.backgroundColor = '#DBEAFE';
+        compBox.style.color = '#1E40AF';
+        compBox.style.border = '1px solid #BFDBFE';
+      }
+      compBox.style.display = 'block';
+      document.getElementById('result-80').textContent = r.p80;
+      document.getElementById('result-50').textContent = r.p50;
+      document.getElementById('result-20').textContent = r.p20;
+      document.getElementById('result-age-label').textContent = age;
+      document.getElementById('gender-label').textContent = gender === 'w' ? 'weiblich' : 'männlich';
+
+      const icon = document.getElementById('gender-icon');
+      if (gender === 'w') {
+        icon.innerHTML = '<circle cx="12" cy="9" r="5"/><line x1="12" y1="14" x2="12" y2="20"/><line x1="9" y1="18" x2="15" y2="18"/>';
+      } else {
+        icon.innerHTML = '<circle cx="10" cy="14" r="5"/><line x1="14" y1="10" x2="20" y2="4"/><polyline points="16 4 20 4 20 8"/>';
+      }
+
+      // Simulate brief loading (like DAV does with 2s delay)
+      setTimeout(() => {
+        document.getElementById('loading-section').classList.remove('visible');
+        document.getElementById('result-section').classList.add('visible');
+        // Animate donuts
+        const maxAge = 110;
+        setTimeout(() => {
+          animateDonut('arc-80', 0.80);
+          animateDonut('arc-50', 0.50);
+          animateDonut('arc-20', 0.20);
+        }, 80);
+      }, 800);
+    }
+
+    // ── RESET ──
+    function resetCalc() {
+      // Reset Calculator State
+      document.getElementById('input-section').style.display = 'block';
+      document.getElementById('loading-section').classList.remove('visible');
+      document.getElementById('result-section').classList.remove('visible');
+      document.getElementById('female').checked = false;
+      document.getElementById('male').checked = false;
+      updateGenderBtns(); // Update the visual state of the gender cards
+      
+      const slider = document.getElementById('age-range');
+      slider.value = 30;
+      document.getElementById('age-input').value = 30;
+      document.getElementById('ageDisplay').innerText = '30 Jahre';
+      updateTrack(slider);
+      resetDonuts();
+
+      // Reset Sales Flow
+      const sfWrap = document.getElementById('sales-flow-wrap');
+      const mainWrap = document.getElementById('main-calc-wrap');
+      if (sfWrap && mainWrap) {
+        sfWrap.style.display = 'block';
+        mainWrap.style.display = 'none';
+        document.getElementById('sf-step1').style.display = 'block';
+        document.getElementById('sf-step2').style.display = 'none';
+        
+        const sfSlider = document.getElementById('sf-age-slider');
+        if(sfSlider) {
+          sfSlider.value = 70;
+          sfSlider.dispatchEvent(new Event('input'));
+        }
+      }
+    }
+
+    // ── INIT ──
+    window.addEventListener('DOMContentLoaded', () => {
+      // Check for client mode to hide advisor nav
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('mode') === 'client') {
+          const nav = document.getElementById('advisor-nav');
+          if(nav) nav.style.display = 'none';
+          const header = document.getElementById('main-header');
+          if(header) header.style.display = 'none';
+          
+          const sfWrap = document.getElementById('sales-flow-wrap');
+          if(sfWrap) sfWrap.classList.add('mt-12', 'md:mt-24');
+      }
+
+      updateTrack(document.getElementById('age-range'));
+      
+      // Sales Flow Logic
+      const sfSlider = document.getElementById('sf-age-slider');
+      const sfDisplay = document.getElementById('sf-age-display');
+      
+      const updateSfSlider = () => {
+        const val = sfSlider.value;
+        sfDisplay.textContent = val;
+        const min = sfSlider.min;
+        const max = sfSlider.max;
+        const pct = ((val - min) / (max - min)) * 100;
+        sfSlider.style.background = `linear-gradient(to right, #023e84 0%, #023e84 ${pct}%, #e5e7eb ${pct}%, #e5e7eb 100%)`;
+      };
+
+      sfSlider.addEventListener('input', updateSfSlider);
+      updateSfSlider(); // Init
+
+      document.getElementById('btn-sf-next').addEventListener('click', () => {
+        document.getElementById('sf-step1').style.display = 'none';
+        document.getElementById('sf-step2').style.display = 'block';
+      });
+
+      const showCalculator = () => {
+        document.getElementById('sales-flow-wrap').style.display = 'none';
+        document.getElementById('main-header').style.display = 'block';
+        document.getElementById('main-calc-wrap').style.display = 'block';
+      };
+
+      document.getElementById('btn-sf-ja').addEventListener('click', showCalculator);
+      document.getElementById('btn-sf-nein').addEventListener('click', showCalculator);
+    });
+
+    function openCampaignModal() {
+        const baseUrl = window.location.href.split('?')[0];
+        const clientUrl = baseUrl + '?mode=client';
+        
+        ['copy-wa', 'copy-li', 'copy-mail'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el && el.innerHTML.includes('[Link zum Rechner]')) {
+                el.innerHTML = el.innerHTML.replace(/\[Link zum Rechner\]/g, clientUrl);
+            }
+        });
+        
+        document.getElementById('campaign-modal').classList.remove('hidden');
+    }
+
+    function closeCampaignModal() {
+        document.getElementById('campaign-modal').classList.add('hidden');
+    }
+
+    function copyToClipboard(elementId) {
+        const text = document.getElementById(elementId).innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.querySelector(`button[onclick="copyToClipboard('${elementId}')"]`);
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<svg class="w-4 h-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Kopiert!';
+            btn.classList.add('bg-green-50', 'text-green-700');
+            btn.classList.remove('text-[#006fb9]', 'hover:bg-[#e8f0fa]');
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.classList.remove('bg-green-50', 'text-green-700');
+                btn.classList.add('text-[#006fb9]', 'hover:bg-[#e8f0fa]');
+            }, 2000);
+        });
+    }
+  </script>
+
+  <!-- Marketing Modal -->
+  <div id="campaign-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+          <div class="sticky top-0 bg-white/95 backdrop-blur z-10 border-b border-slate-100 p-6 flex justify-between items-center">
+              <div>
+                  <h3 class="text-xl font-bold text-[#023e84]">Marketing-Kampagne</h3>
+                  <p class="text-sm text-slate-500 mt-1">Vorlagen zur Kundengewinnung & Ansprache</p>
+              </div>
+              <button onclick="closeCampaignModal()" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition-colors">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+          </div>
+          <div class="p-6 space-y-8">
+              <!-- WhatsApp -->
+              <div>
+                  <div class="flex justify-between items-end mb-3">
+                      <h4 class="font-bold text-[#023e84] flex items-center gap-2"><svg class="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>WhatsApp / Messenger</h4>
+                      <button onclick="copyToClipboard('copy-wa')" class="text-xs font-bold text-[#006fb9] hover:bg-[#e8f0fa] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Kopieren</button>
+                  </div>
+                  <div id="copy-wa" class="bg-slate-50 p-4 rounded-xl text-sm text-slate-700 leading-relaxed border border-slate-100 font-mono">Guten Tag [Name], kurze Frage: Bis zu welchem Alter glauben Sie, muss Ihre Rente voraussichtlich reichen? Die meisten Menschen schätzen das völlig falsch ein. Machen Sie mal kurz diesen Test (basiert auf den offiziellen Daten der Deutschen Aktuarvereinigung): [Link zum Rechner] 📊 Melden Sie sich gerne danach, ob Sie vom Ergebnis überrascht waren!</div>
+              </div>
+
+              <!-- LinkedIn -->
+              <div>
+                  <div class="flex justify-between items-end mb-3">
+                      <h4 class="font-bold text-[#023e84] flex items-center gap-2"><svg class="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>LinkedIn / Social Media</h4>
+                      <button onclick="copyToClipboard('copy-li')" class="text-xs font-bold text-[#006fb9] hover:bg-[#e8f0fa] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Kopieren</button>
+                  </div>
+                  <div id="copy-li" class="bg-slate-50 p-4 rounded-xl text-sm text-slate-700 leading-relaxed border border-slate-100 font-mono whitespace-pre-line">Der größte Fehler bei der Altersvorsorge? Ein zu kurzes Leben einplanen. 📉
+
+Hand aufs Herz: Bis zu welchem Alter muss Ihr Erspartes im Ruhestand voraussichtlich reichen? 80? 85 Jahre? 
+
+Die Statistik hält oft Überraschungen bereit. Wer heute Mitte 40 ist, hat eine extrem hohe Wahrscheinlichkeit, die 90 Jahre deutlich zu überschreiten. 
+
+Das Problem: Die meisten privaten Renten- und Auszahlpläne (sowie ETFs) werden oft nur bis zum 85. Lebensjahr berechnet. Was passiert danach? Dieses Phänomen nennt sich "Langlebigkeitsrisiko" – das Risiko, das eigene Kapital zu überleben.
+
+Ich habe ein neues Tool für meine Mandanten freigeschaltet. Es berechnet auf Basis der offiziellen DAV2004R Sterbetafel Ihre individuelle statistische Lebenserwartung.
+
+👉 Hier geht's zum interaktiven Test: [Link zum Rechner]
+
+Planen Sie Ihre Rente bisher eher für 20 oder für 30 Jahre Ruhestand? Schreiben Sie es in die Kommentare! 👇</div>
+              </div>
+
+              <!-- E-Mail -->
+              <div>
+                  <div class="flex justify-between items-end mb-3">
+                      <h4 class="font-bold text-[#023e84] flex items-center gap-2"><svg class="w-5 h-5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>E-Mail Newsletter</h4>
+                      <button onclick="copyToClipboard('copy-mail')" class="text-xs font-bold text-[#006fb9] hover:bg-[#e8f0fa] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Kopieren</button>
+                  </div>
+                  <div id="copy-mail" class="bg-slate-50 p-4 rounded-xl text-sm text-slate-700 leading-relaxed border border-slate-100 font-mono whitespace-pre-line">Betreff: Wie lange muss Ihre Rente wirklich reichen? Machen Sie den Test...
+
+Guten Tag [Name],
+
+wenn wir über die Rente sprechen, geht es meistens um die Frage: "Wie viel bekomme ich pro Monat?" 
+Eine viel wichtigere Frage wird dabei aber oft vergessen: "Und wie lange muss dieses Geld reichen?"
+
+Die meisten Menschen schätzen ihre eigene Lebenserwartung deutlich zu gering ein. Das führt zu einer gefährlichen Lücke in der Ruhestandsplanung. Wer seinen ETF-Entnahmeplan oder sein Festgeld nur bis zum 85. Lebensjahr kalkuliert, riskiert im hohen Alter einen massiven finanziellen Einschnitt.
+
+Die offizielle Statistik der Deutschen Aktuarvereinigung zeigt ein anderes Bild. Wer heute mitten im Berufsleben steht, wird mit hoher Wahrscheinlichkeit älter als 90. 
+
+Wir möchten, dass Sie auf Basis echter Daten planen. Deshalb haben wir einen neuen, interaktiven Lebenserwartungs-Rechner freigeschaltet. Mit wenigen Klicks sehen Sie schwarz auf weiß, auf wie viele Jahre Ruhestand Sie sich finanziell vorbereiten müssen:
+
+👉 [Link zum Rechner]
+
+Wenn das Ergebnis Sie überrascht hat oder Sie sichergehen wollen, dass Ihr aktuelles Portfolio für diesen Zeitraum ausreicht, antworten Sie einfach kurz auf diese E-Mail. 
+
+Herzliche Grüße,
+[Ihr Name]</div>
+              </div>
+          </div>
+      </div>
+  </div>
+</body>
+
+</html>

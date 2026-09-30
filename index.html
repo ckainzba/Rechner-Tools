@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rechner &amp; Tools – Beratungstools für Finanzberater</title>
+  <meta name="description" content="Professionelle Rechner und Tools für die Finanzberatung – Altersvorsorge und Investment auf einen Blick.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif; }
+    @keyframes pop-in {
+      from { transform: scale(0.92); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+    .animate-pop-in {
+      animation: pop-in 0.22s ease;
+    }
+  </style>
+</head>
+<body class="bg-white text-[#1a1a2e] text-[15px] leading-[1.6] antialiased">
+
+  <!-- Hero / Header -->
+  <header class="bg-white border-b border-[#e2e8f0] pt-[56px] px-6 pb-[48px] text-center max-sm:pt-[40px] max-sm:px-5 max-sm:pb-[36px]">
+    <div class="max-w-[1100px] mx-auto">
+      <span class="inline-block text-[11px] font-medium tracking-[0.12em] uppercase text-[#006fb9] bg-[#e5f3fb] px-3 py-1 rounded-[20px] mb-4">
+        Beratungstools
+      </span>
+      <h1 class="text-[clamp(28px,5vw,44px)] font-bold text-[#023e84] tracking-[-0.02em] leading-[1.15] mb-[14px]">
+        Rechner &amp; Tools
+      </h1>
+      <p class="text-[16px] font-normal text-[#646464] max-w-[520px] mx-auto">
+        Professionelle Berechnungen für Ihre Beratungsgespräche –
+        schnell, präzise und direkt einsetzbar.
+      </p>
+    </div>
+  </header>
+
+  <main class="max-w-[1100px] mx-auto pt-[56px] px-6 pb-[80px] max-sm:pt-[40px] max-sm:px-4 max-sm:pb-[60px]">
+
+    <!-- ── SECTION: Altersvorsorge ── -->
+    <section class="flex flex-col gap-[28px]" id="altersvorsorge">
+      <div class="flex items-center gap-4 flex-wrap max-sm:gap-3">
+        <div class="shrink-0 w-[48px] h-[48px] rounded-[12px] flex items-center justify-center bg-[#e8f0fa] text-[#023e84]">
+          <!-- Shield / umbrella icon for retirement -->
+          <svg class="w-[24px] h-[24px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/>
+          </svg>
+        </div>
+        <div class="flex-1 min-w-[180px]">
+          <h2 class="text-[22px] font-bold text-[#023e84] tracking-[-0.01em] leading-[1.2]">Altersvorsorge</h2>
+          <p class="text-[14px] text-[#646464] mt-[2px]">Lebenserwartung, Altersvorsorgedepot und Frühstartrente</p>
+        </div>
+        <span class="text-[12px] font-medium text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-[20px] whitespace-nowrap">3 Tools</span>
+      </div>
+
+      <div class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4 max-sm:grid-cols-1">
+
+        <!-- Card 1: Lebenserwartung -->
+        <a href="altersvorsorge/lebenserwartung/index.html" class="flex flex-col bg-white border border-[#e2e8f0] rounded-[14px] pt-6 px-5 pb-5 relative cursor-pointer overflow-hidden transition-all duration-[220ms] ease-out group hover:border-[#a8c0df] hover:shadow-[0_6px_24px_rgba(2,62,132,0.09)] hover:-translate-y-[2px]">
+          <!-- Top stripe -->
+          <div class="absolute top-0 left-0 right-0 h-[3px] bg-[#023e84] origin-left scale-x-0 transition-transform duration-[250ms] ease-out group-hover:scale-x-100 rounded-t-[14px]"></div>
+          
+          <div class="w-[44px] h-[44px] rounded-[10px] flex items-center justify-center mb-[14px] shrink-0 bg-[#e8f0fa] text-[#023e84] transition-transform duration-[200ms] ease-out group-hover:scale-[1.06]">
+            <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+          <div class="flex-1 flex flex-col gap-[6px]">
+            <h3 class="text-[15.5px] font-semibold text-[#023e84] tracking-[-0.01em] leading-[1.3]">Lebenserwartung</h3>
+            <p class="text-[13.5px] text-[#646464] leading-[1.55] flex-1">Dynamische Berechnung der statistischen Lebenserwartung auf Basis von Alter und Geschlecht – als realistische Planungsgrundlage für die Rentenphase.</p>
+          </div>
+          <div class="flex justify-end mt-4">
+            <svg class="w-[18px] h-[18px] text-[#e2e8f0] transition-all duration-[200ms] ease-out group-hover:text-[#006fb9] group-hover:translate-x-[3px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 2: Altersvorsorgedepot -->
+        <a id="card-altersvorsorgedepot" class="flex flex-col bg-white border border-[#e2e8f0] rounded-[14px] pt-6 px-5 pb-5 relative cursor-pointer overflow-hidden transition-all duration-[220ms] ease-out group hover:border-[#a8c0df] hover:shadow-[0_6px_24px_rgba(2,62,132,0.09)] hover:-translate-y-[2px]">
+          <!-- Top stripe -->
+          <div class="absolute top-0 left-0 right-0 h-[3px] bg-[#023e84] origin-left scale-x-0 transition-transform duration-[250ms] ease-out group-hover:scale-x-100 rounded-t-[14px]"></div>
+          
+          <div class="absolute top-4 right-4 bg-[#fff4e5] text-[#d97706] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">In Arbeit</div>
+          
+          <div class="w-[44px] h-[44px] rounded-[10px] flex items-center justify-center mb-[14px] shrink-0 bg-[#e8f0fa] text-[#023e84] transition-transform duration-[200ms] ease-out group-hover:scale-[1.06]">
+            <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 10h12" />
+              <path d="M4 14h9" />
+              <path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2" />
+            </svg>
+          </div>
+          <div class="flex-1 flex flex-col gap-[6px]">
+            <h3 class="text-[15.5px] font-semibold text-[#023e84] tracking-[-0.01em] leading-[1.3]">Altersvorsorgedepot</h3>
+            <p class="text-[13.5px] text-[#646464] leading-[1.55] flex-1">Projektion des Depot-Endwerts und der monatlichen Entnahme in der Rentenphase – individuell berechnet auf Basis von Sparrate, Laufzeit und Rendite.</p>
+          </div>
+          <div class="flex justify-end mt-4">
+            <svg class="w-[18px] h-[18px] text-[#e2e8f0] transition-all duration-[200ms] ease-out group-hover:text-[#006fb9] group-hover:translate-x-[3px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 3: Frühstartrente -->
+        <a href="altersvorsorge/fruehstartrente/index.html" class="flex flex-col bg-white border border-[#e2e8f0] rounded-[14px] pt-6 px-5 pb-5 relative cursor-pointer overflow-hidden transition-all duration-[220ms] ease-out group hover:border-[#a8c0df] hover:shadow-[0_6px_24px_rgba(2,62,132,0.09)] hover:-translate-y-[2px]">
+          <!-- Top stripe -->
+          <div class="absolute top-0 left-0 right-0 h-[3px] bg-[#023e84] origin-left scale-x-0 transition-transform duration-[250ms] ease-out group-hover:scale-x-100 rounded-t-[14px]"></div>
+          
+          <div class="w-[44px] h-[44px] rounded-[10px] flex items-center justify-center mb-[14px] shrink-0 bg-[#e8f0fa] text-[#023e84] transition-transform duration-[200ms] ease-out group-hover:scale-[1.06]">
+            <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+          <div class="flex-1 flex flex-col gap-[6px]">
+            <h3 class="text-[15.5px] font-semibold text-[#023e84] tracking-[-0.01em] leading-[1.3]">Frühstartrente</h3>
+            <p class="text-[13.5px] text-[#646464] leading-[1.55] flex-1">Der Vorteil des frühen Startes: Wie sich ein früher Beginn der Altersvorsorge durch Zinseszinseffekte langfristig auf die monatliche Rente auswirkt.</p>
+          </div>
+          <div class="flex justify-end mt-4">
+            <svg class="w-[18px] h-[18px] text-[#e2e8f0] transition-all duration-[200ms] ease-out group-hover:text-[#006fb9] group-hover:translate-x-[3px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- Divider -->
+    <div class="h-[1px] bg-[#e2e8f0] my-[56px]"></div>
+
+    <!-- ── SECTION: Investment ── -->
+    <section class="flex flex-col gap-[28px]" id="investment">
+      <div class="flex items-center gap-4 flex-wrap max-sm:gap-3">
+        <div class="shrink-0 w-[48px] h-[48px] rounded-[12px] flex items-center justify-center bg-[#e8f0fa] text-[#023e84]">
+          <!-- Trending up icon for investment -->
+          <svg class="w-[24px] h-[24px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+            <polyline points="17 6 23 6 23 12"/>
+          </svg>
+        </div>
+        <div class="flex-1 min-w-[180px]">
+          <h2 class="text-[22px] font-bold text-[#023e84] tracking-[-0.01em] leading-[1.2]">Investment</h2>
+          <p class="text-[14px] text-[#646464] mt-[2px]">Zinseszinsrechner, Zeit schlägt Risiko, Krisen sind Chancen und Cost-Average-Effekt</p>
+        </div>
+        <span class="text-[12px] font-medium text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-[20px] whitespace-nowrap">5 Tools</span>
+      </div>
+
+      <div class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4 max-sm:grid-cols-1">
+
+        <!-- Card 5: Renditelücken-Rechner -->
+        <a href="investment/renditeluecken-rechner/index.html" class="flex flex-col bg-white border border-[#e2e8f0] rounded-[14px] pt-6 px-5 pb-5 relative cursor-pointer overflow-hidden transition-all duration-[220ms] ease-out group hover:border-[#a8c0df] hover:shadow-[0_6px_24px_rgba(2,62,132,0.09)] hover:-translate-y-[2px]">
+          <!-- Top stripe -->
+          <div class="absolute top-0 left-0 right-0 h-[3px] bg-[#023e84] origin-left scale-x-0 transition-transform duration-[250ms] ease-out group-hover:scale-x-100 rounded-t-[14px]"></div>
+          
+          <div class="w-[44px] h-[44px] rounded-[10px] flex items-center justify-center mb-[14px] shrink-0 bg-[#e8f0fa] text-[#023e84] transition-transform duration-[200ms] ease-out group-hover:scale-[1.06]">
+            <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 17 13.5 8.5 8.5 13.5 2 7" />
+              <polyline points="16 17 22 17 22 11" />
+            </svg>
+          </div>
+          <div class="flex-1 flex flex-col gap-[6px]">
+            <h3 class="text-[15.5px] font-semibold text-[#023e84] tracking-[-0.01em] leading-[1.3]">Renditelücken-Rechner</h3>
+            <p class="text-[13.5px] text-[#646464] leading-[1.55] flex-1">Wie viel Rendite kostet das menschliche Bauchgefühl? Berechnen Sie den finanziellen Unterschied zwischen einer disziplinierten Marktanlage und emotionalem Anlegerverhalten.</p>
+          </div>
+          <div class="flex justify-end mt-4">
+            <svg class="w-[18px] h-[18px] text-[#e2e8f0] transition-all duration-[200ms] ease-out group-hover:text-[#006fb9] group-hover:translate-x-[3px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 6: Zinseszinsrechner -->
+        <a href="investment/zinseszinsrechner/index.html" class="flex flex-col bg-white border border-[#e2e8f0] rounded-[14px] pt-6 px-5 pb-5 relative cursor-pointer overflow-hidden transition-all duration-[220ms] ease-out group hover:border-[#a8c0df] hover:shadow-[0_6px_24px_rgba(2,62,132,0.09)] hover:-translate-y-[2px]">
+          <!-- Top stripe -->
+          <div class="absolute top-0 left-0 right-0 h-[3px] bg-[#023e84] origin-left scale-x-0 transition-transform duration-[250ms] ease-out group-hover:scale-x-100 rounded-t-[14px]"></div>
+          
+          <div class="w-[44px] h-[44px] rounded-[10px] flex items-center justify-center mb-[14px] shrink-0 bg-[#e8f0fa] text-[#023e84] transition-transform duration-[200ms] ease-out group-hover:scale-[1.06]">
+            <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 7 13.5 15.5 8.5 10.5 1 18"/>
+              <polyline points="16 7 22 7 22 13"/>
+            </svg>
+          </div>
+          <div class="flex-1 flex flex-col gap-[6px]">
+            <h3 class="text-[15.5px] font-semibold text-[#023e84] tracking-[-0.01em] leading-[1.3]">Zinseszinsrechner</h3>
+            <p class="text-[13.5px] text-[#646464] leading-[1.55] flex-1">Wie wirkt sich der Zinseszinseffekt auf Ihre Geldanlage aus? Visualisierung des Kapitalwachstums bei Einmalanlage oder monatlichem Sparplan über verschiedene Laufzeiten.</p>
+          </div>
+          <div class="flex justify-end mt-4">
+            <svg class="w-[18px] h-[18px] text-[#e2e8f0] transition-all duration-[200ms] ease-out group-hover:text-[#006fb9] group-hover:translate-x-[3px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 6: Zeit schlägt Risiko -->
+        <a href="investment/haltedauerrechner/index.html" class="flex flex-col bg-white border border-[#e2e8f0] rounded-[14px] pt-6 px-5 pb-5 relative cursor-pointer overflow-hidden transition-all duration-[220ms] ease-out group hover:border-[#a8c0df] hover:shadow-[0_6px_24px_rgba(2,62,132,0.09)] hover:-translate-y-[2px]">
+          <!-- Top stripe -->
+          <div class="absolute top-0 left-0 right-0 h-[3px] bg-[#023e84] origin-left scale-x-0 transition-transform duration-[250ms] ease-out group-hover:scale-x-100 rounded-t-[14px]"></div>
+          
+          <div class="w-[44px] h-[44px] rounded-[10px] flex items-center justify-center mb-[14px] shrink-0 bg-[#e8f0fa] text-[#023e84] transition-transform duration-[200ms] ease-out group-hover:scale-[1.06]">
+            <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <div class="flex-1 flex flex-col gap-[6px]">
+            <h3 class="text-[15.5px] font-semibold text-[#023e84] tracking-[-0.01em] leading-[1.3]">Zeit schlägt Risiko</h3>
+            <p class="text-[13.5px] text-[#646464] leading-[1.55] flex-1">Wie lange muss ich investiert bleiben, um Verlustrisiken zu minimieren? Analyse historischer Renditedaten des MSCI World für verschiedene Haltedauern.</p>
+          </div>
+          <div class="flex justify-end mt-4">
+            <svg class="w-[18px] h-[18px] text-[#e2e8f0] transition-all duration-[200ms] ease-out group-hover:text-[#006fb9] group-hover:translate-x-[3px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 7: Krisen sind Chancen -->
+        <a href="investment/krisen-sind-chancen/index.html" class="flex flex-col bg-white border border-[#e2e8f0] rounded-[14px] pt-6 px-5 pb-5 relative cursor-pointer overflow-hidden transition-all duration-[220ms] ease-out group hover:border-[#a8c0df] hover:shadow-[0_6px_24px_rgba(2,62,132,0.09)] hover:-translate-y-[2px]">
+          <!-- Top stripe -->
+          <div class="absolute top-0 left-0 right-0 h-[3px] bg-[#023e84] origin-left scale-x-0 transition-transform duration-[250ms] ease-out group-hover:scale-x-100 rounded-t-[14px]"></div>
+          
+          <div class="w-[44px] h-[44px] rounded-[10px] flex items-center justify-center mb-[14px] shrink-0 bg-[#e8f0fa] text-[#023e84] transition-transform duration-[200ms] ease-out group-hover:scale-[1.06]">
+            <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <polyline points="9 15 12 12 15 15"/>
+            </svg>
+          </div>
+          <div class="flex-1 flex flex-col gap-[6px]">
+            <h3 class="text-[15.5px] font-semibold text-[#023e84] tracking-[-0.01em] leading-[1.3]">Krisen sind Chancen</h3>
+            <p class="text-[13.5px] text-[#646464] leading-[1.55] flex-1">Was wäre gewesen, wenn? Simulation des Kapitalwachstums bei Investitionen in historischen Krisen – als überzeugendes Argument für Ruhe und langen Atem.</p>
+          </div>
+          <div class="flex justify-end mt-4">
+            <svg class="w-[18px] h-[18px] text-[#e2e8f0] transition-all duration-[200ms] ease-out group-hover:text-[#006fb9] group-hover:translate-x-[3px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Card 8: Cost-Average-Effekt -->
+        <a href="investment/cost-average-effekt/index.html" class="flex flex-col bg-white border border-[#e2e8f0] rounded-[14px] pt-6 px-5 pb-5 relative cursor-pointer overflow-hidden transition-all duration-[220ms] ease-out group hover:border-[#a8c0df] hover:shadow-[0_6px_24px_rgba(2,62,132,0.09)] hover:-translate-y-[2px]">
+          <!-- Top stripe -->
+          <div class="absolute top-0 left-0 right-0 h-[3px] bg-[#023e84] origin-left scale-x-0 transition-transform duration-[250ms] ease-out group-hover:scale-x-100 rounded-t-[14px]"></div>
+          
+          <div class="w-[44px] h-[44px] rounded-[10px] flex items-center justify-center mb-[14px] shrink-0 bg-[#e8f0fa] text-[#023e84] transition-transform duration-[200ms] ease-out group-hover:scale-[1.06]">
+            <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            </svg>
+          </div>
+          <div class="flex-1 flex flex-col gap-[6px]">
+            <h3 class="text-[15.5px] font-semibold text-[#023e84] tracking-[-0.01em] leading-[1.3]">Cost-Average-Effekt</h3>
+            <p class="text-[13.5px] text-[#646464] leading-[1.55] flex-1">Simulieren Sie den Cost-Average-Effekt bei Sparplänen in verschiedenen Marktszenarien (z.B. V-Kurve, Bullenmarkt) und vergleichen Sie diesen mit einer Einmalanlage.</p>
+          </div>
+          <div class="flex justify-end mt-4">
+            <svg class="w-[18px] h-[18px] text-[#e2e8f0] transition-all duration-[200ms] ease-out group-hover:text-[#006fb9] group-hover:translate-x-[3px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="text-center py-5 px-6 border-t border-[#e2e8f0] text-[12px] text-[#b0b8c8]">
+    <p>Internes Beratungstool &nbsp;·&nbsp; Nur für den internen Gebrauch</p>
+  </footer>
+
+  <!-- Coming-soon overlay for unbuilt tools -->
+  <div id="coming-soon-overlay" class="fixed inset-0 z-[200] flex items-center justify-center p-6 hidden">
+    <!-- Backdrop -->
+    <div id="coming-soon-backdrop" class="fixed inset-0 z-[199] bg-[#021e3c]/[0.38] backdrop-blur-[3px] hidden"></div>
+    
+    <!-- Modal Box -->
+    <div class="bg-white rounded-[18px] py-10 px-9 max-w-[400px] w-full text-center shadow-[0_20px_60px_rgba(2,62,132,0.14)] animate-pop-in relative z-[200]">
+      <div class="w-[56px] h-[56px] mx-auto mb-[18px] bg-[#e8f0fa] rounded-full flex items-center justify-center">
+        <svg class="w-[26px] h-[26px] text-[#023e84]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <h2 class="text-[20px] font-bold text-[#023e84] mb-[10px]">Demnächst verfügbar</h2>
+      <p class="text-[14px] text-[#646464] leading-[1.6] mb-[26px]">Dieser Rechner befindet sich noch in der Entwicklung und wird in Kürze freigeschaltet.</p>
+      <button id="overlay-close" class="bg-[#023e84] text-white border-none rounded-lg py-[11px] px-[28px] font-medium text-[14px] cursor-pointer transition-all duration-[180ms] ease-out hover:bg-[#006fb9] hover:-translate-y-[1px]">Schließen</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const overlay = document.getElementById('coming-soon-overlay');
+      const backdrop = document.getElementById('coming-soon-backdrop');
+      const closeBtn = document.getElementById('overlay-close');
+      
+      if (overlay && backdrop && closeBtn) {
+        const showOverlay = (e) => {
+          e.preventDefault();
+          overlay.classList.remove('hidden');
+          backdrop.classList.remove('hidden');
+        };
+        
+        const hideOverlay = () => {
+          overlay.classList.add('hidden');
+          backdrop.classList.add('hidden');
+        };
+        
+        closeBtn.addEventListener('click', hideOverlay);
+        backdrop.addEventListener('click', hideOverlay);
+        
+        // Attach to the unbuilt tools
+        const comingSoonTools = ['card-altersvorsorgedepot'];
+        comingSoonTools.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.addEventListener('click', showOverlay);
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

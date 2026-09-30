@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renditelücken-Rechner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="../../styles.css">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-family: 'Roboto', sans-serif;
+            background: #ffffff;
+            color: #1e293b;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .badge-brand {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            background: rgba(0, 111, 185, 0.08);
+            border: 1px solid rgba(0, 111, 185, 0.2);
+            color: #006fb9;
+            font-size: 0.73rem;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .card-panel {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+
+        .card-panel:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e5e7eb;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #023e84;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(2, 62, 132, 0.25);
+            transition: transform 0.15s ease;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.12);
+        }
+
+        input[type=range]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #023e84;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(2, 62, 132, 0.25);
+            transition: transform 0.15s ease;
+        }
+
+        input[type=range]::-moz-range-thumb:hover {
+            transform: scale(1.12);
+        }
+
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased pb-20 bg-white">
+
+    <!-- Header & Content Wrapper -->
+    <div id="advisor-nav" class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 mt-4 flex justify-between items-center">
+        <a href="../../index.html"
+            class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-[#023e84] transition-colors mb-6 group">
+            <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Zurück zur Übersicht
+        </a>
+        
+        <button onclick="openCampaignModal()" class="inline-flex items-center gap-2 text-sm font-bold text-[#006fb9] bg-[#e8f0fa] hover:bg-[#cce0f5] px-4 py-2 rounded-xl transition-colors mb-6">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                <path d="M12 12v9"></path>
+                <path d="m8 17 4 4 4-4"></path>
+            </svg>
+            Kampagnen-Material
+        </button>
+    </div>
+
+    <header id="main-header" class="text-center pb-8 pt-4 px-4">
+        <div class="badge-brand">Verhaltensökonomie</div>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-[#023e84] mb-4 tracking-tight">Renditelücken-Rechner</h1>
+        <p class="text-slate-500 max-w-2xl mx-auto text-[15px] leading-relaxed">
+            Berechne, wie viel Rendite das menschliche Bauchgefühl statistisch auf der Strecke lässt.
+        </p>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 md:px-6">
+
+        <!-- SALES FLOW (Die Beichte) -->
+        <div id="sales-flow-wrap" class="card-panel p-8 md:p-12 mb-8 max-w-3xl mx-auto text-center">
+            <!-- Step 1: Neobroker/DIY Frage -->
+            <div id="sf-step1">
+                <div
+                    class="w-16 h-16 bg-[#e8f0fa] rounded-2xl flex items-center justify-center mx-auto mb-6 text-[#023e84]">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="w-8 h-8">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                    </svg>
+                </div>
+
+                <h2 class="text-2xl font-bold text-[#023e84] mb-3">Welches Team bist du?</h2>
+                <p class="text-slate-500 mb-8 text-[15px] max-w-lg mx-auto leading-relaxed">
+                    Verwaltest du deine Geldanlagen und ETFs komplett selbst über eine App oder vertraust du auf Profis?
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto">
+                    <button class="sf-answer-btn bg-white border-2 border-slate-200 hover:border-[#006fb9] text-[#023e84] hover:text-[#006fb9] hover:bg-slate-50 px-4 py-4 rounded-xl font-bold text-[15px] transition-all" onclick="handleStep1('ja')">
+                        Team Trade Republic
+                    </button>
+                    <button class="sf-answer-btn bg-white border-2 border-slate-200 hover:border-[#006fb9] text-[#023e84] hover:text-[#006fb9] hover:bg-slate-50 px-4 py-4 rounded-xl font-bold text-[15px] transition-all" onclick="handleStep1('ja')">
+                        Team Scalable
+                    </button>
+                    <button class="sf-answer-btn bg-white border-2 border-slate-200 hover:border-[#006fb9] text-[#023e84] hover:text-[#006fb9] hover:bg-slate-50 px-4 py-4 rounded-xl font-bold text-[15px] transition-all" onclick="handleStep1('ja')">
+                        anderer Neobroker
+                    </button>
+                    <button class="sf-answer-btn bg-white border-2 border-slate-200 hover:border-[#006fb9] text-[#023e84] hover:text-[#006fb9] hover:bg-slate-50 px-4 py-4 rounded-xl font-bold text-[15px] transition-all" onclick="handleStep1('nein')">
+                        Team Berater
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 1b: Prioritäten (nur für DIY) -->
+            <div id="sf-step-prio" style="display: none;">
+                <div class="w-16 h-16 bg-[#e8f0fa] rounded-2xl flex items-center justify-center mx-auto mb-6 text-[#023e84]">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </div>
+
+                <h2 class="text-2xl font-bold text-[#023e84] mb-3">Was ist dein Fokus?</h2>
+                <p class="text-slate-500 mb-8 text-[15px] max-w-lg mx-auto leading-relaxed">
+                    Was ist dir bei der Geldanlage am wichtigsten?
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto">
+                    <button class="sf-answer-btn bg-white border-2 border-slate-200 hover:border-[#006fb9] text-[#023e84] hover:text-[#006fb9] hover:bg-slate-50 px-4 py-4 rounded-xl font-bold text-[15px] transition-all" onclick="handleStepPrio()">
+                        Geringe Kosten
+                    </button>
+                    <button class="sf-answer-btn bg-white border-2 border-slate-200 hover:border-[#006fb9] text-[#023e84] hover:text-[#006fb9] hover:bg-slate-50 px-4 py-4 rounded-xl font-bold text-[15px] transition-all" onclick="handleStepPrio()">
+                        Hohe Rendite
+                    </button>
+                    <button class="sf-answer-btn bg-white border-2 border-slate-200 hover:border-[#006fb9] text-[#023e84] hover:text-[#006fb9] hover:bg-slate-50 px-4 py-4 rounded-xl font-bold text-[15px] transition-all" onclick="handleStepPrio()">
+                        Volle Kontrolle
+                    </button>
+                    <button class="sf-answer-btn bg-white border-2 border-slate-200 hover:border-[#006fb9] text-[#023e84] hover:text-[#006fb9] hover:bg-slate-50 px-4 py-4 rounded-xl font-bold text-[15px] transition-all" onclick="handleStepPrio()">
+                        Maximale Flexibilität
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Hand aufs Herz (nur für DIY) -->
+            <div id="sf-step2" style="display: none;">
+                <div
+                    class="w-16 h-16 bg-[#e8f0fa] rounded-2xl flex items-center justify-center mx-auto mb-6 text-[#023e84]">
+                    <svg viewBox="0 0 24 24" class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        <path d="M12 8v4" />
+                        <path d="M12 16h.01" />
+                    </svg>
+                </div>
+
+                <h2 class="text-2xl font-bold text-[#023e84] mb-3">Hand aufs Herz</h2>
+                <p class="text-slate-500 mb-8 text-[15px] max-w-lg mx-auto leading-relaxed">
+                    Hast du in deiner App schon einmal aus einem Bauchgefühl heraus gehandelt – z.B. bei fallenden
+                    Kursen verkauft oder auf den vermeintlich perfekten Einstieg gewartet?
+                </p>
+
+                <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
+                    <button
+                        class="sf-answer-btn bg-white border-2 border-slate-200 hover:border-[#006fb9] text-[#023e84] hover:text-[#006fb9] hover:bg-slate-50 px-8 py-4 rounded-xl font-bold text-[15px] transition-all flex-1"
+                        onclick="handleStep2('ja')">
+                        Ja, schon passiert
+                    </button>
+                    <button
+                        class="sf-answer-btn bg-white border-2 border-slate-200 hover:border-[#006fb9] text-[#023e84] hover:text-[#006fb9] hover:bg-slate-50 px-8 py-4 rounded-xl font-bold text-[15px] transition-all flex-1"
+                        onclick="handleStep2('nein')">
+                        Nein, noch nie
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Auflösung -->
+            <div id="sf-step3" style="display: none;">
+                <div
+                    class="w-16 h-16 bg-[#e8f0fa] rounded-2xl flex items-center justify-center mx-auto mb-6 text-[#023e84]">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="w-8 h-8">
+                        <path
+                            d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.9 1.2 1.5 1.5 2.5" />
+                        <path d="M9 18h6" />
+                        <path d="M10 22h4" />
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-[#023e84] mb-4" id="sf-resolution-title">Die Theorie vs. Praxis</h2>
+                <p class="text-slate-600 mb-8 text-[15px] max-w-lg mx-auto leading-relaxed" id="sf-resolution-text">
+                    [Wird durch JS gefüllt]
+                </p>
+
+                <div class="mt-8 pt-8 border-t border-slate-100">
+                    <p class="font-bold text-lg text-[#023e84] mb-6" id="sf-transition-text">Möchten Sie wissen, wie
+                        viel Sie das kostet?</p>
+                    <button
+                        class="bg-[#023e84] hover:bg-[#002f66] text-white px-8 py-3.5 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        onclick="startCalculator()">
+                        Zum Rechner
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN CALCULATOR -->
+        <div id="main-calc-wrap" style="display: none;"
+            class="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 xl:gap-8">
+
+            <!-- Eingabe Panel (Left) -->
+            <div class="card-panel p-6 md:p-8 h-fit sticky top-6">
+                <div class="flex items-center gap-3 mb-6">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center flex-shrink-0">
+                        <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <line x1="4" x2="20" y1="21" y2="21" />
+                            <line x1="4" x2="20" y1="14" y2="14" />
+                            <line x1="4" x2="20" y1="7" y2="7" />
+                            <polyline points="14 17 14 21 18 21" />
+                            <polyline points="8 10 8 14 12 14" />
+                            <polyline points="14 3 14 7 18 7" />
+                        </svg>
+                    </div>
+                    <h2 class="text-lg font-bold text-[#023e84]">Eingabe</h2>
+                </div>
+
+                <div class="flex flex-col gap-8">
+                    <!-- Einmalanlage -->
+                    <div class="w-full">
+                        <div class="flex justify-between items-center mb-6">
+                            <label class="text-[15px] font-semibold text-slate-700">Einmalanlage</label>
+                            <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"
+                                id="capitalDisplay">0 €</div>
+                        </div>
+                        <input type="hidden" id="capital-input" value="0">
+                        <input type="range" id="capital-range" min="0" max="250000" step="5000" value="0"
+                            class="w-full mb-3" oninput="syncCapital(this)">
+                        <div class="flex justify-between text-xs text-slate-400 font-medium">
+                            <span>0 €</span><span>250.000 €</span>
+                        </div>
+                    </div>
+
+                    <!-- Sparrate -->
+                    <div class="w-full">
+                        <div class="flex justify-between items-center mb-6">
+                            <label class="text-[15px] font-semibold text-slate-700">Monatliche Sparrate</label>
+                            <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"
+                                id="rateDisplay">0 €</div>
+                        </div>
+                        <input type="hidden" id="rate-input" value="0">
+                        <input type="range" id="rate-range" min="0" max="1000" step="25" value="0" class="w-full mb-3"
+                            oninput="syncRate(this)">
+                        <div class="flex justify-between text-xs text-slate-400 font-medium">
+                            <span>0 €</span><span>1.000 €</span>
+                        </div>
+                    </div>
+
+                    <!-- Laufzeit -->
+                    <div class="w-full">
+                        <div class="flex justify-between items-center mb-6">
+                            <label class="text-[15px] font-semibold text-slate-700">Anlagedauer</label>
+                            <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"
+                                id="yearsDisplay">20 Jahre</div>
+                        </div>
+                        <input type="hidden" id="years-input" value="20">
+                        <input type="range" id="years-range" min="0" max="50" step="1" value="20" class="w-full mb-3"
+                            oninput="syncYears(this)">
+                        <div class="flex justify-between text-xs text-slate-400 font-medium">
+                            <span>0 J</span><span>50 J</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULT SECTION (Right) -->
+            <div id="result-section" class="flex flex-col gap-6">
+
+                <!-- Main Numbers -->
+                <div class="card-panel p-6 md:p-8">
+                    <div class="mb-8 flex flex-col items-center justify-center text-center">
+                        <div class="text-lg md:text-xl font-bold text-[#023e84] mb-1">Der Preis für emotionales Handeln:
+                        </div>
+                        <div class="flex items-baseline justify-center gap-3 mb-8">
+                            <span
+                                class="text-5xl md:text-[4.5rem] font-black text-[#023e84] tracking-tighter leading-none"
+                                id="gap-value-wrapper"><span id="gap-sign" style="display:none;">- </span><span
+                                    id="res-gap">0</span></span>
+                            <span class="text-2xl md:text-4xl font-bold text-[#023e84]" id="gap-currency">€</span>
+                        </div>
+
+                        <div id="alert-box"
+                            class="bg-[#e8f0fa] border border-[#cce0f5] rounded-2xl p-4 flex gap-4 text-sm text-[#023e84] max-w-xl mx-auto text-left shadow-sm">
+                            <div id="alert-icon-wrap" class="flex-shrink-0 text-[#023e84] mt-0.5">
+                                <svg id="alert-icon-svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="M12 16v-4" />
+                                    <path d="M12 8h.01" />
+                                </svg>
+                            </div>
+                            <p id="alert-text" class="leading-relaxed text-[15px]">Stellen Sie links Ihre Werte ein, um
+                                zu berechnen, wie viel Vermögen durch emotionale Fehlentscheidungen statistisch verloren
+                                geht.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Markt -->
+                        <div class="card-panel p-5 relative overflow-hidden group">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-sm font-medium text-slate-500">Diszipliniert (Markt)</span>
+                                <div
+                                    class="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg transition-transform group-hover:scale-110">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                        <polyline points="17 6 23 6 23 12"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-bold text-[#023e84]"><span id="res-market">0</span> €</div>
+                            <div class="text-xs text-slate-400 mt-1 font-medium">ca. 8,0 % p.a.</div>
+                        </div>
+
+                        <!-- Emotional -->
+                        <div class="card-panel p-5 relative overflow-hidden group">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-sm font-medium text-slate-500">Durchschnittsanleger</span>
+                                <div
+                                    class="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg transition-transform group-hover:scale-110">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-bold text-slate-600"><span id="res-emotional">0</span> €</div>
+                            <div class="text-xs text-slate-400 mt-1 font-medium">ca. 4,5 % p.a.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="card-panel p-6 md:p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-base font-bold text-[#023e84]">Entwicklung des Vermögens</h3>
+                        <div class="flex items-center gap-4 text-xs font-semibold text-slate-500">
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-3 h-3 rounded-sm bg-[#006fb9]"></div>Markt (8,0%)
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-3 h-3 rounded-sm bg-[#64748b]"></div>Anleger (4,5%)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative w-full h-64 md:h-80">
+                        <canvas id="growthChart" class="absolute inset-0 w-full h-full"></canvas>
+                    </div>
+                </div>
+
+                <!-- FAQ Accordion -->
+                <div class="card-panel p-6 md:p-8">
+                    <h2 class="text-lg font-bold text-[#023e84] mb-6">Hintergrundinformationen zur Berechnung</h2>
+                    <div class="space-y-4">
+                        <details class="group bg-slate-50 rounded-xl cursor-pointer">
+                            <summary class="flex justify-between items-center font-semibold p-4 text-[#023e84]">
+                                Woher stammen die 8,0 % und 4,5 % Rendite?
+                                <span class="transition group-open:rotate-180">
+                                    <svg fill="none" height="24" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24" width="24">
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg>
+                                </span>
+                            </summary>
+                            <div class="text-sm text-slate-500 p-4 pt-0 leading-relaxed">
+                                <p class="mb-2">Die <strong>8,0 % p.a. (Marktrendite)</strong> entsprechen der
+                                    historischen, langfristigen Durchschnittsrendite breit gestreuter globaler
+                                    Aktienmärkte (z. B. MSCI World) vor Inflation.</p>
+                                <p>Die <strong>4,5 % p.a. (Anlegerrendite)</strong> basieren auf jahrzehntelangen
+                                    Auswertungen der renommierten US-Forschungsfirma <strong>DALBAR Inc.</strong>
+                                    (<em>"Quantitative Analysis of Investor Behavior"</em>). DALBAR misst regelmäßig,
+                                    welche Renditen Durchschnittsanleger <em>tatsächlich</em> erzielen, indem sie das
+                                    echte Ein- und Ausstiegsverhalten in Fonds analysieren. Die Studie zeigt historisch
+                                    stets das gleiche Bild: Der reale Privatanleger erzielt im Schnitt nur gut die
+                                    Hälfte der Marktrendite.</p>
+                            </div>
+                        </details>
+                        <details class="group bg-slate-50 rounded-xl cursor-pointer">
+                            <summary class="flex justify-between items-center font-semibold p-4 text-[#023e84]">
+                                Warum schneidet der Durchschnittsanleger so viel schlechter ab?
+                                <span class="transition group-open:rotate-180">
+                                    <svg fill="none" height="24" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24" width="24">
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg>
+                                </span>
+                            </summary>
+                            <div class="text-sm text-slate-500 p-4 pt-0 leading-relaxed">
+                                <p class="mb-2">Der Mensch ist psychologisch nicht für die Börse gemacht. Die
+                                    Verhaltensökonomie (Behavioral Finance) identifiziert hierbei drei Hauptfaktoren,
+                                    die Geld kosten:</p>
+                                <ul class="list-disc pl-5 space-y-1">
+                                    <li><strong>Verlustaversion (Panik):</strong> Verluste schmerzen psychologisch
+                                        doppelt so stark wie Gewinne Freude bereiten. Die Folge: Anleger verkaufen im
+                                        Crash völlig entnervt am Tiefpunkt ("Kapitulation").</li>
+                                    <li><strong>Herdentrieb (FOMO):</strong> Wenn die Märkte boomen und alle Bekannten
+                                        investieren, springt der durchschnittliche Anleger auf den fahrenden Zug auf –
+                                        meist viel zu spät und am teuren Hochpunkt.</li>
+                                    <li><strong>Overconfidence (Market Timing):</strong> Die Selbstüberschätzung,
+                                        kurzfristige Marktbewegungen voraussagen zu können ("Ich warte, bis es billiger
+                                        wird"). Meist läuft der Markt dann jedoch ohne den Anleger davon.</li>
+                                </ul>
+                            </div>
+                        </details>
+                        <details class="group bg-slate-50 rounded-xl cursor-pointer">
+                            <summary class="flex justify-between items-center font-semibold p-4 text-[#023e84]">
+                                Was ist die Lösung?
+                                <span class="transition group-open:rotate-180">
+                                    <svg fill="none" height="24" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24" width="24">
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg>
+                                </span>
+                            </summary>
+                            <div class="text-sm text-slate-500 p-4 pt-0 leading-relaxed">
+                                <p>Der größte Wert einer soliden, professionellen Finanzberatung besteht oft nicht in
+                                    der Auswahl des "allerbesten" Fonds, sondern im <strong>Behavioral
+                                        Coaching</strong>. Ein professioneller Berater agiert als rationaler Puffer
+                                    zwischen den Emotionen des Anlegers und seinem Portfolio. Er sorgt dafür, dass die
+                                    gewählte, renditestarke Strategie auch in Krisenzeiten eisern (diszipliniert)
+                                    durchgehalten wird – denn genau dort entsteht langfristig der finanzielle Vorsprung.
+                                </p>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Marketing Modal -->
+    <div id="campaign-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white/95 backdrop-blur z-10 border-b border-slate-100 p-6 flex justify-between items-center">
+                <div>
+                    <h3 class="text-xl font-bold text-[#023e84]">Marketing-Kampagne</h3>
+                    <p class="text-sm text-slate-500 mt-1">Vorlagen zur Kundengewinnung & Ansprache</p>
+                </div>
+                <button onclick="closeCampaignModal()" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition-colors">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-8">
+                
+                <!-- WhatsApp -->
+                <div>
+                    <div class="flex justify-between items-end mb-3">
+                        <h4 class="font-bold text-[#023e84] flex items-center gap-2"><svg class="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>WhatsApp / Messenger</h4>
+                        <button onclick="copyToClipboard('copy-wa')" class="text-xs font-bold text-[#006fb9] hover:bg-[#e8f0fa] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Kopieren</button>
+                    </div>
+                    <div id="copy-wa" class="bg-slate-50 p-4 rounded-xl text-sm text-slate-700 leading-relaxed border border-slate-100 font-mono">Moin [Name]! Kurze Frage: Investierst du eigentlich auch über Trade Republic, Scalable & Co.? Die neue DALBAR-Studie zeigt, dass die meisten Nutzer dort unbewusst Geld liegen lassen – trotz niedriger Gebühren. Mach mal kurz den Test hier: [Link zum Rechner] 🚀 Meld dich danach mal, was bei dir rauskam!</div>
+                </div>
+
+                <!-- LinkedIn -->
+                <div>
+                    <div class="flex justify-between items-end mb-3">
+                        <h4 class="font-bold text-[#023e84] flex items-center gap-2"><svg class="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>LinkedIn / Social Media</h4>
+                        <button onclick="copyToClipboard('copy-li')" class="text-xs font-bold text-[#006fb9] hover:bg-[#e8f0fa] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Kopieren</button>
+                    </div>
+                    <div id="copy-li" class="bg-slate-50 p-4 rounded-xl text-sm text-slate-700 leading-relaxed border border-slate-100 font-mono whitespace-pre-line">Die größte Kostenfalle an der Börse ist nicht dein Broker. Du bist es selbst. 💡
+
+Wir alle lieben kostenlose Neobroker-Apps. Ein Wisch am Smartphone, und die Aktie ist gekauft. Doch genau diese extreme Leichtigkeit hat einen versteckten Preis.
+
+Die renommierte DALBAR-Studie belegt es schwarz auf weiß: Der ständige Drang, das eigene Depot zu checken und aus dem "Bauchgefühl" heraus zu handeln, kostet Privatanleger statistisch rund 3,5 % Rendite pro Jahr. 
+
+Was nützt das günstigste Depot der Welt, wenn man sich die eigene Performance durch fehlende Disziplin ruiniert?
+
+Ich habe ein Tool entwickelt, das genau diesen "Faktor Mensch" berechnet. Finde heraus, wie viel dich dein Bauchgefühl in Euro und Cent kostet. 
+
+👉 Hier geht's zum Test: [Link zum Rechner]
+
+Welches Team seid ihr? Komplett DIY oder vertraut ihr auf professionelle Begleitung? Schreibt es in die Kommentare! 👇</div>
+                </div>
+
+                <!-- E-Mail -->
+                <div>
+                    <div class="flex justify-between items-end mb-3">
+                        <h4 class="font-bold text-[#023e84] flex items-center gap-2"><svg class="w-5 h-5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>E-Mail Newsletter</h4>
+                        <button onclick="copyToClipboard('copy-mail')" class="text-xs font-bold text-[#006fb9] hover:bg-[#e8f0fa] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Kopieren</button>
+                    </div>
+                    <div id="copy-mail" class="bg-slate-50 p-4 rounded-xl text-sm text-slate-700 leading-relaxed border border-slate-100 font-mono whitespace-pre-line">Betreff: Warum dich dein kostenloses Depot ein Vermögen kostet...
+
+Hallo [Name],
+
+"Ich mach das einfach selbst über eine App, das kostet fast keine Gebühren." Diesen Satz höre ich in letzter Zeit sehr oft. Neobroker haben das Investieren demokratisiert. Doch die Bequemlichkeit hat eine gefährliche Schattenseite: Das eigene Bauchgefühl.
+
+Wenn die Kurse fallen, ist der "Verkaufen"-Button auf dem Smartphone nur einen Daumenabdruck entfernt. Wenn eine Hype-Aktie steigt, ist die Versuchung riesig, noch schnell aufzuspringen. 
+
+Die US-Forschungsfirma DALBAR untersucht dieses Phänomen seit Jahrzehnten. Das erschreckende Ergebnis: Durch dieses ständige, emotionale Hin- und Herhandeln erzielen Privatanleger im Schnitt nur die Hälfte der eigentlichen Marktrendite. Statistisch gehen so rund 3,5 % Rendite pro Jahr verloren.
+
+Was bedeutet das konkret in Euro und Cent für deinen Sparplan? Wir haben einen neuen, interaktiven Renditelücken-Rechner freigeschaltet. Klick auf den Link und teste selbst, ob du in die App-Falle tappst:
+👉 [Link zum Rechner]
+
+Wenn du dein Portfolio langfristig und vor allem emotional krisenfest aufstellen möchtest, antworte einfach kurz auf diese E-Mail. 
+
+Herzliche Grüße,
+[Dein Name]</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openCampaignModal() {
+            // Dynamically replace link placeholders
+            const baseUrl = window.location.href.split('?')[0];
+            const clientUrl = baseUrl + '?mode=client';
+            
+            ['copy-wa', 'copy-li', 'copy-mail'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el.innerHTML.includes('[Link zum Rechner]')) {
+                    el.innerHTML = el.innerHTML.replace(/\[Link zum Rechner\]/g, clientUrl);
+                }
+            });
+            
+            document.getElementById('campaign-modal').classList.remove('hidden');
+        }
+
+        function closeCampaignModal() {
+            document.getElementById('campaign-modal').classList.add('hidden');
+        }
+
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector(`button[onclick="copyToClipboard('${elementId}')"]`);
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<svg class="w-4 h-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Kopiert!';
+                btn.classList.add('bg-green-50', 'text-green-700');
+                btn.classList.remove('text-[#006fb9]', 'hover:bg-[#e8f0fa]');
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.classList.remove('bg-green-50', 'text-green-700');
+                    btn.classList.add('text-[#006fb9]', 'hover:bg-[#e8f0fa]');
+                }, 2000);
+            });
+        }
+
+        function updateSliderTrack(slider) {
+            const min = +slider.min || 0;
+            const max = +slider.max || 100;
+            const val = +slider.value;
+            const pct = ((val - min) / (max - min)) * 100;
+            slider.style.background = `linear-gradient(to right, #023e84 0%, #023e84 ${pct}%, #e5e7eb ${pct}%, #e5e7eb 100%)`;
+        }
+
+        function formatCurrency(num) {
+            return num.toLocaleString('de-DE') + ' €';
+        }
+
+        function syncCapital(el) {
+            document.getElementById('capital-input').value = el.value;
+            document.getElementById('capitalDisplay').innerText = formatCurrency(parseInt(el.value));
+            updateSliderTrack(el);
+            if (document.getElementById('main-calc-wrap').style.display !== 'none') {
+                calculateAndDraw();
+            }
+        }
+
+        function syncRate(el) {
+            document.getElementById('rate-input').value = el.value;
+            document.getElementById('rateDisplay').innerText = formatCurrency(parseInt(el.value));
+            updateSliderTrack(el);
+            if (document.getElementById('main-calc-wrap').style.display !== 'none') {
+                calculateAndDraw();
+            }
+        }
+
+        function syncYears(el) {
+            document.getElementById('years-input').value = el.value;
+            document.getElementById('yearsDisplay').innerText = el.value + ' Jahre';
+            updateSliderTrack(el);
+            if (document.getElementById('main-calc-wrap').style.display !== 'none') {
+                calculateAndDraw();
+            }
+        }
+
+        function handleStep1(answer) {
+            const step1 = document.getElementById('sf-step1');
+            const stepPrio = document.getElementById('sf-step-prio');
+            const step3 = document.getElementById('sf-step3');
+
+            if (answer === 'ja') {
+                step1.style.display = 'none';
+                stepPrio.style.display = 'block';
+            } else {
+                // If they already use advice, skip to a positive resolution
+                step1.style.display = 'none';
+
+                const title = document.getElementById('sf-resolution-title');
+                const text = document.getElementById('sf-resolution-text');
+                const transitionText = document.getElementById('sf-transition-text');
+
+                title.innerText = "Alles richtig gemacht!";
+                text.innerHTML = "Glückwunsch! Damit umschiffst du bereits die teuerste Kostenfalle an der Börse: Das eigene Bauchgefühl.<br><br>Die <strong>DALBAR-Studie</strong> belegt, dass Privatanleger ohne professionelle Begleitung durch ständiges Hin- und Herhandeln statistisch <strong>rund 3,5 % Rendite pro Jahr</strong> verlieren. Eine gute Beratung ist ihr Geld also absolut wert.";
+                transitionText.innerText = "Möchtest du sehen, wie viel Geld Do-It-Yourself-Anleger dadurch auf der Strecke lassen?";
+
+                step3.style.display = 'block';
+            }
+        }
+
+        function handleStepPrio() {
+            document.getElementById('sf-step-prio').style.display = 'none';
+            document.getElementById('sf-step2').style.display = 'block';
+        }
+
+        function handleStep2(answer) {
+            const step2 = document.getElementById('sf-step2');
+            const step3 = document.getElementById('sf-step3');
+
+            const title = document.getElementById('sf-resolution-title');
+            const text = document.getElementById('sf-resolution-text');
+            const transitionText = document.getElementById('sf-transition-text');
+
+            title.innerText = "Der Preis des Bauchgefühls";
+
+            let intro, bodyText;
+            if (answer === 'ja') {
+                intro = "Erwischt! Das ist absolut menschlich. ";
+                bodyText = "Denn Neobroker locken mit extrem niedrigen Gebühren und verleiten zum Handeln. Die <strong>DALBAR-Studie</strong> belegt: Der Drang, am Smartphone ständig selbst einzugreifen, kostet Privatanleger statistisch <strong>rund 3,5 % Rendite pro Jahr</strong>.";
+                transitionText.innerText = "Möchtest du wissen, wie viel dich das in Euro und Cent kostet?";
+            } else {
+                intro = "Respekt! Da gehörst du zu einer echten Minderheit. ";
+                bodyText = "Denn Neobroker locken mit extrem niedrigen Gebühren und verleiten zum schnellen Handeln. Die <strong>DALBAR-Studie</strong> belegt: Der Drang, am Smartphone ständig selbst einzugreifen, kostet die meisten Privatanleger statistisch <strong>rund 3,5 % Rendite pro Jahr</strong>.";
+                transitionText.innerText = "Möchtest du sehen, wie viel Geld der durchschnittliche Privatanleger dadurch auf der Strecke lässt?";
+            }
+
+            text.innerHTML = intro + bodyText;
+
+            step2.style.display = 'none';
+            step3.style.display = 'block';
+        }
+
+        function startCalculator() {
+            document.getElementById('sales-flow-wrap').style.display = 'none';
+            document.getElementById('main-header').style.display = 'block';
+            document.getElementById('main-calc-wrap').style.display = 'grid'; // now a grid
+
+            // Init tracks
+            updateSliderTrack(document.getElementById('capital-range'));
+            updateSliderTrack(document.getElementById('rate-range'));
+            updateSliderTrack(document.getElementById('years-range'));
+
+            calculateAndDraw();
+        }
+
+        function calculateCompoundInterest(initial, monthly, years, rate) {
+            let total = initial;
+            const months = years * 12;
+            const monthlyRate = rate / 100 / 12;
+            for (let i = 0; i < months; i++) {
+                total += monthly;
+                total *= (1 + monthlyRate);
+            }
+            return total;
+        }
+
+        function calculateAndDraw() {
+            const capital = parseInt(document.getElementById('capital-input').value);
+            const rate = parseInt(document.getElementById('rate-input').value);
+            const years = parseInt(document.getElementById('years-input').value);
+
+            // Market return vs average investor return (DALBAR estimates)
+            const marketReturn = 8.0;
+            const investorReturn = 4.5;
+
+            const marketResult = calculateCompoundInterest(capital, rate, years, marketReturn);
+            const investorResult = calculateCompoundInterest(capital, rate, years, investorReturn);
+
+            const gap = marketResult - investorResult;
+
+            const gapWrapper = document.getElementById('gap-value-wrapper');
+            const gapCurrency = document.getElementById('gap-currency');
+            const gapSign = document.getElementById('gap-sign');
+
+            const alertBox = document.getElementById('alert-box');
+            const alertIconWrap = document.getElementById('alert-icon-wrap');
+            const alertText = document.getElementById('alert-text');
+            const alertIconSvg = document.getElementById('alert-icon-svg');
+
+            if (gap === 0) {
+                gapWrapper.classList.remove('text-[#991b1b]');
+                gapWrapper.classList.add('text-[#023e84]');
+                gapCurrency.classList.remove('text-[#991b1b]');
+                gapCurrency.classList.add('text-[#023e84]');
+                gapSign.style.display = 'none';
+
+                alertBox.className = "bg-[#e8f0fa] border border-[#cce0f5] rounded-2xl p-4 flex gap-4 text-sm text-[#023e84] max-w-xl mx-auto text-left shadow-sm";
+                alertIconWrap.className = "flex-shrink-0 text-[#023e84] mt-0.5";
+                alertText.innerText = "Stelle links deine Werte ein, um zu berechnen, wie viel Vermögen durch emotionale Fehlentscheidungen statistisch verloren geht.";
+                alertIconSvg.innerHTML = '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+            } else {
+                gapWrapper.classList.remove('text-[#023e84]');
+                gapWrapper.classList.add('text-[#991b1b]');
+                gapCurrency.classList.remove('text-[#023e84]');
+                gapCurrency.classList.add('text-[#991b1b]');
+                gapSign.style.display = 'inline';
+
+                alertBox.className = "bg-[#fcf5f5] border border-[#f5d0d0] rounded-2xl p-4 flex gap-4 text-sm text-[#991b1b] max-w-xl mx-auto text-left shadow-sm";
+                alertIconWrap.className = "flex-shrink-0 text-[#991b1b] mt-0.5";
+                alertText.innerText = "Diesen Betrag würdest du bei deinen gewählten Werten statistisch durch typische Fehlentscheidungen (wie Panikverkäufe oder Timing-Versuche) auf der Strecke lassen.";
+                alertIconSvg.innerHTML = '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>';
+            }
+
+            document.getElementById('res-market').innerText = Math.round(marketResult).toLocaleString('de-DE');
+            document.getElementById('res-emotional').innerText = Math.round(investorResult).toLocaleString('de-DE');
+            document.getElementById('res-gap').innerText = Math.round(gap).toLocaleString('de-DE');
+
+            drawChart(years, capital, rate, marketReturn, investorReturn);
+        }
+
+        let chartInstance = null;
+
+        function drawChart(years, capital, monthly, marketRate, investorRate) {
+            const canvas = document.getElementById('growthChart');
+            if (!canvas) return;
+
+            // Calculate data points (yearly)
+            const labels = [];
+            const marketData = [];
+            const investorData = [];
+
+            let mTotal = capital;
+            let iTotal = capital;
+
+            labels.push('Heute');
+            marketData.push(Math.round(mTotal));
+            investorData.push(Math.round(iTotal));
+
+            for (let y = 1; y <= years; y++) {
+                labels.push('Jahr ' + y);
+                for (let m = 0; m < 12; m++) {
+                    mTotal += monthly;
+                    mTotal *= (1 + (marketRate / 100 / 12));
+                    iTotal += monthly;
+                    iTotal *= (1 + (investorRate / 100 / 12));
+                }
+                marketData.push(Math.round(mTotal));
+                investorData.push(Math.round(iTotal));
+            }
+
+            if (chartInstance) {
+                chartInstance.data.labels = labels;
+                chartInstance.data.datasets[0].data = marketData;
+                chartInstance.data.datasets[1].data = investorData;
+                chartInstance.update();
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Diszipliniert (Markt)',
+                            data: marketData,
+                            borderColor: '#006fb9',
+                            backgroundColor: 'rgba(0, 111, 185, 0.1)',
+                            borderWidth: 3,
+                            fill: 1, // fill to next dataset (the investor curve)
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#ffffff',
+                            pointBorderColor: '#006fb9',
+                            pointBorderWidth: 2
+                        },
+                        {
+                            label: 'Durchschnittsanleger',
+                            data: investorData,
+                            borderColor: '#64748b',
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#ffffff',
+                            pointBorderColor: '#64748b',
+                            pointBorderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            enabled: false,
+                            external: function (context) {
+                                let tooltipEl = document.getElementById('chartjs-tooltip');
+
+                                if (!tooltipEl) {
+                                    tooltipEl = document.createElement('div');
+                                    tooltipEl.id = 'chartjs-tooltip';
+                                    tooltipEl.style.position = 'absolute';
+                                    tooltipEl.style.pointerEvents = 'none';
+                                    tooltipEl.style.transform = 'translate(-50%, -100%)';
+                                    tooltipEl.style.marginTop = '-12px';
+                                    tooltipEl.style.transition = 'all .1s ease';
+                                    tooltipEl.style.zIndex = 50;
+                                    document.body.appendChild(tooltipEl);
+                                }
+
+                                const tooltipModel = context.tooltip;
+                                if (tooltipModel.opacity === 0) {
+                                    tooltipEl.style.opacity = 0;
+                                    return;
+                                }
+
+                                if (tooltipModel.body) {
+                                    const titleLines = tooltipModel.title || [];
+                                    let innerHtml = '<div class="bg-white/95 backdrop-blur-sm shadow-xl p-4 rounded-xl border border-slate-100" style="min-width: 240px;">';
+
+                                    titleLines.forEach(function (title) {
+                                        let titleText = title === 'Heute' ? 'Heute' : 'Nach ' + title.replace('Jahr ', '') + (title === 'Jahr 1' ? ' Jahr' : ' Jahren');
+                                        innerHtml += '<p class="font-bold text-slate-800 mb-3 border-b border-slate-100 pb-2">' + titleText + '</p>';
+                                    });
+
+                                    innerHtml += '<div class="space-y-2">';
+
+                                    const data1 = tooltipModel.dataPoints[0]; // Markt
+                                    const data2 = tooltipModel.dataPoints[1]; // Emotional
+
+                                    if (data1 && data2) {
+                                        const marketVal = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(data1.raw);
+                                        const investVal = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(data2.raw);
+                                        const gapVal = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(data1.raw - data2.raw);
+
+                                        innerHtml += `
+                                            <div class="flex justify-between items-center gap-6">
+                                                <span class="text-slate-500 flex items-center gap-1.5 font-medium"><div class="w-2 h-2 rounded-full bg-slate-500"></div> Durchschnittsanleger:</span>
+                                                <span class="font-bold text-slate-800">${investVal}</span>
+                                            </div>
+                                            <div class="flex justify-between items-center gap-6">
+                                                <span class="text-[#006fb9] flex items-center gap-1.5 font-medium"><div class="w-2 h-2 rounded-full bg-[#006fb9]"></div> Markt (Diszipliniert):</span>
+                                                <span class="font-bold text-slate-800">${marketVal}</span>
+                                            </div>
+                                            <div class="pt-2 mt-2 border-t border-slate-100 flex justify-between items-center gap-6">
+                                                <span class="text-[#991b1b] flex items-center gap-1.5 font-bold"><div class="w-2 h-2 rounded-full bg-[#991b1b]"></div> Verlust:</span>
+                                                <span class="font-bold text-[#991b1b]">${gapVal}</span>
+                                            </div>
+                                        `;
+                                    }
+
+                                    innerHtml += '</div></div>';
+                                    tooltipEl.innerHTML = innerHtml;
+                                }
+
+                                const position = context.chart.canvas.getBoundingClientRect();
+                                tooltipEl.style.opacity = 1;
+                                tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
+                                tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false, drawBorder: false },
+                            ticks: {
+                                font: { family: 'Roboto', size: 12 },
+                                color: '#94a3b8',
+                                maxTicksLimit: 6
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            border: { display: false },
+                            grid: {
+                                color: '#f1f5f9',
+                                drawBorder: false,
+                            },
+                            ticks: {
+                                font: { family: 'Roboto', size: 12 },
+                                color: '#94a3b8',
+                                maxTicksLimit: 6,
+                                callback: function (value) {
+                                    if (value >= 1000000) return (value / 1000000).toFixed(1) + ' Mio. €';
+                                    if (value >= 1000) return (value / 1000).toFixed(0) + ' Tsd. €';
+                                    return value + ' €';
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'customFill',
+                    beforeDraw: (chart) => {
+                        const ctx = chart.ctx;
+                        const xAxis = chart.scales.x;
+                        const yAxis = chart.scales.y;
+                        const meta0 = chart.getDatasetMeta(0);
+                        const meta1 = chart.getDatasetMeta(1);
+
+                        ctx.save();
+                        ctx.beginPath();
+
+                        // Draw market path (top)
+                        meta0.data.forEach((point, index) => {
+                            if (index === 0) ctx.moveTo(point.x, point.y);
+                            else ctx.lineTo(point.x, point.y);
+                        });
+
+                        // Draw investor path backwards (bottom)
+                        for (let i = meta1.data.length - 1; i >= 0; i--) {
+                            ctx.lineTo(meta1.data[i].x, meta1.data[i].y);
+                        }
+
+                        ctx.closePath();
+                        ctx.fillStyle = 'rgba(153, 27, 27, 0.08)'; // bordeaux gap
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                }]
+            });
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for client mode to hide advisor nav
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('mode') === 'client') {
+                const nav = document.getElementById('advisor-nav');
+                if(nav) nav.style.display = 'none';
+                const header = document.getElementById('main-header');
+                if(header) header.style.display = 'none';
+                
+                const sfWrap = document.getElementById('sales-flow-wrap');
+                if(sfWrap) sfWrap.classList.add('mt-12', 'md:mt-24');
+            }
+
+            updateSliderTrack(document.getElementById('capital-range'));
+            updateSliderTrack(document.getElementById('rate-range'));
+            updateSliderTrack(document.getElementById('years-range'));
+
+            window.addEventListener('resize', () => {
+                if (document.getElementById('main-calc-wrap').style.display !== 'none') {
+                    calculateAndDraw();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
