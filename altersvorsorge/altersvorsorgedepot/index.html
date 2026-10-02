@@ -25,17 +25,12 @@
     </style>
 </head>
 <body class="font-sans antialiased pb-20 bg-white">
-    <div id="advisor-nav" class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 mt-4 flex justify-between items-center">
+    <div id="advisor-nav" class="max-w-[1440px] mx-auto px-4 sm:px-6 pt-8 mt-4">
         <a href="../../index.html" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-[#023e84] transition-colors mb-6 group">
             <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
             </svg> Zurück zur Übersicht
         </a>
-        <button onclick="openCampaignModal()" class="inline-flex items-center gap-2 text-sm font-bold text-[#006fb9] bg-[#e8f0fa] hover:bg-[#cce0f5] px-4 py-2 rounded-xl transition-colors mb-6">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m8 17 4 4 4-4"></path>
-            </svg> Kampagnen-Material
-        </button>
     </div>
 
     <header id="main-header" class="text-center pb-8 pt-4 px-4">
@@ -46,7 +41,7 @@
         </p>
     </header>
 
-    <div class="max-w-6xl mx-auto px-4 md:px-6" id="main-calc-wrap">
+    <div class="max-w-[1440px] mx-auto px-4 md:px-6" id="main-calc-wrap">
         <div class="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 xl:gap-8 items-start">
             
             <!-- Left Column: Inputs -->
@@ -66,10 +61,7 @@
                         <h2 class="text-lg font-bold text-[#023e84]">Eingabe</h2>
                     </div>
                     
-                    <!-- Client Mode Intro -->
-                    <div id="client-intro" class="hidden mb-6 text-[14px] text-[#023e84] font-medium bg-[#e8f0fa] p-4 rounded-xl border border-[#cce0f5] leading-relaxed">
-                        Spielen Sie hier mit den Reglern und finden Sie heraus, wie viel Förderung Ihnen persönlich im neuen Altersvorsorgedepot zusteht!
-                    </div>
+
 
                     <!-- Alter -->
                     <div class="mb-8">
@@ -86,17 +78,17 @@
                     <!-- Monatliche Sparrate -->
                     <div class="mb-8">
                         <div class="flex justify-between items-center mb-6">
-                            <label class="block text-[15px] font-semibold text-slate-700">Monatliche Sparrate</label>
+                            <label class="block text-[15px] font-semibold text-slate-700">Monatlicher Eigenbeitrag</label>
                             <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"><span id="val-savings">30</span> €</div>
                         </div>
                         <div class="relative w-full mt-2">
                             <div id="star-indicator" class="absolute -top-6 w-6 h-6 text-[#023e84] transition-opacity duration-200" style="left: 0; transform: translateX(-50%); opacity: 0; pointer-events: none;">
                                 <svg class="w-full h-full fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                             </div>
-                            <input type="range" id="slider-savings" min="10" max="150" value="30" step="5" class="w-full" oninput="updateValues()">
+                            <input type="range" id="slider-savings" min="0" max="150" value="30" step="5" class="w-full" oninput="updateValues()">
                         </div>
                         <div class="flex justify-between text-xs text-slate-400 mt-2 font-medium">
-                            <span>10 €</span><span>150 €</span>
+                            <span>0 €</span><span>150 €</span>
                         </div>
                     </div>
 
@@ -155,7 +147,44 @@
                         <input id="input-u25" type="checkbox" class="w-5 h-5 accent-[#023e84] text-[#023e84] bg-white border-slate-300 rounded focus:ring-[#023e84] cursor-pointer" onchange="updateValues()">
                         <label for="input-u25" class="text-[15px] font-semibold text-slate-700 cursor-pointer select-none">Unter 25 Jahre alt?</label>
                     </div>
-                    <p class="text-[12px] text-slate-400 ml-12 mb-2">(Für den einmaligen Berufseinsteigerbonus von 200 €)</p>
+                    <p class="text-[12px] text-slate-400 ml-12 mb-8">(Für den einmaligen Berufseinsteigerbonus von 200 €)</p>
+
+                    <div class="mb-2 pt-2">
+                        <div class="flex justify-between items-center mb-6">
+                            <label class="block text-[15px] font-semibold text-slate-700">Erwartete Rendite</label>
+                            <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"><span id="val-return">6</span> % p.a.</div>
+                        </div>
+                        <input type="range" id="input-return" min="0" max="10" step="0.5" value="6" class="w-full mt-2" oninput="updateValues()">
+                        <div class="flex justify-between text-xs text-slate-400 mt-2 font-medium">
+                            <span>0 %</span><span>10 %</span>
+                        </div>
+                    </div>
+
+                    <!-- Auszahlungsform & Steuersatz -->
+                    <div class="mt-8 border-t border-slate-100 pt-6">
+                        <label class="block text-[15px] font-semibold text-slate-700 mb-3">Auszahlungsform</label>
+                        <div class="flex flex-col sm:flex-row gap-3 mb-8">
+                            <label class="flex-1 cursor-pointer">
+                                <input type="radio" name="payout_type" value="auszahlplan" class="peer sr-only" checked onchange="updateValues()">
+                                <div class="w-full text-center py-3 px-4 rounded-xl border border-slate-200 text-slate-600 font-medium peer-checked:bg-[#e8f0fa] peer-checked:text-[#023e84] peer-checked:border-[#023e84] transition-all">Auszahlplan</div>
+                            </label>
+                            <label class="flex-1 cursor-pointer">
+                                <input type="radio" name="payout_type" value="verrentung" class="peer sr-only" onchange="updateValues()">
+                                <div class="w-full text-center py-3 px-4 rounded-xl border border-slate-200 text-slate-600 font-medium peer-checked:bg-[#e8f0fa] peer-checked:text-[#023e84] peer-checked:border-[#023e84] transition-all">Verrentung</div>
+                            </label>
+                        </div>
+
+                        <div class="mb-2">
+                            <div class="flex justify-between items-center mb-6">
+                                <label class="block text-[15px] font-semibold text-slate-700">Steuersatz im Alter</label>
+                                <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"><span id="val-tax">20</span> %</div>
+                            </div>
+                            <input type="range" id="slider-tax" min="0" max="42" step="1" value="20" class="w-full mt-2" oninput="updateValues()">
+                            <div class="flex justify-between text-xs text-slate-400 mt-2 font-medium">
+                                <span>0 %</span><span>42 %</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -165,21 +194,33 @@
                 
                 <!-- NEW: Big Annual Subsidy Card -->
                 <div class="bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-6 text-center">
-                    <h3 class="text-[#023e84] font-bold text-lg mb-2">Ihre staatliche Zulage in diesem Jahr:</h3>
+                    <h3 class="text-[#023e84] font-bold text-lg mb-2">Ihre jährliche staatliche Zulage:</h3>
                     <div class="text-4xl md:text-5xl font-extrabold text-[#023e84] mb-4">
-                        + <span id="res-yearly-subsidy">0</span> €
+                        <span id="res-yearly-subsidy-sign">+ </span><span id="res-yearly-subsidy">0</span> €
                     </div>
                     
-                    <div class="bg-[#e8f0fa] border border-[#b6d4f0] rounded-xl p-3 inline-flex items-center gap-2">
+                    <div id="ratio-container" class="bg-[#e8f0fa] border border-[#b6d4f0] rounded-xl p-3 inline-flex items-center gap-2">
                         <svg class="w-5 h-5 text-[#006fb9] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <span class="text-sm font-semibold text-[#023e84] text-left">Das entspricht einer Förderquote von <span id="res-ratio">0</span> % auf Ihre Einzahlung.</span>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
                     <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
                         <div class="flex justify-between items-start mb-1">
-                            <span class="text-sm font-medium text-slate-500">Staatliche Zulagen (gesamt)</span>
+                            <span class="text-sm font-medium text-slate-500">Eigene Beiträge</span>
+                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10h12"/><path stroke-linecap="round" stroke-linejoin="round" d="M4 14h9"/><path stroke-linecap="round" stroke-linejoin="round" d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
+                            <span id="res-own">0</span><span>€</span>
+                        </div>
+                        <div class="text-xs text-[#006fb9] mt-1 font-medium">Bis Rentenbeginn (Alter 67)</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-sm font-medium text-slate-500">Staatliche Zulagen</span>
                             <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.5-1 2-2h2v-4h-2c0-1-.5-1.5-1-2h0V6c0-.5-.5-1-1-1z"/>
@@ -197,7 +238,7 @@
                         <div class="flex justify-between items-start mb-1">
                             <span class="text-sm font-medium text-slate-500">Erwartetes Endkapital</span>
                             <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10h12"/><path stroke-linecap="round" stroke-linejoin="round" d="M4 14h9"/><path stroke-linecap="round" stroke-linejoin="round" d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                             </div>
                         </div>
                         <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
@@ -207,102 +248,77 @@
                     </div>
                 </div>
 
-                <!-- Chart -->
-                <div class="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-6">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                        <h3 class="text-lg font-bold text-[#023e84] m-0">Vermögensentwicklung</h3>
-                        <div class="flex items-center gap-4 text-xs font-medium text-slate-500">
-                            <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#646464]"></div>Einzahlungen</div>
-                            <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#eab308]"></div>Zulagen</div>
-                            <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#023e84]"></div>Ertrag</div>
+                <!-- Chart & Pension Card Row -->
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6 mb-6">
+                    <!-- Chart -->
+                    <div class="xl:col-span-2 bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                            <h3 class="text-lg font-bold text-[#023e84] m-0">Vermögensentwicklung</h3>
+                            <div class="flex items-center gap-4 text-xs font-medium text-slate-500">
+                                <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#646464]"></div>Einzahlungen</div>
+                                <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#eab308]"></div>Zulagen</div>
+                                <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#023e84]"></div>Ertrag</div>
+                            </div>
+                        </div>
+                        <div class="relative flex-1 w-full min-h-[300px]">
+                            <canvas id="wealthChart"></canvas>
                         </div>
                     </div>
-                    <div class="relative h-[300px] md:h-[400px] w-full">
-                        <canvas id="wealthChart"></canvas>
-                    </div>
-                </div>
 
-                <!-- CTA Button -->
-                <div id="client-cta-section" class="hidden mt-2 mb-6 flex flex-col sm:flex-row gap-4">
-                    <!-- Button 1: Termin vereinbaren -->
-                    <a id="wa-contact-link" href="#" class="flex-1 bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-4 px-6 rounded-2xl shadow-[0_8px_20px_rgba(2,62,132,0.25)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                        Berater kontaktieren
-                    </a>
-                    
-                    <!-- Button 2: Weiterempfehlen (WhatsApp) -->
-                    <a id="wa-recommend-link" href="#" class="flex-1 bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-4 px-6 rounded-2xl shadow-[0_8px_20px_rgba(37,211,102,0.25)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3">
-                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                        Berater weiterempfehlen
-                    </a>
-                </div>
-
-                <!-- FAQ Accordion -->
-                <div class="bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100">
-                    <h2 class="text-lg font-bold text-[#023e84] mb-6">Wie funktioniert das neue Modell?</h2>
-                    <div class="space-y-4">
-                        <details class="group bg-slate-50 rounded-xl cursor-pointer">
-                            <summary class="flex justify-between items-center font-semibold p-4 text-[#023e84]">
-                                Wie setzt sich die Förderung zusammen?
-                                <span class="transition group-open:rotate-180">
-                                    <svg fill="none" height="24" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9" /></svg>
-                                </span>
-                            </summary>
-                            <div class="text-sm text-slate-500 p-4 pt-0 leading-relaxed">
-                                <p class="mb-2">Die Reform der privaten Altersvorsorge (Altersvorsorgedepot) belohnt vor allem Einsteiger und Familien enorm:</p>
-                                <ul class="list-disc pl-5 space-y-1">
-                                    <li><strong>Grundzulage 1 (50 %):</strong> Für jeden gesparten Euro bis 360 € pro Jahr (30 € mtl.) legt der Staat 50 Cent obendrauf (max. 180 €).</li>
-                                    <li><strong>Grundzulage 2 (25 %):</strong> Für jeden weiteren gesparten Euro bis 1.800 € gibt es 25 Cent dazu (max. 360 €).</li>
-                                    <li><strong>Kinderzulage (100 %):</strong> Für jeden gesparten Euro gibt es 1 Euro Kinderzulage (bis max. 300 € pro Kind).</li>
-                                </ul>
+                    <!-- Pension Card -->
+                    <div class="xl:col-span-1 bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col h-full relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-6">
+                            <h3 class="text-lg font-bold text-[#023e84] m-0" id="label-pension-title">Monatliche Rente</h3>
+                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
                             </div>
-                        </details>
-                        <details class="group bg-slate-50 rounded-xl cursor-pointer">
-                            <summary class="flex justify-between items-center font-semibold p-4 text-[#023e84]">
-                                Was ist der "30-Euro-Sweetspot"?
-                                <span class="transition group-open:rotate-180">
-                                    <svg fill="none" height="24" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9" /></svg>
-                                </span>
-                            </summary>
-                            <div class="text-sm text-slate-500 p-4 pt-0 leading-relaxed">
-                                <p>Wer 30 € im Monat spart (360 € im Jahr), schöpft die maximale Stufe 1 der Grundzulage (50 %) voll aus. Sie erhalten dafür 180 € vom Staat geschenkt. Nirgendwo sonst bekommen Sie eine derart hohe garantierte Förderquote auf Ihr investiertes Geld.</p>
+                        </div>
+
+                        <div class="space-y-4 mb-6">
+                            <div class="flex justify-between items-end border-b border-slate-100 pb-3">
+                                <span class="text-sm font-medium text-slate-600" id="label-gross-pension">Bruttorente</span>
+                                <span class="text-lg font-bold text-slate-800"><span id="res-gross">0</span> €</span>
                             </div>
-                        </details>
+                            <div class="flex justify-between items-end border-b border-slate-100 pb-3">
+                                <span class="text-sm font-medium text-slate-600">Steuern</span>
+                                <span class="text-lg font-bold text-[#991b1b]">- <span id="res-tax">0</span> €</span>
+                            </div>
+                            <div class="flex justify-between items-end pt-2">
+                                <span class="text-base font-bold text-[#023e84]" id="label-net-pension">Nettorente</span>
+                                <span class="text-3xl font-extrabold text-[#023e84]"><span id="res-net">0</span> €</span>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Alert Box -->
+                        <div class="mt-auto flex flex-col gap-2">
+                            <div>
+                                <span class="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded uppercase tracking-wide inline-block" id="res-pension-type-label">Auszahlplan</span>
+                            </div>
+                            <!-- Auszahlplan Warning -->
+                            <div id="pension-alert-auszahlplan" class="bg-orange-50 border border-orange-100 text-orange-800 p-3 rounded-xl text-[12px] leading-relaxed flex gap-2 items-start">
+                                <svg class="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                <div><span class="font-bold">Hinweis:</span> Sind Sie sicher, dass das Kapital nur bis zum Alter von 90 Jahren reichen muss?</div>
+                            </div>
+                            
+                            <!-- Verrentung Success -->
+                            <div id="pension-alert-verrentung" class="hidden bg-emerald-50 border border-emerald-100 text-emerald-800 p-3 rounded-xl text-[12px] leading-relaxed flex gap-2 items-start">
+                                <svg class="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <div><span class="font-bold">Sehr gut!</span> Mit der Verrentung sind Sie lebenslang auf der sicheren Seite, egal wie alt Sie werden.</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-            </div>
-        </div>
-        
-        <!-- Disclaimer -->
-        <div class="mt-10 text-[11px] text-slate-400 text-center max-w-4xl mx-auto leading-relaxed px-4" id="legal-disclaimer">
-            <span class="font-bold">Wichtiger Hinweis:</span> Dieser Rechner basiert auf dem Entwurf des BMF zur Reform der privaten Altersvorsorge (Stand 2024/2025). Die Gesetzgebung ist noch nicht final, Details können sich ändern. Die Berechnungen dienen ausschließlich der Veranschaulichung und stellen keine Anlageberatung dar. Es wird eine beispielhafte Depot-Rendite von 6,0 % p.a. angenommen (vor Inflation und Kosten). Tatsächliche Ergebnisse können abweichen.
-        </div>
-    </div>
-
-    <!-- Marketing Modal -->
-    <div id="campaign-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white/95 backdrop-blur z-10">
-                <h3 class="font-extrabold text-lg text-[#023e84] flex items-center gap-2">
-                    <svg class="w-5 h-5 text-[#006fb9]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m8 17 4 4 4-4"></path></svg>
-                    Kampagnen-Material
-                </h3>
-                <button onclick="closeCampaignModal()" class="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-100 rounded-full">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-            </div>
-            
-            <div class="p-6 overflow-y-auto">
-                <p class="text-sm text-slate-500 mb-6 leading-relaxed">Nutzen Sie diese Vorlagen, um Ihre Mandanten auf die enormen Zulagen des Altersvorsorgedepots aufmerksam zu machen.</p>
-                
-                <!-- WhatsApp -->
-                <div>
-                    <div class="flex justify-between items-end mb-3">
-                        <h4 class="font-bold text-[#023e84] flex items-center gap-2"><svg class="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>WhatsApp / Messenger</h4>
-                        <button onclick="openWhatsAppDirect('copy-wa')" class="text-xs font-bold text-white bg-[#25D366] hover:bg-[#20bd5a] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>Direkt in WhatsApp öffnen</button>
+                <!-- Assumptions Card -->
+                <div class="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 text-sm text-slate-500 leading-relaxed">
+                    <div class="font-bold text-slate-700 mb-2 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-[#023e84]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Getroffene Annahmen & Hinweise
                     </div>
-                    <div id="copy-wa" class="bg-slate-50 p-4 rounded-xl text-sm text-slate-700 leading-relaxed border border-slate-100 font-mono">Hallo! Die Regierung hat das neue Altersvorsorgedepot beschlossen. Wusstest du, dass du mit nur 30 € im Monat schon hunderte Euro vom Staat geschenkt bekommst? Rechne dir das hier kurz selbst aus: [Link zum Rechner] 🚀 Melde dich gerne, wenn wir das für dich einrichten sollen!</div>
+                    Die Kinderzulage wird bis zum 18. Lebensjahr des Kindes berücksichtigt. Beim <strong>Auszahlplan</strong> wird eine Entnahme bis zum 90. Lebensjahr bei 1,5 % p.a. Rendite (nach Kosten/Inflation) in der Rentenphase angenommen. Bei der <strong>Verrentung</strong> wird ein garantierter Rentenfaktor von 30 € (pro 10.000 € Kapital) angenommen.
+                    <div class="mt-2 text-xs">
+                        Dieser Rechner basiert auf dem Entwurf des BMF zur Reform der privaten Altersvorsorge (Stand 2024/2025). Die Gesetzgebung ist noch nicht final, Details können sich ändern. Die Berechnungen dienen ausschließlich der Veranschaulichung.
+                    </div>
                 </div>
             </div>
         </div>
@@ -493,17 +509,27 @@
         function updateValues() {
             const ageSlider = document.getElementById('slider-age');
             const savingsSlider = document.getElementById('slider-savings');
-            
+            const returnSlider = document.getElementById('input-return');
+
             updateSliderBackground(ageSlider);
             updateSliderBackground(savingsSlider);
+            updateSliderBackground(returnSlider);
 
             const age = parseInt(ageSlider.value);
             const savings = parseInt(savingsSlider.value);
             const children = parseInt(document.getElementById('input-children').value);
+            const returnRateInput = parseFloat(returnSlider.value);
+            const payoutTypeRadio = document.querySelector('input[name="payout_type"]:checked');
+            const payoutType = payoutTypeRadio ? payoutTypeRadio.value : 'auszahlplan';
+            const taxSlider = document.getElementById('slider-tax');
+            updateSliderBackground(taxSlider);
+            const taxRate = parseFloat(taxSlider.value);
             const isU25 = document.getElementById('input-u25').checked;
 
             document.getElementById('val-age').innerText = age;
             document.getElementById('val-savings').innerText = savings;
+            document.getElementById('val-return').innerText = returnRateInput;
+            document.getElementById('val-tax').innerText = taxRate;
 
             const star = document.getElementById('star-indicator');
             if(savings === 30) {
@@ -539,17 +565,17 @@
                 }
             }
 
-            calculate(age, savings, children, isU25, childBirthYears);
+            calculate(age, savings, children, isU25, childBirthYears, returnRateInput, payoutType, taxRate);
         }
 
-        function calculate(age, savingsMonth, children, isU25, childBirthYears) {
+        function calculate(age, savingsMonth, children, isU25, childBirthYears, returnRateInput, payoutType, taxRate) {
             const retirementAge = 67;
             const years = retirementAge - age;
             
             if (years <= 0) return;
 
             const savingsYear = savingsMonth * 12;
-            const returnRate = 0.06; // 6% p.a.
+            const returnRate = returnRateInput / 100;
 
             let labels = [];
             let dataOwn = [];
@@ -570,33 +596,38 @@
                 let currentYearSubsidy = 0;
 
                 // Grundzulage
-                if(savingsYear <= 360) {
-                    currentYearSubsidy += savingsYear * 0.5; // 50%
-                } else {
-                    currentYearSubsidy += 360 * 0.5; // 180 max
-                    let remaining = Math.min(savingsYear - 360, 1440);
-                    currentYearSubsidy += remaining * 0.25; // 25% up to 1440
-                }
+                if (savingsYear >= 120) {
+                    if(savingsYear <= 360) {
+                        currentYearSubsidy += savingsYear * 0.5; // 50%
+                    } else {
+                        currentYearSubsidy += 360 * 0.5; // 180 max
+                        let remaining = Math.min(savingsYear - 360, 1440);
+                        currentYearSubsidy += remaining * 0.25; // 25% up to 1440
+                    }
 
-                // Kinderzulage (nur bis zum 18. Lebensjahr)
-                let kinderBasis = Math.min(savingsYear, 300);
-                let kinderSubsidy = 0;
-                const currentYear = new Date().getFullYear();
-                
-                for(let i=0; i<children; i++) {
-                    const birthYear = childBirthYears[i];
-                    const simYear = currentYear + (y - 1);
-                    const childAge = simYear - birthYear;
-                    if (childAge < 18) {
-                        kinderSubsidy += kinderBasis;
+                    // Kinderzulage (nur bis zum 18. Lebensjahr)
+                    let kinderBasis = Math.min(savingsYear, 300);
+                    let kinderSubsidy = 0;
+                    const currentYear = new Date().getFullYear();
+                    
+                    for(let i=0; i<children; i++) {
+                        const birthYear = childBirthYears[i];
+                        const simYear = currentYear + (y - 1);
+                        const childAge = simYear - birthYear;
+                        if (childAge < 18) {
+                            kinderSubsidy += kinderBasis;
+                        }
+                    }
+                    currentYearSubsidy += kinderSubsidy;
+
+                    // U25 Bonus in year 1
+                    if(y === 1 && isU25) {
+                        currentYearSubsidy += 200;
                     }
                 }
-                currentYearSubsidy += kinderSubsidy;
-
-                // U25 Bonus in year 1
+                
                 if(y === 1) {
-                    if (isU25) currentYearSubsidy += 200;
-                    firstYearSubsidy = currentYearSubsidy;
+                    firstYearSubsidy = currentYearSubsidy - (isU25 && savingsMonth >= 10 ? 200 : 0);
                 }
 
                 totalSubsidy += currentYearSubsidy;
@@ -613,57 +644,68 @@
             }
 
             // Update UI
-            const ratio = (firstYearSubsidy / savingsYear) * 100;
             document.getElementById('res-yearly-subsidy').innerText = fmt.format(firstYearSubsidy).replace('€','').trim();
-            document.getElementById('res-ratio').innerText = Math.round(ratio);
             
+            const ratioContainer = document.getElementById('ratio-container');
+            const signSpan = document.getElementById('res-yearly-subsidy-sign');
+            
+            if (savingsYear >= 120) {
+                signSpan.innerText = '+ ';
+                const ratio = (firstYearSubsidy / savingsYear) * 100;
+                ratioContainer.className = "bg-[#e8f0fa] border border-[#b6d4f0] rounded-xl p-3 inline-flex items-center gap-2";
+                ratioContainer.innerHTML = `<svg class="w-5 h-5 text-[#006fb9] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-semibold text-[#023e84] text-left">Das entspricht einer Förderquote von <span id="res-ratio">${Math.round(ratio)}</span> % auf Ihre Einzahlung.</span>`;
+            } else {
+                signSpan.innerText = '';
+                ratioContainer.className = "bg-amber-50 border border-amber-200 rounded-xl p-3 inline-flex items-center gap-2";
+                ratioContainer.innerHTML = `<svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg><span class="text-sm font-semibold text-amber-700 text-left">Der Mindestbeitrag für Zulagen beträgt 10 € monatlich.</span>`;
+            }
+            
+            document.getElementById('res-own').innerText = fmt.format(totalOwn).replace('€','').trim();
             document.getElementById('res-subsidy').innerText = fmt.format(totalSubsidy).replace('€','').trim();
             document.getElementById('res-total').innerText = fmt.format(currentCapital).replace('€','').trim();
+
+            // Calculate Pension
+            let grossPension = 0;
+            if (payoutType === 'verrentung') {
+                grossPension = (currentCapital / 10000) * 30;
+                document.getElementById('res-pension-type-label').innerText = 'Verrentung';
+                document.getElementById('label-pension-title').innerText = 'Monatliche Rente';
+                document.getElementById('label-gross-pension').innerText = 'Bruttorente';
+                document.getElementById('label-net-pension').innerText = 'Nettorente';
+                document.getElementById('pension-alert-auszahlplan').classList.add('hidden');
+                document.getElementById('pension-alert-verrentung').classList.remove('hidden');
+            } else {
+                // Auszahlplan
+                const p = 0.015 / 12; // 1.5% p.a.
+                const n = (90 - 67) * 12; // 23 years
+                if (currentCapital > 0 && n > 0 && p > 0) {
+                    grossPension = currentCapital * (p * Math.pow(1 + p, n)) / (Math.pow(1 + p, n) - 1);
+                } else {
+                    grossPension = 0;
+                }
+                document.getElementById('res-pension-type-label').innerText = 'Auszahlplan';
+                document.getElementById('label-pension-title').innerText = 'Monatliche Auszahlung';
+                document.getElementById('label-gross-pension').innerText = 'Brutto';
+                document.getElementById('label-net-pension').innerText = 'Netto';
+                document.getElementById('pension-alert-auszahlplan').classList.remove('hidden');
+                document.getElementById('pension-alert-verrentung').classList.add('hidden');
+            }
+
+            const taxDeduction = grossPension * (taxRate / 100);
+            const netPension = grossPension - taxDeduction;
+
+            document.getElementById('res-gross').innerText = fmt.format(grossPension).replace('€','').trim();
+            document.getElementById('res-tax').innerText = fmt.format(taxDeduction).replace('€','').trim();
+            document.getElementById('res-net').innerText = fmt.format(netPension).replace('€','').trim();
 
             // Update Chart
             wealthChart.data.labels = labels;
             wealthChart.data.datasets[0].data = dataOwn;
             wealthChart.data.datasets[1].data = dataSubsidy;
             wealthChart.data.datasets[2].data = dataInterest;
+            wealthChart.data.datasets[2].label = `Ertrag (${returnRateInput.toString().replace('.', ',')}% p.a.)`;
             wealthChart.update();
 
-            updateWhatsAppClientLink(savingsMonth, firstYearSubsidy);
-        }
-
-        function updateWhatsAppClientLink(savingsMonth, firstYearSubsidy) {
-            const formattedSavings = fmt.format(savingsMonth).replace(',00', '');
-            const formattedSubsidy = fmt.format(firstYearSubsidy).replace(',00', '');
-            
-            // Text 1: Contact Advisor
-            const textContact = `Hallo! Ich habe mir gerade ausgerechnet, dass ich bei ${formattedSavings} monatlicher Sparrate vom Staat eine jährliche Zulage von ${formattedSubsidy} erhalte. Ich würde das neue Altersvorsorgedepot gerne umsetzen. Wann können wir sprechen?`;
-            const waContactLink = document.getElementById('wa-contact-link');
-            if(waContactLink) waContactLink.href = `whatsapp://send?text=${encodeURIComponent(textContact)}`;
-
-            // Text 2: Recommend
-            const textRecommend = `Wahnsinn! Ich habe mir gerade ausgerechnet: Wenn ich beim neuen Altersvorsorgedepot ${formattedSavings} monatlich spare, schenkt mir der Staat jedes Jahr ${formattedSubsidy} dazu! Lass dir das unbedingt auch mal durchrechnen, ob das bei dir auch klappt. Meld dich einfach bei meinem Berater: Thomas Berater - 0171123456`;
-            const waRecommendLink = document.getElementById('wa-recommend-link');
-            if(waRecommendLink) waRecommendLink.href = `whatsapp://send?text=${encodeURIComponent(textRecommend)}`;
-        }
-
-        // Campaign Modal Logic
-        function openCampaignModal() {
-            const baseUrl = window.location.href.split('?')[0];
-            const clientUrl = baseUrl + '?mode=client';
-            
-            const waText = document.getElementById('copy-wa').innerText;
-            document.getElementById('copy-wa').innerText = waText.replace(/\[Link zum Rechner\]/g, clientUrl);
-            
-            document.getElementById('campaign-modal').classList.remove('hidden');
-        }
-
-        function closeCampaignModal() {
-            document.getElementById('campaign-modal').classList.add('hidden');
-        }
-
-        function openWhatsAppDirect(elementId) {
-            const text = document.getElementById(elementId).innerText;
-            const encodedText = encodeURIComponent(text);
-            window.location.href = `whatsapp://send?text=${encodedText}`;
         }
 
         function initSliders() {
@@ -678,20 +720,8 @@
             }
         }
 
-        // Check Client Mode
-        function checkClientMode() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('mode') === 'client') {
-                document.getElementById('advisor-nav').classList.add('hidden');
-                document.getElementById('main-header').classList.add('mt-8', 'md:mt-12');
-                document.getElementById('client-intro').classList.remove('hidden');
-                document.getElementById('client-cta-section').classList.remove('hidden');
-            }
-        }
-
         // Initial Call
         initSliders();
-        checkClientMode();
         updateValues();
     </script>
 </body>
