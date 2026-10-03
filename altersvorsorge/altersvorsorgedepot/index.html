@@ -67,9 +67,9 @@
                     <div class="mb-8">
                         <div class="flex justify-between items-center mb-6">
                             <label class="block text-[15px] font-semibold text-slate-700">Aktuelles Alter</label>
-                            <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"><span id="val-age">30</span> Jahre</div>
+                            <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"><span id="val-age">22</span> Jahre</div>
                         </div>
-                        <input type="range" id="slider-age" min="18" max="67" value="30" class="w-full mt-2" oninput="updateValues()">
+                        <input type="range" id="slider-age" min="18" max="67" value="22" class="w-full mt-2" oninput="updateValues()">
                         <div class="flex justify-between text-xs text-slate-400 mt-2 font-medium">
                             <span>18 J</span><span>67 J</span>
                         </div>
@@ -89,6 +89,18 @@
                         </div>
                         <div class="flex justify-between text-xs text-slate-400 mt-2 font-medium">
                             <span>0 €</span><span>150 €</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Riester Übertragung -->
+                    <div class="mb-8">
+                        <div class="mb-2 flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <input id="input-riester-transfer" type="checkbox" class="shrink-0 w-5 h-5 accent-[#023e84] text-[#023e84] bg-white border-slate-300 rounded focus:ring-[#023e84] cursor-pointer" onchange="updateValues()">
+                            <label for="input-riester-transfer" class="text-[15px] font-semibold text-slate-700 cursor-pointer select-none">Riester-Guthaben übertragen?</label>
+                        </div>
+                        <div id="riester-amount-wrap" class="hidden mt-3 px-1">
+                            <label class="block text-[14px] font-semibold text-slate-700 mb-2">Übertragungswert</label>
+                            <input type="text" inputmode="numeric" id="input-riester-amount" placeholder="z. B. 15.000 €" class="w-full bg-white border border-slate-200 text-[#023e84] text-[15px] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#023e84] focus:border-[#023e84] block p-3.5 font-bold shadow-sm transition-colors" oninput="formatRiesterInput(this); updateValues()">
                         </div>
                     </div>
 
@@ -143,11 +155,13 @@
                         </div>
                     </div>
 
-                    <div class="mb-2 flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100 mt-2">
-                        <input id="input-u25" type="checkbox" class="w-5 h-5 accent-[#023e84] text-[#023e84] bg-white border-slate-300 rounded focus:ring-[#023e84] cursor-pointer" onchange="updateValues()">
-                        <label for="input-u25" class="text-[15px] font-semibold text-slate-700 cursor-pointer select-none">Unter 25 Jahre alt?</label>
+                    <div id="u25-wrap" class="hidden">
+                        <div class="mb-2 flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100 mt-2">
+                            <input id="input-u25" type="checkbox" class="shrink-0 w-5 h-5 accent-[#023e84] text-[#023e84] bg-white border-slate-300 rounded focus:ring-[#023e84] cursor-pointer" onchange="updateValues()">
+                            <label for="input-u25" class="text-[15px] font-semibold text-slate-700 cursor-pointer select-none">Berufseinsteigerbonus berücksichtigen?</label>
+                        </div>
+                        <p class="text-[12px] text-slate-400 ml-12 mb-8">(Einmalig 200 € im ersten Jahr)</p>
                     </div>
-                    <p class="text-[12px] text-slate-400 ml-12 mb-8">(Für den einmaligen Berufseinsteigerbonus von 200 €)</p>
 
                     <div class="mb-2 pt-2">
                         <div class="flex justify-between items-center mb-6">
@@ -160,10 +174,10 @@
                         </div>
                     </div>
 
-                    <!-- Auszahlungsform & Steuersatz -->
+                    <!-- Auszahlungsform -->
                     <div class="mt-8 border-t border-slate-100 pt-6">
                         <label class="block text-[15px] font-semibold text-slate-700 mb-3">Auszahlungsform</label>
-                        <div class="flex flex-col sm:flex-row gap-3 mb-8">
+                        <div class="flex flex-col sm:flex-row gap-3 mb-2">
                             <label class="flex-1 cursor-pointer">
                                 <input type="radio" name="payout_type" value="auszahlplan" class="peer sr-only" checked onchange="updateValues()">
                                 <div class="w-full text-center py-3 px-4 rounded-xl border border-slate-200 text-slate-600 font-medium peer-checked:bg-[#e8f0fa] peer-checked:text-[#023e84] peer-checked:border-[#023e84] transition-all">Auszahlplan</div>
@@ -172,17 +186,6 @@
                                 <input type="radio" name="payout_type" value="verrentung" class="peer sr-only" onchange="updateValues()">
                                 <div class="w-full text-center py-3 px-4 rounded-xl border border-slate-200 text-slate-600 font-medium peer-checked:bg-[#e8f0fa] peer-checked:text-[#023e84] peer-checked:border-[#023e84] transition-all">Verrentung</div>
                             </label>
-                        </div>
-
-                        <div class="mb-2">
-                            <div class="flex justify-between items-center mb-6">
-                                <label class="block text-[15px] font-semibold text-slate-700">Steuersatz im Alter</label>
-                                <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"><span id="val-tax">20</span> %</div>
-                            </div>
-                            <input type="range" id="slider-tax" min="0" max="42" step="1" value="20" class="w-full mt-2" oninput="updateValues()">
-                            <div class="flex justify-between text-xs text-slate-400 mt-2 font-medium">
-                                <span>0 %</span><span>42 %</span>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -216,7 +219,7 @@
                         <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
                             <span id="res-own">0</span><span>€</span>
                         </div>
-                        <div class="text-xs text-[#006fb9] mt-1 font-medium">Bis Rentenbeginn (Alter 67)</div>
+                        <div class="text-xs text-[#006fb9] mt-1 font-medium" id="res-rentenbeginn-text-1">Bis Rentenbeginn (Alter 67)</div>
                     </div>
                     <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
                         <div class="flex justify-between items-start mb-1">
@@ -232,7 +235,7 @@
                         <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
                             <span id="res-subsidy">0</span><span>€</span>
                         </div>
-                        <div class="text-xs text-[#006fb9] mt-1 font-medium">Bis Rentenbeginn (Alter 67)</div>
+                        <div class="text-xs text-[#006fb9] mt-1 font-medium" id="res-rentenbeginn-text-2">Bis Rentenbeginn (Alter 67)</div>
                     </div>
                     <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
                         <div class="flex justify-between items-start mb-1">
@@ -297,7 +300,7 @@
                             <!-- Auszahlplan Warning -->
                             <div id="pension-alert-auszahlplan" class="bg-orange-50 border border-orange-100 text-orange-800 p-3 rounded-xl text-[12px] leading-relaxed flex gap-2 items-start">
                                 <svg class="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                <div><span class="font-bold">Hinweis:</span> Sind Sie sicher, dass das Kapital nur bis zum Alter von 90 Jahren reichen muss?</div>
+                                <div><span class="font-bold">Hinweis:</span> Sind Sie sicher, dass das Kapital nur bis zum Alter von <span id="res-endalter-text">90</span> Jahren reichen muss?</div>
                             </div>
                             
                             <!-- Verrentung Success -->
@@ -309,17 +312,94 @@
                     </div>
                 </div>
 
-                <!-- Assumptions Card -->
-                <div class="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 text-sm text-slate-500 leading-relaxed">
-                    <div class="font-bold text-slate-700 mb-2 flex items-center gap-2">
-                        <svg class="w-4 h-4 text-[#023e84]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Getroffene Annahmen & Hinweise
+                <!-- Erweiterte Einstellungen Accordion -->
+                <details class="group bg-white rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 cursor-pointer overflow-hidden">
+                    <summary class="flex justify-between items-center font-bold text-slate-700 p-6 select-none">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            Erweiterte Einstellungen
+                        </div>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9" /></svg>
+                        </span>
+                    </summary>
+                    <div class="p-6 pt-0 border-t border-slate-100 cursor-default">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                            
+                            <!-- Rentenbeginn -->
+                            <div class="mb-2">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="block text-[14px] font-semibold text-slate-700">Rentenbeginn (Alter)</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[13px]"><span id="val-rentenbeginn">67</span></div>
+                                </div>
+                                <input type="range" id="slider-rentenbeginn" min="65" max="70" step="1" value="67" class="w-full" oninput="updateValues()">
+                                <div class="flex justify-between text-[11px] text-slate-400 mt-2 font-medium">
+                                    <span>65 J.</span><span>70 J.</span>
+                                </div>
+                            </div>
+
+                            <!-- Steuersatz im Alter -->
+                            <div class="mb-2">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="block text-[14px] font-semibold text-slate-700">Steuersatz im Alter</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[13px]"><span id="val-tax">20</span> %</div>
+                                </div>
+                                <input type="range" id="slider-tax" min="0" max="42" step="1" value="20" class="w-full" oninput="updateValues()">
+                                <div class="flex justify-between text-[11px] text-slate-400 mt-2 font-medium">
+                                    <span>0 %</span><span>42 %</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Endalter Auszahlplan -->
+                            <div class="mb-2">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="block text-[14px] font-semibold text-slate-700">Endalter Auszahlplan</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[13px]"><span id="val-endalter">90</span></div>
+                                </div>
+                                <input type="range" id="slider-endalter" min="85" max="100" step="1" value="90" class="w-full" oninput="updateValues()">
+                                <div class="flex justify-between text-[11px] text-slate-400 mt-2 font-medium">
+                                    <span>85 J.</span><span>100 J.</span>
+                                </div>
+                            </div>
+
+                            <!-- Rendite Auszahlplan -->
+                            <div class="mb-2">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="block text-[14px] font-semibold text-slate-700">Rendite i.d. Rentenphase (Auszahlplan)</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[13px]"><span id="val-payout-return">1.5</span> %</div>
+                                </div>
+                                <input type="range" id="slider-payout-return" min="0" max="4" step="0.1" value="1.5" class="w-full" oninput="updateValues()">
+                                <div class="flex justify-between text-[11px] text-slate-400 mt-2 font-medium">
+                                    <span>0,0 %</span><span>4,0 %</span>
+                                </div>
+                            </div>
+
+                            <!-- Rentenfaktor -->
+                            <div class="mb-2">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="block text-[14px] font-semibold text-slate-700">Rentenfaktor (pro 10.000 €) (Verrentung)</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[13px]"><span id="val-rentenfaktor">30</span> €</div>
+                                </div>
+                                <input type="range" id="slider-rentenfaktor" min="20" max="40" step="1" value="30" class="w-full" oninput="updateValues()">
+                                <div class="flex justify-between text-[11px] text-slate-400 mt-2 font-medium">
+                                    <span>20 €</span><span>40 €</span>
+                                </div>
+                            </div>
+
+                            <!-- Kinderzulage-Dauer -->
+                            <div class="mb-2">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="block text-[14px] font-semibold text-slate-700">Dauer der Kinderzulage</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[13px]"><span id="val-kinderzulage-dauer">18</span> Jahre</div>
+                                </div>
+                                <input type="range" id="slider-kinderzulage-dauer" min="18" max="25" step="1" value="18" class="w-full" oninput="updateValues()">
+                                <div class="flex justify-between text-[11px] text-slate-400 mt-2 font-medium">
+                                    <span>18 J.</span><span>25 J.</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    Die Kinderzulage wird bis zum 18. Lebensjahr des Kindes berücksichtigt. Beim <strong>Auszahlplan</strong> wird eine Entnahme bis zum 90. Lebensjahr bei 1,5 % p.a. Rendite (nach Kosten/Inflation) in der Rentenphase angenommen. Bei der <strong>Verrentung</strong> wird ein garantierter Rentenfaktor von 30 € (pro 10.000 € Kapital) angenommen.
-                    <div class="mt-2 text-xs">
-                        Dieser Rechner basiert auf dem Entwurf des BMF zur Reform der privaten Altersvorsorge (Stand 2024/2025). Die Gesetzgebung ist noch nicht final, Details können sich ändern. Die Berechnungen dienen ausschließlich der Veranschaulichung.
-                    </div>
-                </div>
+                </details>
             </div>
         </div>
     </div>
@@ -498,6 +578,15 @@
 
         const fmt = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
 
+        function formatRiesterInput(input) {
+            let val = input.value.replace(/[^0-9]/g, '');
+            if (val) {
+                input.value = new Intl.NumberFormat('de-DE').format(parseInt(val, 10)) + ' €';
+            } else {
+                input.value = '';
+            }
+        }
+
         function updateSliderBackground(slider) {
             const min = parseFloat(slider.min) || 0;
             const max = parseFloat(slider.max) || 100;
@@ -510,10 +599,23 @@
             const ageSlider = document.getElementById('slider-age');
             const savingsSlider = document.getElementById('slider-savings');
             const returnSlider = document.getElementById('input-return');
+            
+            const rentenbeginnSlider = document.getElementById('slider-rentenbeginn');
+            const taxSlider = document.getElementById('slider-tax');
+            const endalterSlider = document.getElementById('slider-endalter');
+            const payoutReturnSlider = document.getElementById('slider-payout-return');
+            const rentenfaktorSlider = document.getElementById('slider-rentenfaktor');
+            const kinderzulageDauerSlider = document.getElementById('slider-kinderzulage-dauer');
 
             updateSliderBackground(ageSlider);
             updateSliderBackground(savingsSlider);
             updateSliderBackground(returnSlider);
+            updateSliderBackground(rentenbeginnSlider);
+            updateSliderBackground(taxSlider);
+            updateSliderBackground(endalterSlider);
+            updateSliderBackground(payoutReturnSlider);
+            updateSliderBackground(rentenfaktorSlider);
+            updateSliderBackground(kinderzulageDauerSlider);
 
             const age = parseInt(ageSlider.value);
             const savings = parseInt(savingsSlider.value);
@@ -521,15 +623,47 @@
             const returnRateInput = parseFloat(returnSlider.value);
             const payoutTypeRadio = document.querySelector('input[name="payout_type"]:checked');
             const payoutType = payoutTypeRadio ? payoutTypeRadio.value : 'auszahlplan';
-            const taxSlider = document.getElementById('slider-tax');
-            updateSliderBackground(taxSlider);
+            
+            const u25Wrap = document.getElementById('u25-wrap');
+            let isU25 = false;
+            if (age < 25) {
+                u25Wrap.classList.remove('hidden');
+                isU25 = document.getElementById('input-u25').checked;
+            } else {
+                u25Wrap.classList.add('hidden');
+            }
+            
+            const hasRiester = document.getElementById('input-riester-transfer').checked;
+            const riesterWrap = document.getElementById('riester-amount-wrap');
+            let riesterAmount = 0;
+            if (hasRiester) {
+                riesterWrap.classList.remove('hidden');
+                let rawRiester = document.getElementById('input-riester-amount').value.replace(/[^0-9]/g, '');
+                riesterAmount = parseInt(rawRiester, 10) || 0;
+            } else {
+                riesterWrap.classList.add('hidden');
+            }
+            
+            const rentenbeginn = parseInt(rentenbeginnSlider.value);
             const taxRate = parseFloat(taxSlider.value);
-            const isU25 = document.getElementById('input-u25').checked;
+            const endalter = parseInt(endalterSlider.value);
+            const payoutReturn = parseFloat(payoutReturnSlider.value);
+            const rentenfaktor = parseFloat(rentenfaktorSlider.value);
+            const kinderzulageDauer = parseInt(kinderzulageDauerSlider.value);
 
             document.getElementById('val-age').innerText = age;
             document.getElementById('val-savings').innerText = savings;
             document.getElementById('val-return').innerText = returnRateInput;
+            document.getElementById('val-rentenbeginn').innerText = rentenbeginn;
             document.getElementById('val-tax').innerText = taxRate;
+            document.getElementById('val-endalter').innerText = endalter;
+            document.getElementById('val-payout-return').innerText = payoutReturn.toString().replace('.', ',');
+            document.getElementById('val-rentenfaktor').innerText = rentenfaktor;
+            document.getElementById('val-kinderzulage-dauer').innerText = kinderzulageDauer;
+            
+            document.getElementById('res-rentenbeginn-text-1').innerText = `Bis Rentenbeginn (Alter ${rentenbeginn})`;
+            document.getElementById('res-rentenbeginn-text-2').innerText = `Bis Rentenbeginn (Alter ${rentenbeginn})`;
+            document.getElementById('res-endalter-text').innerText = endalter;
 
             const star = document.getElementById('star-indicator');
             if(savings === 30) {
@@ -565,11 +699,11 @@
                 }
             }
 
-            calculate(age, savings, children, isU25, childBirthYears, returnRateInput, payoutType, taxRate);
+            calculate(age, savings, children, isU25, childBirthYears, returnRateInput, payoutType, taxRate, rentenbeginn, endalter, payoutReturn, rentenfaktor, kinderzulageDauer, riesterAmount);
         }
 
-        function calculate(age, savingsMonth, children, isU25, childBirthYears, returnRateInput, payoutType, taxRate) {
-            const retirementAge = 67;
+        function calculate(age, savingsMonth, children, isU25, childBirthYears, returnRateInput, payoutType, taxRate, rentenbeginn, endalter, payoutReturn, rentenfaktor, kinderzulageDauer, riesterAmount) {
+            const retirementAge = rentenbeginn;
             const years = retirementAge - age;
             
             if (years <= 0) return;
@@ -582,9 +716,9 @@
             let dataSubsidy = [];
             let dataInterest = [];
 
-            let totalOwn = 0;
+            let totalOwn = riesterAmount;
             let totalSubsidy = 0;
-            let currentCapital = 0;
+            let currentCapital = riesterAmount;
             let firstYearSubsidy = 0;
 
             for (let y = 1; y <= years; y++) {
@@ -614,7 +748,7 @@
                         const birthYear = childBirthYears[i];
                         const simYear = currentYear + (y - 1);
                         const childAge = simYear - birthYear;
-                        if (childAge < 18) {
+                        if (childAge < kinderzulageDauer) {
                             kinderSubsidy += kinderBasis;
                         }
                     }
@@ -667,7 +801,7 @@
             // Calculate Pension
             let grossPension = 0;
             if (payoutType === 'verrentung') {
-                grossPension = (currentCapital / 10000) * 30;
+                grossPension = (currentCapital / 10000) * rentenfaktor;
                 document.getElementById('res-pension-type-label').innerText = 'Verrentung';
                 document.getElementById('label-pension-title').innerText = 'Monatliche Rente';
                 document.getElementById('label-gross-pension').innerText = 'Bruttorente';
@@ -676,10 +810,14 @@
                 document.getElementById('pension-alert-verrentung').classList.remove('hidden');
             } else {
                 // Auszahlplan
-                const p = 0.015 / 12; // 1.5% p.a.
-                const n = (90 - 67) * 12; // 23 years
-                if (currentCapital > 0 && n > 0 && p > 0) {
-                    grossPension = currentCapital * (p * Math.pow(1 + p, n)) / (Math.pow(1 + p, n) - 1);
+                const p = (payoutReturn / 100) / 12; // dynamic % p.a.
+                const n = (endalter - retirementAge) * 12; // dynamic years
+                if (currentCapital > 0 && n > 0) {
+                    if (p > 0) {
+                        grossPension = currentCapital * (p * Math.pow(1 + p, n)) / (Math.pow(1 + p, n) - 1);
+                    } else {
+                        grossPension = currentCapital / n;
+                    }
                 } else {
                     grossPension = 0;
                 }
