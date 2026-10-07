@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renteneintritts-Rechner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-family: 'Roboto', sans-serif; background: #ffffff; color: #1e293b; min-height: 100vh; padding-bottom: 80px; }
+        .badge-brand { display: inline-block; padding: 4px 14px; border-radius: 20px; background: rgba(0, 111, 185, 0.08); border: 1px solid rgba(0, 111, 185, 0.2); color: #006fb9; font-size: 0.73rem; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 14px; }
+        .card-panel { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03); transition: box-shadow 0.2s, border-color 0.2s; }
+        .card-panel:hover { box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06); }
+        
+        .input-field { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; color: #334155; font-size: 15px; font-weight: 600; border-radius: 8px; padding: 10px 14px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+        .input-field:focus { border-color: #006fb9; box-shadow: 0 0 0 3px rgba(0, 111, 185, 0.15); background: #ffffff; }
+        
+        .toggle-btn { padding: 10px 16px; border: 1px solid #e2e8f0; background: #f8fafc; color: #64748b; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; flex: 1; text-align: center; }
+        .toggle-btn.active { background: #023e84; border-color: #023e84; color: #ffffff; }
+        .toggle-btn:first-child { border-radius: 8px 0 0 8px; }
+        .toggle-btn:last-child { border-radius: 0 8px 8px 0; margin-left: -1px; }
+    </style>
+</head>
+<body class="font-sans antialiased pb-20 bg-white">
+    <div id="advisor-nav" class="max-w-[1440px] mx-auto px-4 sm:px-6 pt-8 mt-4 flex justify-between items-center">
+        <a href="../../index.html" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-[#023e84] transition-colors mb-6 group">
+            <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
+            </svg> Zurück zur Übersicht
+        </a>
+        <button onclick="openCampaignModal()" class="inline-flex items-center gap-2 text-sm font-bold text-[#006fb9] bg-[#e8f0fa] hover:bg-[#cce0f5] px-4 py-2 rounded-xl transition-colors mb-6 shadow-sm">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m8 17 4 4 4-4"></path>
+            </svg> Kampagnen-Material
+        </button>
+    </div>
+
+    <header id="main-header" class="text-center pb-8 pt-4 px-4">
+        <div class="badge-brand">Renten-Planung</div>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-[#023e84] mb-4 tracking-tight">Renteneintritts-Rechner</h1>
+        <p class="text-slate-500 max-w-2xl mx-auto text-[15px] leading-relaxed">
+            Berechnen Sie, welche finanziellen Auswirkungen ein früherer oder späterer Rentenbeginn hat.
+        </p>
+    </header>
+
+    <div class="max-w-[1440px] mx-auto px-4 md:px-6" id="main-calc-wrap">
+        <div class="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 xl:gap-8 items-start">
+            
+            <!-- Left Column: Inputs -->
+            <div class="lg:sticky lg:top-8">
+                <div class="card-panel p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <line x1="4" x2="20" y1="21" y2="21" />
+                                <line x1="4" x2="20" y1="14" y2="14" />
+                                <line x1="4" x2="20" y1="7" y2="7" />
+                                <polyline points="14 17 14 21 18 21" />
+                                <polyline points="8 10 8 14 12 14" />
+                                <polyline points="14 3 14 7 18 7" />
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-bold text-[#023e84]">Eingabe</h2>
+                    </div>
+
+                    <!-- Person -->
+                    <div class="mb-6">
+                        <label class="block text-[15px] font-semibold text-slate-700 mb-2">Geburtsdatum</label>
+                        <input type="date" id="input-birthdate" class="input-field" value="1990-01-01" onchange="calculate()">
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-6 mb-6">
+                        <h3 class="font-bold text-[#023e84] mb-4">Erwerbsleben</h3>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-[13px] font-semibold text-slate-500 mb-2">Arbeitsbeginn (Monat)</label>
+                                <input type="number" id="input-work-start-month" class="input-field" value="11" min="1" max="12" onchange="calculate()">
+                            </div>
+                            <div>
+                                <label class="block text-[13px] font-semibold text-slate-500 mb-2">Arbeitsbeginn (Jahr)</label>
+                                <input type="number" id="input-work-start-year" class="input-field" value="2000" min="1950" max="2100" onchange="calculate()">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-[13px] font-semibold text-slate-500 mb-2">Lücken im Versicherungsverlauf (Monate)</label>
+                            <input type="number" id="input-gaps" class="input-field" value="0" min="0" onchange="calculate()">
+                        </div>
+                        <div>
+                            <label class="block text-[13px] font-semibold text-slate-500 mb-2">Monatsbruttoentgelt (€)</label>
+                            <input type="text" id="input-salary" class="input-field" value="4.000" oninput="formatCurrencyInput(this); calculate()">
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-6">
+                        <h3 class="font-bold text-[#023e84] mb-4">Rentenansprüche</h3>
+                        <label class="block text-[13px] font-semibold text-slate-500 mb-2">Kennen Sie Ihre Ansprüche?</label>
+                        <div class="flex mb-4">
+                            <button class="toggle-btn" id="btn-knows-pension-no" onclick="setKnowsPension(false)">nein</button>
+                            <button class="toggle-btn active" id="btn-knows-pension-yes" onclick="setKnowsPension(true)">ja</button>
+                        </div>
+                        <div id="wrap-pension-amount">
+                            <label class="block text-[13px] font-semibold text-slate-500 mb-2">Regelaltersrente (€)</label>
+                            <input type="text" id="input-pension-amount" class="input-field" value="1.500" oninput="formatCurrencyInput(this); calculate()">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Column: Results -->
+            <div class="min-w-0">
+                <div class="mb-6">
+                    <h3 class="text-[#023e84] font-bold text-lg mb-2">Auswirkung des Renteneintrittsalters:</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
+                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-sm font-medium text-slate-500">Kapitalbedarf je Monat früher</span>
+                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10h12"/><path stroke-linecap="round" stroke-linejoin="round" d="M4 14h9"/><path stroke-linecap="round" stroke-linejoin="round" d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
+                            <span id="out-capital-need">1.799 €</span>
+                        </div>
+                        <div class="text-xs text-[#006fb9] mt-1 font-medium">zum Rentenbeginn</div>
+                    </div>
+                    
+                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-sm font-medium text-slate-500">Regelaltersgrenze</span>
+                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
+                            <span id="out-rag">mit 67 Jahren</span>
+                        </div>
+                        <div class="text-xs text-[#006fb9] mt-1 font-medium" id="out-birthyear">Jahrgang 1990</div>
+                    </div>
+                    
+                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-sm font-medium text-slate-500">Abschlag / Zuschlag</span>
+                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-[#991b1b] flex items-baseline gap-1 mt-1">
+                            <span id="out-penalty">- 7,53 €</span>
+                        </div>
+                        <div class="text-xs text-[#006fb9] mt-1 font-medium" id="out-bonus">Zuschlag + 10,53 € je Monat später</div>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-8">
+                    <div class="border-b border-slate-100 flex gap-6 pb-2">
+                        <button class="pb-2 border-b-2 border-[#023e84] font-bold text-[#023e84] text-[15px]">Renten-Differenz</button>
+                    </div>
+                    <div class="h-[350px] mt-6">
+                        <canvas id="pensionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Insights -->
+                <h3 class="text-lg font-bold text-[#023e84] mb-4">Smart Insights</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                        <div class="bg-[#e8f0fa] border border-[#cce0f5] rounded-xl p-4 flex gap-3">
+                            <div class="mt-0.5 text-[#006fb9] shrink-0">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                            </div>
+                            <div class="text-[13px] text-[#023e84] leading-relaxed">
+                                <b>Für jeden Monat</b>, den Sie vor der Regelaltersgrenze in Rente gehen, benötigen Sie zum Zeitpunkt des Rentenbeginns ein Kapital von <b id="insight-capital">1.799 €</b>, um die Kürzung auszugleichen.
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex gap-3">
+                            <div class="mt-0.5 text-slate-400 shrink-0">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+                            </div>
+                            <div class="text-[13px] text-slate-600 leading-relaxed">
+                                Ihr <b>frühester Rentenbeginn</b> ist <b id="insight-early">mit 63 Jahren</b> möglich (ggf. mit Abschlägen).
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex gap-3">
+                            <div class="mt-0.5 text-slate-400 shrink-0">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <div class="text-[13px] text-slate-600 leading-relaxed" id="insight-basis">
+                                Grundlage Ihrer Prognose ist Ihre angegebene Renteninformation.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Details Table -->
+                <div class="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-8 overflow-hidden">
+                    <table class="w-full text-left text-[14px] text-slate-600">
+                        <tr class="border-b border-slate-200">
+                            <td class="py-3 pr-4">Regelaltersgrenze</td>
+                            <td class="py-3 font-bold text-[#023e84] text-right" id="tab-rag">mit 67 Jahren</td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="py-3 pr-4">Abschlagsfreie Rente mit 63 Jahren möglich</td>
+                            <td class="py-3 font-bold text-[#023e84] text-right" id="tab-63">nein</td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="py-3 pr-4">Abschlagsfreie Rente mit 65 Jahren möglich</td>
+                            <td class="py-3 font-bold text-[#023e84] text-right" id="tab-65">nein</td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="py-3 pr-4">Frühester Rentenbeginn</td>
+                            <td class="py-3 font-bold text-[#023e84] text-right" id="tab-early">mit 63 Jahren</td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="py-3 pr-4">1. Monat vorgezogene Rente reduziert die Versorgung um</td>
+                            <td class="py-3 font-bold text-[#023e84] text-right" id="tab-pen">7,53 €</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 pr-4">1. Monat späterer Rentenbeginn erhöht die Versorgung um</td>
+                            <td class="py-3 font-bold text-[#023e84] text-right" id="tab-bon">10,53 €</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div id="client-cta-section" class="hidden mt-6 mb-16 flex flex-col sm:flex-row gap-4">
+                    <!-- Button 1: Termin vereinbaren -->
+                    <a id="wa-contact-link" href="#" class="flex-1 bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-4 px-6 rounded-2xl shadow-[0_8px_20px_rgba(2,62,132,0.25)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                        <span>Berater kontaktieren</span>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Marketing Modal -->
+    <div id="campaign-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white/95 backdrop-blur z-10">
+                <h3 class="font-extrabold text-lg text-[#023e84] flex items-center gap-2">
+                    <svg class="w-5 h-5 text-[#006fb9]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m8 17 4 4 4-4"></path></svg>
+                    Kampagnen-Material
+                </h3>
+                <button onclick="closeCampaignModal()" class="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-100 rounded-full">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto">
+                <p class="text-sm text-slate-500 mb-6 leading-relaxed">Nutzen Sie diese Vorlagen, um Ihre Mandanten auf die Finanzierungslücke bei einem früheren Renteneintritt aufmerksam zu machen.</p>
+                
+                <!-- WhatsApp -->
+                <div>
+                    <div class="flex justify-between items-end mb-3">
+                        <h4 class="font-bold text-[#023e84] flex items-center gap-2"><svg class="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>WhatsApp / Messenger</h4>
+                        <button onclick="openWhatsAppDirect('copy-wa')" class="text-xs font-bold text-white bg-[#25D366] hover:bg-[#20bd5a] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>Direkt in WhatsApp öffnen</button>
+                    </div>
+                    <div id="copy-wa" class="bg-slate-50 p-4 rounded-xl text-sm text-slate-700 leading-relaxed border border-slate-100 font-mono whitespace-pre-wrap">Träumst du auch davon, früher in Rente zu gehen? Jeder Monat früher kostet allerdings echtes Geld! Ich habe gerade ausgerechnet, wie viel Kapital für mein Ziel nötig ist. 
+
+Finde heraus, wie groß deine Lücke ist und was du tun kannst: [Link zum Rechner] 🚀 
+
+Melde dich danach gerne, dann planen wir gemeinsam deine Strategie!</div>
+                </div>
+
+                <!-- Social Media -->
+                <div class="mt-8">
+                    <div class="flex justify-between items-end mb-3">
+                        <h4 class="font-bold text-[#023e84] flex items-center gap-2"><svg class="w-5 h-5 text-[#006fb9]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>Social Media (LinkedIn, Insta, FB)</h4>
+                        <button onclick="copyToClipboard('copy-social', this)" class="text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span>Kopieren</span></button>
+                    </div>
+                    <div id="copy-social" class="bg-slate-50 p-4 rounded-xl text-sm text-slate-700 leading-relaxed border border-slate-100 font-mono whitespace-pre-wrap">Freiheit oder Vollzeit? Wann wollen Sie WIRKLICH in Rente gehen? 🏖️
+
+Rente mit 63 klingt super – aber wussten Sie, dass Sie für jeden Monat, den Sie früher aufhören, signifikante Einbußen in Kauf nehmen müssen?
+
+Wir haben das Ganze mal in harte Euro-Beträge umgerechnet. Finden Sie in unserem neuen Rechner heraus, welches Kapital Sie heute ansparen müssen, um Ihren frühen Renteneintritt zu finanzieren!
+
+👉 Hier geht's zum Selbst-Check: [Link zum Rechner]
+
+Sie wollen aus dem Hamsterrad aussteigen? Lassen Sie uns sprechen – gemeinsam erarbeiten wir Ihre Strategie.</div>
+                </div>
+
+                <!-- E-Mail -->
+                <div class="mt-8">
+                    <div class="flex justify-between items-end mb-3">
+                        <h4 class="font-bold text-[#023e84] flex items-center gap-2"><svg class="w-5 h-5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>E-Mail Newsletter</h4>
+                        <button onclick="copyToClipboard('copy-email', this)" class="text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span>Kopieren</span></button>
+                    </div>
+                    <div id="copy-email" class="bg-slate-50 p-4 rounded-xl text-sm text-slate-700 leading-relaxed border border-slate-100 font-mono whitespace-pre-wrap">Betreff: Rente mit 63: Was kostet Sie Ihre Freiheit?
+
+Hallo,
+
+wir alle träumen davon, den Ruhestand früher zu genießen. Doch die gesetzlichen Hürden sind hoch: Jeder Monat, den Sie vor der regulären Regelaltersgrenze in Rente gehen, kostet Sie bares Geld in Form von Rentenabschlägen.
+
+Aber wie viel Kapital brauchen Sie wirklich, um diese Lücke zu schließen?
+
+In unserem neuen Renteneintritts-Rechner können Sie Ihre ganz persönliche Situation in unter einer Minute simulieren. Tragen Sie einfach Ihr Geburtsjahr und Ihr Wunschalter ein:
+
+👉 [Link zum Rechner]
+
+Wenn Sie Ihre Zahl kennen, stehe ich Ihnen gerne zur Verfügung, um die passenden Strategien zu besprechen, wie wir dieses Ziel gemeinsam erreichen können. 
+
+Beste Grüße,
+Ihr Berater</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Logic -->
+    <script>
+        function openCampaignModal() {
+            document.getElementById('campaign-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCampaignModal() {
+            document.getElementById('campaign-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function copyToClipboard(elementId, btn) {
+            const el = document.getElementById(elementId);
+            const text = el.innerText || el.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = `<svg class="w-4 h-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg><span class="text-green-600">Kopiert!</span>`;
+                setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+            });
+        }
+
+        function openWhatsAppDirect(elementId) {
+            const el = document.getElementById(elementId);
+            let text = el.innerText || el.textContent;
+            const encodedText = encodeURIComponent(text);
+            window.location.href = `whatsapp://send?text=${encodedText}`;
+        }
+
+        let knowsPension = true;
+        let pensionChart = null;
+
+        const RENTENWERT = 39.32;
+        const DURCHSCHNITTSENTGELT = 45358;
+        const FAKTOR_KAPITALBEDARF = 214.56;
+
+        function setKnowsPension(val) {
+            knowsPension = val;
+            document.getElementById('btn-knows-pension-yes').classList.toggle('active', val);
+            document.getElementById('btn-knows-pension-no').classList.toggle('active', !val);
+            
+            const wrap = document.getElementById('wrap-pension-amount');
+            wrap.style.display = val ? 'block' : 'none';
+            calculate();
+        }
+
+        function formatCurrencyInput(input) {
+            let val = input.value.replace(/[^0-9]/g, '');
+            if (val === '') { input.value = ''; return; }
+            val = parseInt(val, 10);
+            input.value = new Intl.NumberFormat('de-DE').format(val);
+        }
+
+        function calculateRAG(birthYear, birthMonth) {
+            if (birthYear <= 1946) return { years: 65, months: 0 };
+            if (birthYear >= 1964) return { years: 67, months: 0 };
+            
+            if (birthYear >= 1947 && birthYear <= 1958) {
+                return { years: 65, months: (birthYear - 1946) };
+            }
+            if (birthYear >= 1959 && birthYear <= 1963) {
+                return { years: 66, months: (birthYear - 1958) * 2 };
+            }
+            return { years: 67, months: 0 };
+        }
+
+        function calculate() {
+            const birthdate = new Date(document.getElementById('input-birthdate').value);
+            if(isNaN(birthdate.getTime())) return;
+            
+            const birthYear = birthdate.getFullYear();
+            const birthMonth = birthdate.getMonth() + 1;
+            
+            // RAG
+            const rag = calculateRAG(birthYear, birthMonth);
+            let ragText = `mit ${rag.years} Jahren`;
+            if (rag.months > 0) ragText += ` und ${rag.months} Monaten`;
+
+            // Beitragsjahre
+            const workStartYear = parseInt(document.getElementById('input-work-start-year').value) || birthYear + 20;
+            const workStartMonth = parseInt(document.getElementById('input-work-start-month').value) || 1;
+            const gaps = parseInt(document.getElementById('input-gaps').value) || 0;
+            
+            let workEndYear = birthYear + rag.years;
+            let workEndMonth = birthMonth + rag.months;
+            if (workEndMonth > 12) { workEndYear++; workEndMonth -= 12; }
+            
+            const totalWorkMonths = ((workEndYear - workStartYear) * 12 + (workEndMonth - workStartMonth)) - gaps;
+            const beitragsjahre = Math.max(0, totalWorkMonths / 12);
+            
+            // Rentenhöhe
+            let basePension = 0;
+            if (knowsPension) {
+                basePension = parseInt(document.getElementById('input-pension-amount').value.replace(/[^0-9]/g, '')) || 0;
+                document.getElementById('insight-basis').innerHTML = `Grundlage Ihrer Prognose ist Ihre angegebene <b>Renteninformation</b>.`;
+            } else {
+                const salary = parseInt(document.getElementById('input-salary').value.replace(/[^0-9]/g, '')) || 0;
+                const epPerYear = (salary * 12) / DURCHSCHNITTSENTGELT;
+                basePension = (epPerYear * beitragsjahre) * RENTENWERT;
+                document.getElementById('insight-basis').innerHTML = `Ihre Rente wurde aus dem Verdienst geschätzt (bei <b>${Math.round(beitragsjahre)} Beitragsjahren</b>).`;
+            }
+
+            // Abschlag/Zuschlag
+            const penaltyPerMonth = basePension * 0.003;
+            const bonusPerMonth = basePension * 0.005;
+            const fmt = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+            
+            // UI
+            document.getElementById('out-rag').innerText = ragText;
+            document.getElementById('out-birthyear').innerText = `Jahrgang ${birthYear}`;
+            document.getElementById('out-penalty').innerText = `- ${fmt.format(penaltyPerMonth)}`;
+            document.getElementById('out-bonus').innerText = `Zuschlag + ${fmt.format(bonusPerMonth)} je Monat später`;
+            
+            const capitalNeed = penaltyPerMonth * FAKTOR_KAPITALBEDARF;
+            const capitalFmt = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(capitalNeed);
+            document.getElementById('out-capital-need').innerText = capitalFmt;
+            document.getElementById('insight-capital').innerText = capitalFmt;
+            
+            const canRetireAt63 = beitragsjahre >= 35;
+            let earlyAge = canRetireAt63 ? 63 : rag.years;
+            document.getElementById('insight-early').innerText = `mit ${earlyAge} Jahren`;
+            
+            document.getElementById('tab-rag').innerText = ragText;
+            document.getElementById('tab-63').innerText = (beitragsjahre >= 45 && rag.years > 63) ? 'ja' : 'nein';
+            document.getElementById('tab-65').innerText = (beitragsjahre >= 45) ? 'ja' : 'nein';
+            document.getElementById('tab-early').innerText = `mit ${earlyAge} Jahren`;
+            document.getElementById('tab-pen').innerText = fmt.format(penaltyPerMonth);
+            document.getElementById('tab-bon').innerText = fmt.format(bonusPerMonth);
+
+            updateChart(rag, basePension, penaltyPerMonth, bonusPerMonth);
+        }
+
+        function updateChart(rag, basePension, penaltyPerMonth, bonusPerMonth) {
+            const ctx = document.getElementById('pensionChart').getContext('2d');
+            let labels = [];
+            let data = [];
+            
+            for (let age = 63; age <= 70; age++) {
+                labels.push(`mit ${age} J.`);
+                const diffMonths = (age - rag.years) * 12 - rag.months;
+                let diffValue = 0;
+                if (diffMonths < 0) diffValue = diffMonths * penaltyPerMonth;
+                else if (diffMonths > 0) diffValue = diffMonths * bonusPerMonth;
+                data.push(diffValue);
+            }
+
+            if (pensionChart) pensionChart.destroy();
+
+            pensionChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Differenz',
+                        data: data,
+                        borderColor: function(context) {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return;
+                            const yScale = chart.scales.y;
+                            const yZero = yScale.getPixelForValue(0);
+                            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                            gradient.addColorStop(0, '#023e84');
+                            gradient.addColorStop(yZero / chartArea.bottom || 0.5, '#023e84');
+                            gradient.addColorStop(yZero / chartArea.bottom || 0.5, '#991b1b');
+                            gradient.addColorStop(1, '#991b1b');
+                            return gradient;
+                        },
+                        backgroundColor: function(context) {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return;
+                            const yScale = chart.scales.y;
+                            const yZero = yScale.getPixelForValue(0);
+                            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                            gradient.addColorStop(0, 'rgba(2, 62, 132, 0.2)');
+                            gradient.addColorStop(yZero / chartArea.bottom || 0.5, 'rgba(2, 62, 132, 0.0)');
+                            gradient.addColorStop(yZero / chartArea.bottom || 0.5, 'rgba(153, 27, 27, 0.0)');
+                            gradient.addColorStop(1, 'rgba(153, 27, 27, 0.2)');
+                            return gradient;
+                        },
+                        fill: true,
+                        tension: 0.1,
+                        borderWidth: 2,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#023e84',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let val = context.parsed.y;
+                                    let sign = val > 0 ? '+' : '';
+                                    return sign + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(val);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: '#f1f5f9', drawBorder: false },
+                            ticks: {
+                                font: { family: 'Roboto', size: 12 }, color: '#64748b',
+                                callback: function(value) { return value + ' €'; }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Roboto', size: 12, weight: '500' }, color: '#64748b' }
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'customXAxisStyles',
+                    afterDraw: (chart) => {
+                        const ctx = chart.ctx;
+                        const xAxis = chart.scales.x;
+                        xAxis.ticks.forEach((tick, index) => {
+                            if (tick.label.includes(rag.years.toString())) {
+                                const x = xAxis.getPixelForTick(index);
+                                const y = xAxis.bottom + 15;
+                                ctx.save();
+                                ctx.font = 'bold 12px Roboto';
+                                ctx.fillStyle = '#023e84';
+                                ctx.textAlign = 'center';
+                                ctx.fillText(tick.label, x, y);
+                                ctx.restore();
+                            }
+                        });
+                    }
+                }]
+            });
+        }
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const baseUrl = window.location.href.split('?')[0];
+        const clientUrl = baseUrl + '?mode=client';
+
+        function updateCampaignLinks() {
+            const wa = document.getElementById('copy-wa');
+            const social = document.getElementById('copy-social');
+            const email = document.getElementById('copy-email');
+            
+            if (wa) wa.innerText = wa.innerText.replace(/\[Link zum Rechner\]/g, clientUrl);
+            if (social) social.innerText = social.innerText.replace(/\[Link zum Rechner\]/g, clientUrl);
+            if (email) email.innerText = email.innerText.replace(/\[Link zum Rechner\]/g, clientUrl);
+        }
+
+        window.onload = function() {
+            if (urlParams.get('mode') === 'client') {
+                document.getElementById('advisor-nav').classList.add('hidden');
+                document.getElementById('client-cta-section').classList.remove('hidden');
+            } else {
+                updateCampaignLinks();
+            }
+            setKnowsPension(false);
+        };
+    </script>
+</body>
+</html>

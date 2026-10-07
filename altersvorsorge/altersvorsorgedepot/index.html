@@ -69,9 +69,9 @@
                             <label class="block text-[15px] font-semibold text-slate-700">Aktuelles Alter</label>
                             <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"><span id="val-age">22</span> Jahre</div>
                         </div>
-                        <input type="range" id="slider-age" min="18" max="67" value="22" class="w-full mt-2" oninput="updateValues()">
+                        <input type="range" id="slider-age" min="18" max="60" value="22" class="w-full mt-2" oninput="updateValues()">
                         <div class="flex justify-between text-xs text-slate-400 mt-2 font-medium">
-                            <span>18 J</span><span>67 J</span>
+                            <span>18 J</span><span>60 J</span>
                         </div>
                     </div>
                     
@@ -165,10 +165,10 @@
 
                     <div class="mb-2 pt-2">
                         <div class="flex justify-between items-center mb-6">
-                            <label class="block text-[15px] font-semibold text-slate-700">Erwartete Rendite</label>
-                            <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"><span id="val-return">6</span> % p.a.</div>
+                            <label class="block text-[15px] font-semibold text-slate-700">Erwartete Netto-Rendite</label>
+                            <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"><span id="val-return">4</span> % p.a.</div>
                         </div>
-                        <input type="range" id="input-return" min="0" max="10" step="0.5" value="6" class="w-full mt-2" oninput="updateValues()">
+                        <input type="range" id="input-return" min="0" max="10" step="0.5" value="4" class="w-full mt-2" oninput="updateValues()">
                         <div class="flex justify-between text-xs text-slate-400 mt-2 font-medium">
                             <span>0 %</span><span>10 %</span>
                         </div>
@@ -451,7 +451,7 @@
                         pointHoverRadius: 5
                     },
                     {
-                        label: 'Ertrag (6% p.a.)',
+                        label: 'Ertrag (4% p.a.)',
                         data: [],
                         borderColor: '#023e84',
                         backgroundColor: function(context) {
@@ -565,7 +565,7 @@
                         grid: { color: '#f1f5f9', drawBorder: false },
                         ticks: {
                             font: { family: 'Roboto', size: 11 }, color: '#94a3b8',
-                            callback: function(value) { return value / 1000 + 'k €'; }
+                            callback: function(value) { return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value); }
                         }
                     },
                     x: {
