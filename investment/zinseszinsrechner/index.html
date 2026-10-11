@@ -64,7 +64,7 @@
             font-weight: 600;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: #006fb9;
+            color: #023e84;
             background: #e8f0fa;
             padding: 4px 14px;
             border-radius: 20px;
@@ -149,7 +149,11 @@
     <div id="root"></div>
 
     <footer class="footer">
-        Internes Beratungstool &nbsp;·&nbsp; Nur für den internen Gebrauch
+        <div class="flex items-center justify-center gap-3">
+            <a href="#" onclick="return false;" class="hover:text-slate-600 transition-colors">Impressum</a>
+            <span>·</span>
+            <a href="#" onclick="return false;" class="hover:text-slate-600 transition-colors">Datenschutz</a>
+        </div>
     </footer>
 
     <script type="text/babel">
@@ -212,7 +216,7 @@
                                 </div>
                             )}
                         </label>
-                        <div className={`font-bold px-3 py-1 rounded-lg whitespace-nowrap ${isDark ? 'text-white bg-white/10' : 'text-slate-900 bg-slate-100'}`}>
+                        <div className={`font-bold px-3 py-1 rounded-lg whitespace-nowrap text-sm ${isDark ? 'text-white bg-white/10' : 'text-[#023e84] bg-[#e8f0fa]'}`}>
                             {displayValue}
                         </div>
                     </div>
@@ -360,8 +364,8 @@
                     {/* TOP LEFT: Inputs */}
                     <div className="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col gap-6 lg:row-span-1">
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 bg-[#006fb9]/10 text-[#006fb9] rounded-xl">
-                                <SlidersIcon />
+                            <div className="w-10 h-10 rounded-xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center flex-shrink-0">
+                                <SlidersIcon className="w-5 h-5 text-[#023e84]" />
                             </div>
                             <h2 className="text-xl font-bold text-[#023e84]">Eingabe</h2>
                         </div>
@@ -379,8 +383,8 @@
                             <div className="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
                                 <div className="flex justify-between items-start mb-1">
                                     <span className="text-sm font-medium text-slate-500">Gesamte Einzahlungen</span>
-                                    <div className="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg">
-                                        <PiggyBankIcon className="w-5 h-5" />
+                                    <div className="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                                        <PiggyBankIcon className="w-5 h-5 text-[#023e84]" />
                                     </div>
                                 </div>
                                 <div className="text-2xl font-bold text-[#023e84]">{formatCurrency(eingezahltTotal)}</div>
@@ -389,8 +393,8 @@
                             <div className="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
                                 <div className="flex justify-between items-start mb-1">
                                     <span className="text-sm font-medium text-slate-500">Ertrag</span>
-                                    <div className="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg">
-                                        <TrendingUpIcon className="w-5 h-5" />
+                                    <div className="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                                        <TrendingUpIcon className="w-5 h-5 text-[#023e84]" />
                                     </div>
                                 </div>
                                 <div className="text-2xl font-bold text-[#023e84]">{formatCurrency(zinsenTotal)}</div>
@@ -399,8 +403,8 @@
                             <div className="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
                                 <div className="flex justify-between items-start mb-1">
                                     <span className="text-sm font-medium text-slate-500">Endkapital</span>
-                                    <div className="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg">
-                                        <EuroIcon className="w-5 h-5" />
+                                    <div className="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                                        <EuroIcon className="w-5 h-5 text-[#023e84]" />
                                     </div>
                                 </div>
                                 <div className="text-2xl font-bold text-[#023e84]">{formatCurrency(endkapital)}</div>
@@ -453,8 +457,8 @@
                     {/* BOTTOM LEFT: Kosten des Wartens */}
                     <div className="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 self-stretch lg:row-span-1 flex flex-col">
                         <div className="flex items-center gap-3 mb-4 text-slate-500">
-                            <div className="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg">
-                                <ClockIcon2 className="w-5 h-5" />
+                            <div className="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                                <ClockIcon2 className="w-5 h-5 text-[#023e84]" />
                             </div>
                             <h4 className="text-sm font-bold text-[#023e84] tracking-wider uppercase">Kosten des Wartens</h4>
                         </div>
@@ -487,8 +491,8 @@
                     {/* BOTTOM RIGHT: Zeitfaktor */}
                     <div className="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 self-stretch lg:row-span-1 flex flex-col justify-center">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg">
-                                <ClockIcon2 className="w-5 h-5" />
+                            <div className="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                                <ClockIcon2 className="w-5 h-5 text-[#023e84]" />
                             </div>
                             <h4 className="text-sm font-bold text-[#023e84] tracking-wider uppercase">Zeitfaktor — Der mächtigste Hebel</h4>
                         </div>

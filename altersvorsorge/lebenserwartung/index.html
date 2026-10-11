@@ -35,8 +35,8 @@
 
         .badge-brand {
             display: inline-block; padding: 4px 14px; border-radius: 20px;
-            background: rgba(0, 111, 185, 0.08); border: 1px solid rgba(0, 111, 185, 0.2);
-            color: #006fb9; font-size: 0.73rem; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 14px;
+            background: #e8f0fa;
+            color: #023e84; font-size: 0.73rem; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 14px;
         }
 
         .card-panel {
@@ -115,7 +115,7 @@
             Zurück zur Übersicht
         </a>
         
-        <button onclick="openCampaignModal()" class="inline-flex items-center gap-2 text-sm font-bold text-[#006fb9] bg-[#e8f0fa] hover:bg-[#cce0f5] px-4 py-2 rounded-xl transition-colors mb-6">
+        <button onclick="openCampaignModal()" class="inline-flex items-center gap-2 text-sm font-bold text-[#023e84] bg-[#e8f0fa] hover:bg-[#dbe9f9] px-4 py-2 rounded-xl transition-all duration-200 mb-6 hover:shadow-[0_4px_12px_rgba(2,62,132,0.08)]">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
                 <path d="M12 12v9"></path>
@@ -160,7 +160,7 @@
             
             <!-- STEP 2 -->
             <div id="sf-step2" style="display: none;">
-                <div class="w-16 h-16 bg-[#e8f0fa] rounded-2xl flex items-center justify-center mx-auto mb-6 text-[#006fb9]">
+                <div class="w-16 h-16 bg-[#e8f0fa] rounded-2xl flex items-center justify-center mx-auto mb-6 text-[#023e84]">
                     <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                 </div>
                 
@@ -373,6 +373,14 @@
                 </details>
             </div>
         </div>
+
+        <footer class="mt-16 pb-8 text-center text-[12px] text-slate-400 border-t border-slate-100 pt-6">
+            <div class="flex items-center justify-center gap-3">
+                <a href="#" onclick="return false;" class="hover:text-slate-600 transition-colors">Impressum</a>
+                <span>·</span>
+                <a href="#" onclick="return false;" class="hover:text-slate-600 transition-colors">Datenschutz</a>
+            </div>
+        </footer>
     </div>
 <script>
     function updateGenderBtns() {

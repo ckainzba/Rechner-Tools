@@ -34,9 +34,8 @@
             display: inline-block;
             padding: 4px 14px;
             border-radius: 20px;
-            background: rgba(0, 111, 185, 0.08);
-            border: 1px solid rgba(0, 111, 185, 0.2);
-            color: #006fb9;
+            background: #e8f0fa;
+            color: #023e84;
             font-size: 0.73rem;
             font-weight: 600;
             letter-spacing: 0.8px;
@@ -121,7 +120,7 @@
             Zurück zur Übersicht
         </a>
         
-        <button onclick="openCampaignModal()" class="inline-flex items-center gap-2 text-sm font-bold text-[#006fb9] bg-[#e8f0fa] hover:bg-[#cce0f5] px-4 py-2 rounded-xl transition-colors mb-6">
+        <button onclick="openCampaignModal()" class="inline-flex items-center gap-2 text-sm font-bold text-[#023e84] bg-[#e8f0fa] hover:bg-[#dbe9f9] px-4 py-2 rounded-xl transition-all duration-200 mb-6 hover:shadow-[0_4px_12px_rgba(2,62,132,0.08)]">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
                 <path d="M12 12v9"></path>
@@ -376,8 +375,8 @@
                             <div class="flex justify-between items-start mb-2">
                                 <span class="text-sm font-medium text-slate-500">Diszipliniert (Markt)</span>
                                 <div
-                                    class="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg transition-transform group-hover:scale-110">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+                                    class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg transition-transform group-hover:scale-110">
+                                    <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" stroke-width="2"
                                         stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                                         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
                                         <polyline points="17 6 23 6 23 12"></polyline>
@@ -393,8 +392,8 @@
                             <div class="flex justify-between items-start mb-2">
                                 <span class="text-sm font-medium text-slate-500">Durchschnittsanleger</span>
                                 <div
-                                    class="p-2 bg-[#006fb9]/10 text-[#006fb9] rounded-lg transition-transform group-hover:scale-110">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+                                    class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg transition-transform group-hover:scale-110">
+                                    <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" stroke-width="2"
                                         stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                                         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                                     </svg>
@@ -518,6 +517,14 @@
         <div class="mt-10 text-[11px] text-slate-400 text-center max-w-4xl mx-auto leading-relaxed px-4" id="legal-disclaimer">
             <span class="font-bold">Wichtiger Hinweis:</span> Dieser Rechner dient ausschließlich der Veranschaulichung und stellt keine Anlageberatung oder Anlageempfehlung dar. Die verwendeten Renditen (8,0 % und 4,5 % p.a.) sind Modellannahmen, die auf historischen und wissenschaftlichen Durchschnittswerten (u.a. der DALBAR-Studie) basieren. Historische Marktentwicklungen sind kein verlässlicher Indikator für zukünftige Erträge. Tatsächliche Anlageergebnisse können durch Marktschwankungen, Steuern, Inflation und individuelle Produktkosten (wie z. B. Depot- oder Fondsgebühren) deutlich abweichen.
         </div>
+
+        <footer class="mt-12 pb-8 text-center text-[12px] text-slate-400 border-t border-slate-100 pt-6">
+            <div class="flex items-center justify-center gap-3">
+                <a href="#" onclick="return false;" class="hover:text-slate-600 transition-colors">Impressum</a>
+                <span>·</span>
+                <a href="#" onclick="return false;" class="hover:text-slate-600 transition-colors">Datenschutz</a>
+            </div>
+        </footer>
 
     </div>
 
