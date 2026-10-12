@@ -325,10 +325,10 @@
                         <div class="flex justify-between items-center mb-6">
                             <label class="text-[15px] font-semibold text-slate-700">Anlagedauer</label>
                             <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"
-                                id="yearsDisplay">20 Jahre</div>
+                                id="yearsDisplay">10 Jahre</div>
                         </div>
-                        <input type="hidden" id="years-input" value="20">
-                        <input type="range" id="years-range" min="0" max="50" step="1" value="20" class="w-full mb-3"
+                        <input type="hidden" id="years-input" value="10">
+                        <input type="range" id="years-range" min="0" max="50" step="1" value="10" class="w-full mb-3"
                             oninput="syncYears(this)">
                         <div class="flex justify-between text-xs text-slate-400 font-medium">
                             <span>0 J</span><span>50 J</span>
@@ -511,11 +511,11 @@
 
 
             </div>
-        </div>
 
-        <!-- Disclaimer -->
-        <div class="mt-10 text-[11px] text-slate-400 text-center max-w-4xl mx-auto leading-relaxed px-4" id="legal-disclaimer">
-            <span class="font-bold">Wichtiger Hinweis:</span> Dieser Rechner dient ausschließlich der Veranschaulichung und stellt keine Anlageberatung oder Anlageempfehlung dar. Die verwendeten Renditen (8,0 % und 4,5 % p.a.) sind Modellannahmen, die auf historischen und wissenschaftlichen Durchschnittswerten (u.a. der DALBAR-Studie) basieren. Historische Marktentwicklungen sind kein verlässlicher Indikator für zukünftige Erträge. Tatsächliche Anlageergebnisse können durch Marktschwankungen, Steuern, Inflation und individuelle Produktkosten (wie z. B. Depot- oder Fondsgebühren) deutlich abweichen.
+            <!-- Disclaimer -->
+            <div class="lg:col-span-2 mt-4 text-[11px] text-slate-400 text-center max-w-4xl mx-auto leading-relaxed px-4" id="legal-disclaimer">
+                <span class="font-bold">Wichtiger Hinweis:</span> Dieser Rechner dient ausschließlich der Veranschaulichung und stellt keine Anlageberatung oder Anlageempfehlung dar. Die verwendeten Renditen (8,0 % und 4,5 % p.a.) sind Modellannahmen, die auf historischen und wissenschaftlichen Durchschnittswerten (u.a. der DALBAR-Studie) basieren. Historische Marktentwicklungen sind kein verlässlicher Indikator für zukünftige Erträge. Tatsächliche Anlageergebnisse können durch Marktschwankungen, Steuern, Inflation und individuelle Produktkosten (wie z. B. Depot- oder Fondsgebühren) deutlich abweichen.
+            </div>
         </div>
 
         <footer class="mt-12 pb-8 text-center text-[12px] text-slate-400 border-t border-slate-100 pt-6">
@@ -864,8 +864,17 @@ Herzliche Grüße,
                             label: 'Diszipliniert (Markt)',
                             data: marketData,
                             borderColor: '#006fb9',
-                            backgroundColor: 'rgba(0, 111, 185, 0.1)',
-                            borderWidth: 3,
+                            backgroundColor: function(context) {
+                                const chart = context.chart;
+                                const {ctx, chartArea} = chart;
+                                if (!chartArea) return 'rgba(0, 111, 185, 0.15)';
+                                const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                                gradient.addColorStop(0, 'rgba(0, 111, 185, 0.45)');
+                                gradient.addColorStop(0.6, 'rgba(0, 111, 185, 0.12)');
+                                gradient.addColorStop(1, 'rgba(0, 111, 185, 0.01)');
+                                return gradient;
+                            },
+                            borderWidth: 2,
                             fill: 1, // fill to next dataset (the investor curve)
                             tension: 0.3,
                             pointRadius: 0,
@@ -878,9 +887,17 @@ Herzliche Grüße,
                             label: 'Durchschnittsanleger',
                             data: investorData,
                             borderColor: '#64748b',
-                            backgroundColor: 'transparent',
-                            borderWidth: 3,
-                            fill: false,
+                            backgroundColor: function(context) {
+                                const chart = context.chart;
+                                const {ctx, chartArea} = chart;
+                                if (!chartArea) return 'rgba(100, 116, 139, 0.1)';
+                                const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                                gradient.addColorStop(0, 'rgba(100, 116, 139, 0.22)');
+                                gradient.addColorStop(1, 'rgba(100, 116, 139, 0.01)');
+                                return gradient;
+                            },
+                            borderWidth: 2,
+                            fill: true,
                             tension: 0.3,
                             pointRadius: 0,
                             pointHoverRadius: 6,

@@ -331,6 +331,11 @@
                         <label class="block text-[13px] font-semibold text-[#023e84] mb-1">Terminbuchungs-Link (optional)</label>
                         <input type="url" id="adv-calendly" placeholder="z.B. calendly.com/ihr-name" class="w-full bg-white border border-[#cce0f5] text-slate-700 text-sm rounded-lg focus:ring-[#006fb9] focus:border-[#006fb9] px-3 py-2 outline-none transition-colors" oninput="updateModalLinks()">
                     </div>
+                    <div class="mt-4 pt-4 border-t border-[#cce0f5]/60">
+                        <label class="block text-[13px] font-semibold text-[#023e84] mb-1">Endkunden-Domain (Vercel-Projekt)</label>
+                        <input type="text" id="adv-domain" placeholder="z.B. zulagen-check.vercel.app" class="w-full bg-white border border-[#cce0f5] text-slate-700 text-sm rounded-lg focus:ring-[#006fb9] focus:border-[#006fb9] px-3 py-2 outline-none transition-colors" oninput="updateModalLinks()">
+                        <p class="text-[11px] text-[#006fb9] mt-1">Hierüber wird der saubere Link für Mandanten generiert (z. B. <code>https://zulagen-check.vercel.app</code>).</p>
+                    </div>
                 </div>
                 
                 <!-- WhatsApp -->
@@ -565,20 +570,53 @@ Beste Grüße
         let originalCampaignTexts = {};
 
         function updateModalLinks() {
-            const name = document.getElementById('adv-name').value.trim();
-            const phone = document.getElementById('adv-phone').value.trim();
-            const calendly = document.getElementById('adv-calendly').value.trim();
+            const nameEl = document.getElementById('adv-name');
+            const phoneEl = document.getElementById('adv-phone');
+            const calendlyEl = document.getElementById('adv-calendly');
+            const domainEl = document.getElementById('adv-domain');
+
+            const name = nameEl ? nameEl.value.trim() : '';
+            const phone = phoneEl ? phoneEl.value.trim() : '';
+            const calendly = calendlyEl ? calendlyEl.value.trim() : '';
+            const domainInput = domainEl ? domainEl.value.trim() : '';
             
             // Save to localStorage
             localStorage.setItem('novori_adv_name', name);
             localStorage.setItem('novori_adv_phone', phone);
             localStorage.setItem('novori_adv_calendly', calendly);
+            if (domainInput) localStorage.setItem('novori_adv_domain', domainInput);
             
-            let clientUrl = window.location.href.split('?')[0] + '?mode=client';
-            
+            // Ermittle die Basis-URL für Kunden
+            let clientBase = '';
+            const currentHost = window.location.hostname.toLowerCase();
+            if (currentHost.includes('zulagen-check') || currentHost.startsWith('check.')) {
+                // Wir befinden uns bereits auf der eigenständigen Kunden-Domain
+                clientBase = window.location.origin;
+            } else if (domainInput) {
+                let cleanDom = domainInput.replace(/^https?:\/\//i, '').replace(/\/+$/, '');
+                clientBase = 'https://' + cleanDom;
+            } else {
+                clientBase = 'https://zulagen-check.vercel.app';
+            }
+
+            let clientUrl = clientBase;
+            if (!clientUrl.endsWith('/')) clientUrl += '/';
+
+            // Parameter zusammenbauen:
+            // Wenn die Domain eine eigenständige Zulagen-Check-Domain ist, braucht sie kein "?mode=client"!
+            const isClientDom = clientBase.toLowerCase().includes('zulagen-check') || clientBase.toLowerCase().includes('check.');
+            let params = [];
+            if (!isClientDom) {
+                params.push('mode=client');
+            }
+
             if (name || phone || calendly) {
                 const data = btoa(encodeURIComponent((name || '') + '|' + (phone || '') + '|' + (calendly || '')));
-                clientUrl += '&adv=' + data;
+                params.push('adv=' + data);
+            }
+
+            if (params.length > 0) {
+                clientUrl += '?' + params.join('&');
             }
 
             const elementIds = ['copy-wa', 'copy-social', 'copy-email'];
@@ -588,7 +626,11 @@ Beste Grüße
                     if (!originalCampaignTexts[id]) {
                         originalCampaignTexts[id] = el.innerText;
                     }
-                    el.innerText = originalCampaignTexts[id].replace(/\[Link zum Rechner\]/g, clientUrl);
+                    let updated = originalCampaignTexts[id].replace(/\[Link zum Rechner\]/g, clientUrl);
+                    if (name) {
+                        updated = updated.replace(/\[Ihr Name\]/g, name);
+                    }
+                    el.innerText = updated;
                 }
             });
         }
@@ -644,8 +686,17 @@ Beste Grüße
             document.getElementById('client-start-screen').classList.remove('hidden');
 
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('mode') === 'client') {
-                document.getElementById('advisor-nav').classList.add('hidden');
+            const host = window.location.hostname.toLowerCase();
+            const isClientDomain = host.includes('zulagen-check') || host.startsWith('check.');
+            const isClientMode = isClientDomain || urlParams.get('mode') === 'client';
+
+            if (isClientMode) {
+                // Sicherheitsmaßnahme: Berater-Navigation und Kampagnen-Modal komplett aus dem DOM entfernen
+                const advNav = document.getElementById('advisor-nav');
+                if (advNav) advNav.remove();
+                const campModal = document.getElementById('campaign-modal');
+                if (campModal) campModal.remove();
+
                 document.getElementById('client-intro').classList.remove('hidden');
                 document.getElementById('client-cta-section').classList.remove('hidden');
                 
@@ -717,14 +768,16 @@ Beste Grüße
             const nameField = document.getElementById('adv-name');
             const phoneField = document.getElementById('adv-phone');
             const calendlyField = document.getElementById('adv-calendly');
+            const domainField = document.getElementById('adv-domain');
             
             if (nameField && phoneField && calendlyField) {
                 nameField.value = localStorage.getItem('novori_adv_name') || '';
                 phoneField.value = localStorage.getItem('novori_adv_phone') || '';
                 calendlyField.value = localStorage.getItem('novori_adv_calendly') || '';
-                if (nameField.value || phoneField.value || calendlyField.value) {
-                    updateModalLinks();
+                if (domainField) {
+                    domainField.value = localStorage.getItem('novori_adv_domain') || 'zulagen-check.vercel.app';
                 }
+                updateModalLinks();
             }
         }
 

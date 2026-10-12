@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Altersvorsorgedepot-Rechner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="../../styles.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-family: 'Roboto', sans-serif; background: #ffffff; color: #1e293b; min-height: 100vh; padding-bottom: 80px; }
+        .badge-brand { display: inline-block; padding: 4px 14px; border-radius: 20px; background: #e8f0fa; color: #023e84; font-size: 0.73rem; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 14px; }
+        .card-panel { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03); transition: box-shadow 0.2s, border-color 0.2s; }
+        .card-panel:hover { box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06); }
+        input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 3px; background: #e5e7eb; outline: none; cursor: pointer; transition: all 0.2s ease; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #023e84; cursor: pointer; border: none; box-shadow: 0 2px 4px rgba(2, 62, 132, 0.25); transition: transform 0.15s ease; }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.12); }
+        input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #023e84; cursor: pointer; border: none; box-shadow: 0 2px 4px rgba(2, 62, 132, 0.25); transition: transform 0.15s ease; }
+        input[type=range]::-moz-range-thumb:hover { transform: scale(1.12); }
+        details summary::-webkit-details-marker { display: none; }
+    </style>
+</head>
+<body class="font-sans antialiased pb-20 bg-white">
+    <div id="advisor-nav" class="max-w-[1440px] mx-auto px-4 sm:px-6 pt-8 mt-4">
+        <a href="../../index.html" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-[#023e84] transition-colors mb-6 group">
+            <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
+            </svg> Zurück zur Übersicht
+        </a>
+    </div>
+
+    <header id="main-header" class="text-center pb-8 pt-4 px-4">
+        <div class="badge-brand">Reform der privaten Altersvorsorge</div>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-[#023e84] mb-4 tracking-tight">Altersvorsorgedepot-Rechner</h1>
+        <p class="text-slate-500 max-w-2xl mx-auto text-[15px] leading-relaxed">
+            Berechnen Sie, wie viel Geld Ihnen der Staat im neuen Altersvorsorgedepot dazu schenkt – und wie sich Ihr Vermögen entwickelt.
+        </p>
+    </header>
+
+    <div class="max-w-[1440px] mx-auto px-4 md:px-6" id="main-calc-wrap">
+        <div class="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 xl:gap-8 items-start">
+            
+            <!-- Left Column: Inputs -->
+            <div class="lg:sticky lg:top-8">
+                <div class="card-panel p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <line x1="4" x2="20" y1="21" y2="21" />
+                                <line x1="4" x2="20" y1="14" y2="14" />
+                                <line x1="4" x2="20" y1="7" y2="7" />
+                                <polyline points="14 17 14 21 18 21" />
+                                <polyline points="8 10 8 14 12 14" />
+                                <polyline points="14 3 14 7 18 7" />
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-bold text-[#023e84]">Eingabe</h2>
+                    </div>
+                    
+
+
+                    <!-- Alter -->
+                    <div class="mb-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <label class="block text-[15px] font-semibold text-slate-700">Aktuelles Alter</label>
+                            <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"><span id="val-age">22</span> Jahre</div>
+                        </div>
+                        <input type="range" id="slider-age" min="18" max="60" value="22" class="w-full mt-2" oninput="updateValues()">
+                        <div class="flex justify-between text-xs text-slate-400 mt-2 font-medium">
+                            <span>18 J</span><span>60 J</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Monatliche Sparrate -->
+                    <div class="mb-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <label class="block text-[15px] font-semibold text-slate-700">Monatlicher Eigenbeitrag</label>
+                            <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"><span id="val-savings">30</span> €</div>
+                        </div>
+                        <div class="relative w-full mt-2">
+                            <div id="star-indicator" class="absolute -top-6 w-6 h-6 text-[#023e84] transition-opacity duration-200" style="left: 0; transform: translateX(-50%); opacity: 0; pointer-events: none;">
+                                <svg class="w-full h-full fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            </div>
+                            <input type="range" id="slider-savings" min="0" max="150" value="30" step="5" class="w-full" oninput="updateValues()">
+                        </div>
+                        <div class="flex justify-between text-xs text-slate-400 mt-2 font-medium">
+                            <span>0 €</span><span>150 €</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Riester Übertragung -->
+                    <div class="mb-8">
+                        <div class="mb-2 flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <input id="input-riester-transfer" type="checkbox" class="shrink-0 w-5 h-5 accent-[#023e84] text-[#023e84] bg-white border-slate-300 rounded focus:ring-[#023e84] cursor-pointer" onchange="updateValues()">
+                            <label for="input-riester-transfer" class="text-[15px] font-semibold text-slate-700 cursor-pointer select-none">Riester-Guthaben übertragen?</label>
+                        </div>
+                        <div id="riester-amount-wrap" class="hidden mt-3 px-1">
+                            <label class="block text-[14px] font-semibold text-slate-700 mb-2">Übertragungswert</label>
+                            <input type="text" inputmode="numeric" id="input-riester-amount" placeholder="z. B. 15.000 €" class="w-full bg-white border border-slate-200 text-[#023e84] text-[15px] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#023e84] focus:border-[#023e84] block p-3.5 font-bold shadow-sm transition-colors" oninput="formatRiesterInput(this); updateValues()">
+                        </div>
+                    </div>
+
+                    <!-- Kinder -->
+                    <div class="mb-8">
+                        <label class="block text-[15px] font-semibold text-slate-700 mb-3">Kinder (für Zulagen)</label>
+                        <select id="input-children" class="w-full bg-slate-50 border border-slate-200 text-[#023e84] text-[15px] rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] block p-3.5 font-semibold shadow-sm transition-colors" onchange="updateValues()">
+                            <option value="0" selected>Keine Kinder</option>
+                            <option value="1">1 Kind</option>
+                            <option value="2">2 Kinder</option>
+                            <option value="3">3 Kinder</option>
+                            <option value="4">4 Kinder</option>
+                            <option value="5">5+ Kinder</option>
+                        </select>
+                        
+                        <div id="children-sliders" class="mt-5 hidden flex-col gap-5 border-t border-slate-100 pt-5">
+                            <div id="child-1-wrap" class="hidden">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="block text-sm font-semibold text-slate-600">Geburtsjahr 1. Kind</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-2 py-0.5 rounded text-[13px]"><span id="val-child-1">2020</span></div>
+                                </div>
+                                <input type="range" id="slider-child-1" class="w-full mt-1" oninput="updateValues()">
+                            </div>
+                            <div id="child-2-wrap" class="hidden">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="block text-sm font-semibold text-slate-600">Geburtsjahr 2. Kind</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-2 py-0.5 rounded text-[13px]"><span id="val-child-2">2020</span></div>
+                                </div>
+                                <input type="range" id="slider-child-2" class="w-full mt-1" oninput="updateValues()">
+                            </div>
+                            <div id="child-3-wrap" class="hidden">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="block text-sm font-semibold text-slate-600">Geburtsjahr 3. Kind</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-2 py-0.5 rounded text-[13px]"><span id="val-child-3">2020</span></div>
+                                </div>
+                                <input type="range" id="slider-child-3" class="w-full mt-1" oninput="updateValues()">
+                            </div>
+                            <div id="child-4-wrap" class="hidden">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="block text-sm font-semibold text-slate-600">Geburtsjahr 4. Kind</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-2 py-0.5 rounded text-[13px]"><span id="val-child-4">2020</span></div>
+                                </div>
+                                <input type="range" id="slider-child-4" class="w-full mt-1" oninput="updateValues()">
+                            </div>
+                            <div id="child-5-wrap" class="hidden">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="block text-sm font-semibold text-slate-600">Geburtsjahr 5. Kind</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-2 py-0.5 rounded text-[13px]"><span id="val-child-5">2020</span></div>
+                                </div>
+                                <input type="range" id="slider-child-5" class="w-full mt-1" oninput="updateValues()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="u25-wrap" class="hidden">
+                        <div class="mb-2 flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100 mt-2">
+                            <input id="input-u25" type="checkbox" class="shrink-0 w-5 h-5 accent-[#023e84] text-[#023e84] bg-white border-slate-300 rounded focus:ring-[#023e84] cursor-pointer" onchange="updateValues()">
+                            <label for="input-u25" class="text-[15px] font-semibold text-slate-700 cursor-pointer select-none">Berufseinsteigerbonus berücksichtigen?</label>
+                        </div>
+                        <p class="text-[12px] text-slate-400 ml-12 mb-8">(Einmalig 200 € im ersten Jahr)</p>
+                    </div>
+
+                    <div class="mb-2 pt-2">
+                        <div class="flex justify-between items-center mb-6">
+                            <label class="block text-[15px] font-semibold text-slate-700">Erwartete Netto-Rendite</label>
+                            <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[14px]"><span id="val-return">4</span> % p.a.</div>
+                        </div>
+                        <input type="range" id="input-return" min="0" max="10" step="0.5" value="4" class="w-full mt-2" oninput="updateValues()">
+                        <div class="flex justify-between text-xs text-slate-400 mt-2 font-medium">
+                            <span>0 %</span><span>10 %</span>
+                        </div>
+                    </div>
+
+                    <!-- Auszahlungsform -->
+                    <div class="mt-8 border-t border-slate-100 pt-6">
+                        <label class="block text-[15px] font-semibold text-slate-700 mb-3">Auszahlungsform</label>
+                        <div class="flex flex-col sm:flex-row gap-3 mb-2">
+                            <label class="flex-1 cursor-pointer">
+                                <input type="radio" name="payout_type" value="auszahlplan" class="peer sr-only" checked onchange="updateValues()">
+                                <div class="w-full text-center py-3 px-4 rounded-xl border border-slate-200 text-slate-600 font-medium peer-checked:bg-[#e8f0fa] peer-checked:text-[#023e84] peer-checked:border-[#023e84] transition-all">Auszahlplan</div>
+                            </label>
+                            <label class="flex-1 cursor-pointer">
+                                <input type="radio" name="payout_type" value="verrentung" class="peer sr-only" onchange="updateValues()">
+                                <div class="w-full text-center py-3 px-4 rounded-xl border border-slate-200 text-slate-600 font-medium peer-checked:bg-[#e8f0fa] peer-checked:text-[#023e84] peer-checked:border-[#023e84] transition-all">Verrentung</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Results & Chart -->
+            <div class="flex-1 w-full min-w-0" id="result-section">
+                <!-- Highlight boxes -->
+                
+                <!-- NEW: Big Annual Subsidy Card -->
+                <div class="bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-6 text-center">
+                    <h3 class="text-[#023e84] font-bold text-lg mb-2">Ihre jährliche staatliche Zulage:</h3>
+                    <div class="text-4xl md:text-5xl font-extrabold text-[#023e84] mb-4">
+                        <span id="res-yearly-subsidy-sign">+ </span><span id="res-yearly-subsidy">0</span> €
+                    </div>
+                    
+                    <div id="ratio-container" class="bg-[#e8f0fa] border border-[#b6d4f0] rounded-xl p-3 inline-flex items-center gap-2">
+                        <svg class="w-5 h-5 text-[#006fb9] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span class="text-sm font-semibold text-[#023e84] text-left">Das entspricht einer Förderquote von <span id="res-ratio">0</span> % auf Ihre Einzahlung.</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
+                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-sm font-medium text-slate-500">Eigene Beiträge</span>
+                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10h12"/><path stroke-linecap="round" stroke-linejoin="round" d="M4 14h9"/><path stroke-linecap="round" stroke-linejoin="round" d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
+                            <span id="res-own">0</span><span>€</span>
+                        </div>
+                        <div class="text-xs text-[#006fb9] mt-1 font-medium" id="res-rentenbeginn-text-1">Bis Rentenbeginn (Alter 67)</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-sm font-medium text-slate-500">Staatliche Zulagen</span>
+                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.5-1 2-2h2v-4h-2c0-1-.5-1.5-1-2h0V6c0-.5-.5-1-1-1z"/>
+                                    <path d="M2 9v1c0 1.1.9 2 2 2h1"/>
+                                    <path d="M16 11h.01"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
+                            <span id="res-subsidy">0</span><span>€</span>
+                        </div>
+                        <div class="text-xs text-[#006fb9] mt-1 font-medium" id="res-rentenbeginn-text-2">Bis Rentenbeginn (Alter 67)</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-sm font-medium text-slate-500">Erwartetes Endkapital</span>
+                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
+                            <span id="res-total">0</span><span>€</span>
+                        </div>
+                        <div class="text-xs text-[#006fb9] mt-1 font-medium">inkl. Marktrendite</div>
+                    </div>
+                </div>
+
+                <!-- Chart & Pension Card Row -->
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6 mb-6">
+                    <!-- Chart -->
+                    <div class="xl:col-span-2 bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                            <h3 class="text-lg font-bold text-[#023e84] m-0">Vermögensentwicklung</h3>
+                            <div class="flex items-center gap-4 text-xs font-medium text-slate-500">
+                                <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#646464]"></div>Einzahlungen</div>
+                                <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#eab308]"></div>Zulagen</div>
+                                <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#023e84]"></div>Ertrag</div>
+                            </div>
+                        </div>
+                        <div class="relative flex-1 w-full min-h-[300px]">
+                            <canvas id="wealthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Pension Card -->
+                    <div class="xl:col-span-1 bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col h-full relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-6">
+                            <h3 class="text-lg font-bold text-[#023e84] m-0" id="label-pension-title">Monatliche Rente</h3>
+                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 mb-6">
+                            <div class="flex justify-between items-end border-b border-slate-100 pb-3">
+                                <span class="text-sm font-medium text-slate-600" id="label-gross-pension">Bruttorente</span>
+                                <span class="text-lg font-bold text-slate-800"><span id="res-gross">0</span> €</span>
+                            </div>
+                            <div class="flex justify-between items-end border-b border-slate-100 pb-3">
+                                <span class="text-sm font-medium text-slate-600">Steuern</span>
+                                <span class="text-lg font-bold text-[#991b1b]">- <span id="res-tax">0</span> €</span>
+                            </div>
+                            <div class="flex justify-between items-end pt-2">
+                                <span class="text-base font-bold text-[#023e84]" id="label-net-pension">Nettorente</span>
+                                <span class="text-3xl font-extrabold text-[#023e84]"><span id="res-net">0</span> €</span>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Alert Box -->
+                        <div class="mt-auto flex flex-col gap-2">
+                            <div>
+                                <span class="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded uppercase tracking-wide inline-block" id="res-pension-type-label">Auszahlplan</span>
+                            </div>
+                            <!-- Auszahlplan Warning -->
+                            <div id="pension-alert-auszahlplan" class="bg-orange-50 border border-orange-100 text-orange-800 p-3 rounded-xl text-[12px] leading-relaxed flex gap-2 items-start">
+                                <svg class="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                <div><span class="font-bold">Hinweis:</span> Sind Sie sicher, dass das Kapital nur bis zum Alter von <span id="res-endalter-text">90</span> Jahren reichen muss?</div>
+                            </div>
+                            
+                            <!-- Verrentung Success -->
+                            <div id="pension-alert-verrentung" class="hidden bg-emerald-50 border border-emerald-100 text-emerald-800 p-3 rounded-xl text-[12px] leading-relaxed flex gap-2 items-start">
+                                <svg class="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <div><span class="font-bold">Sehr gut!</span> Mit der Verrentung sind Sie lebenslang auf der sicheren Seite, egal wie alt Sie werden.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Erweiterte Einstellungen Accordion -->
+                <details class="group bg-white rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 cursor-pointer overflow-hidden">
+                    <summary class="flex justify-between items-center font-bold text-slate-700 p-6 select-none">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            Erweiterte Einstellungen
+                        </div>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9" /></svg>
+                        </span>
+                    </summary>
+                    <div class="p-6 pt-0 border-t border-slate-100 cursor-default">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                            
+                            <!-- Rentenbeginn -->
+                            <div class="mb-2">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="block text-[14px] font-semibold text-slate-700">Rentenbeginn (Alter)</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[13px]"><span id="val-rentenbeginn">67</span></div>
+                                </div>
+                                <input type="range" id="slider-rentenbeginn" min="65" max="70" step="1" value="67" class="w-full" oninput="updateValues()">
+                                <div class="flex justify-between text-[11px] text-slate-400 mt-2 font-medium">
+                                    <span>65 J.</span><span>70 J.</span>
+                                </div>
+                            </div>
+
+                            <!-- Steuersatz im Alter -->
+                            <div class="mb-2">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="block text-[14px] font-semibold text-slate-700">Steuersatz im Alter</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[13px]"><span id="val-tax">20</span> %</div>
+                                </div>
+                                <input type="range" id="slider-tax" min="0" max="42" step="1" value="20" class="w-full" oninput="updateValues()">
+                                <div class="flex justify-between text-[11px] text-slate-400 mt-2 font-medium">
+                                    <span>0 %</span><span>42 %</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Endalter Auszahlplan -->
+                            <div class="mb-2">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="block text-[14px] font-semibold text-slate-700">Endalter Auszahlplan</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[13px]"><span id="val-endalter">90</span></div>
+                                </div>
+                                <input type="range" id="slider-endalter" min="85" max="100" step="1" value="90" class="w-full" oninput="updateValues()">
+                                <div class="flex justify-between text-[11px] text-slate-400 mt-2 font-medium">
+                                    <span>85 J.</span><span>100 J.</span>
+                                </div>
+                            </div>
+
+                            <!-- Rendite Auszahlplan -->
+                            <div class="mb-2">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="block text-[14px] font-semibold text-slate-700">Rendite i.d. Rentenphase (Auszahlplan)</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[13px]"><span id="val-payout-return">1.5</span> %</div>
+                                </div>
+                                <input type="range" id="slider-payout-return" min="0" max="4" step="0.1" value="1.5" class="w-full" oninput="updateValues()">
+                                <div class="flex justify-between text-[11px] text-slate-400 mt-2 font-medium">
+                                    <span>0,0 %</span><span>4,0 %</span>
+                                </div>
+                            </div>
+
+                            <!-- Rentenfaktor -->
+                            <div class="mb-2">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="block text-[14px] font-semibold text-slate-700">Rentenfaktor (pro 10.000 €) (Verrentung)</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[13px]"><span id="val-rentenfaktor">30</span> €</div>
+                                </div>
+                                <input type="range" id="slider-rentenfaktor" min="20" max="40" step="1" value="30" class="w-full" oninput="updateValues()">
+                                <div class="flex justify-between text-[11px] text-slate-400 mt-2 font-medium">
+                                    <span>20 €</span><span>40 €</span>
+                                </div>
+                            </div>
+
+                            <!-- Kinderzulage-Dauer -->
+                            <div class="mb-2">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="block text-[14px] font-semibold text-slate-700">Dauer der Kinderzulage</label>
+                                    <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-[13px]"><span id="val-kinderzulage-dauer">18</span> Jahre</div>
+                                </div>
+                                <input type="range" id="slider-kinderzulage-dauer" min="18" max="25" step="1" value="18" class="w-full" oninput="updateValues()">
+                                <div class="flex justify-between text-[11px] text-slate-400 mt-2 font-medium">
+                                    <span>18 J.</span><span>25 J.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Recommendation Card -->
+                <div class="mt-8 bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col lg:flex-row gap-8 items-stretch lg:items-center justify-between">
+                    <!-- Left: Header & Inputs spanning full width starting under the icon -->
+                    <div class="flex flex-col gap-6 flex-1 w-full">
+                        <!-- Top: Icon & Text -->
+                        <div class="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-5">
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#e8f0fa] rounded-[20px] shadow-sm flex items-center justify-center flex-shrink-0 text-[#023e84]">
+                                <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 12 20 22 4 22 4 12"></polyline>
+                                    <rect x="2" y="7" width="20" height="5"></rect>
+                                    <line x1="12" y1="22" x2="12" y2="7"></line>
+                                    <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+                                    <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-2xl md:text-[28px] font-extrabold text-[#023e84] mb-2 leading-tight">Wem gönnen Sie noch ein Geschenk vom Staat?</h3>
+                                <p class="text-[15px] text-slate-500">Empfehlen Sie die neue Altersvorsorgeförderung einfach weiter.</p>
+                            </div>
+                        </div>
+
+                        <!-- Bottom: Input Fields starting under the icon -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-100 w-full">
+                            <div>
+                                <label class="h-5 flex items-center text-[11px] font-bold text-slate-500 mb-1.5 uppercase tracking-wide">
+                                    Name des Mandanten
+                                </label>
+                                <input type="text" id="rec-client-name" placeholder="z. B. Anna Müller..." class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-2.5 outline-none transition-colors shadow-sm" oninput="updateRecommendationLogic()">
+                            </div>
+                            <div>
+                                <label class="h-5 flex items-center gap-1.5 text-[11px] font-bold text-slate-500 mb-1.5 uppercase tracking-wide whitespace-nowrap">
+                                    <span>Vorname der Empfehlung</span>
+                                    <span class="text-slate-400 font-normal lowercase">(optional)</span>
+                                </label>
+                                <input type="text" id="rec-recipient-name" placeholder="z. B. Lisa..." class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-2.5 outline-none transition-colors shadow-sm" oninput="updateRecommendationLogic()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Action Area (Setup or QR) -->
+                    <div class="w-full lg:w-[320px] flex-shrink-0 bg-slate-50 rounded-2xl p-5 border border-slate-100 self-center">
+                        <!-- Setup State -->
+                        <div id="rec-setup-view" class="hidden flex flex-col gap-3">
+                            <p class="text-xs text-slate-500 mb-1 text-center">Hinterlegen Sie Ihre Kontaktdaten für den Empfehlungs-Link:</p>
+                            <input type="text" id="rec-adv-name" placeholder="Ihr Name" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
+                            <input type="tel" id="rec-adv-phone" placeholder="WhatsApp-Nummer" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
+                            <input type="email" id="rec-adv-email" placeholder="E-Mail-Adresse" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
+                            <button onclick="updateRecommendationLogic()" class="w-full bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-3 px-6 rounded-xl transition-colors text-sm shadow-sm mt-1">Code generieren</button>
+                        </div>
+
+                        <!-- QR State -->
+                        <div id="rec-qr-view" class="hidden flex-col items-center w-full">
+                            <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 mb-3" id="qrcode-container"></div>
+                            <p class="text-[11px] font-medium text-slate-500 mb-3 text-center uppercase tracking-wide">Mandant scannen lassen</p>
+                            <button onclick="editRecommendationSetup()" class="text-[11px] font-bold text-slate-400 hover:text-[#006fb9] transition-colors flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>Ihre Kontaktdaten ändern</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Sandbox Info Box -->
+                <div class="mt-4 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
+                    <div class="flex items-center gap-2 font-bold mb-1">
+                        <span class="px-2 py-0.5 rounded bg-amber-200 text-amber-800 text-[10px] uppercase tracking-wider">Test-Sandbox</span>
+                        <span>Empfehlungskarten-Weg (ohne Foto, sauberer Link)</span>
+                    </div>
+                    <p class="text-amber-800 mb-2">Der QR-Code oben erzeugt jetzt den Text aus deinem Screenshot mit dem kurzen Link zur zentralen <code>karte.html</code> im Hauptverzeichnis.</p>
+                    <div class="bg-white/90 p-3 rounded-xl border border-amber-200 font-mono text-[11px] text-slate-700 break-all whitespace-pre-wrap" id="rec-test-preview">Noch keine Daten hinterlegt. Tragen Sie rechts Ihre Kontaktdaten ein.</div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-16 pb-8 text-center text-[12px] text-slate-400 border-t border-slate-100 pt-6">
+            <div class="flex items-center justify-center gap-3">
+                <a href="#" onclick="return false;" class="hover:text-slate-600 transition-colors">Impressum</a>
+                <span>·</span>
+                <a href="#" onclick="return false;" class="hover:text-slate-600 transition-colors">Datenschutz</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Init Chart
+        const ctx = document.getElementById('wealthChart').getContext('2d');
+        let wealthChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Eigene Einzahlungen',
+                        data: [],
+                        borderColor: '#646464',
+                        backgroundColor: function(context) {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return 'rgba(100, 100, 100, 0.1)';
+                            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                            gradient.addColorStop(0, 'rgba(100, 100, 100, 0.2)');
+                            gradient.addColorStop(1, 'rgba(100, 100, 100, 0.0)');
+                            return gradient;
+                        },
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 5
+                    },
+                    {
+                        label: 'Staatliche Zulagen',
+                        data: [],
+                        borderColor: '#eab308',
+                        backgroundColor: function(context) {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return 'rgba(234, 179, 8, 0.4)';
+                            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                            gradient.addColorStop(0, 'rgba(234, 179, 8, 0.5)');
+                            gradient.addColorStop(1, 'rgba(234, 179, 8, 0.05)');
+                            return gradient;
+                        },
+                        fill: '-1',
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 5
+                    },
+                    {
+                        label: 'Ertrag (4% p.a.)',
+                        data: [],
+                        borderColor: '#023e84',
+                        backgroundColor: function(context) {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return 'rgba(2, 62, 132, 0.1)';
+                            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                            gradient.addColorStop(0, 'rgba(2, 62, 132, 0.4)');
+                            gradient.addColorStop(1, 'rgba(2, 62, 132, 0.0)');
+                            return gradient;
+                        },
+                        fill: '-1',
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 5
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false,
+                        external: function(context) {
+                            let tooltipEl = document.getElementById('chartjs-tooltip');
+                            if (!tooltipEl) {
+                                tooltipEl = document.createElement('div');
+                                tooltipEl.id = 'chartjs-tooltip';
+                                tooltipEl.style.position = 'absolute';
+                                tooltipEl.style.pointerEvents = 'none';
+                                tooltipEl.style.transition = 'all .1s ease';
+                                tooltipEl.style.zIndex = 100;
+                                document.body.appendChild(tooltipEl);
+                            }
+
+                            const tooltipModel = context.tooltip;
+                            if (tooltipModel.opacity === 0) {
+                                tooltipEl.style.opacity = 0;
+                                return;
+                            }
+
+                            if (tooltipModel.body) {
+                                const titleLines = tooltipModel.title || [];
+                                const bodyLines = tooltipModel.body.map(bodyItem => bodyItem.lines);
+
+                                let innerHtml = '<div class="bg-white/95 backdrop-blur-sm shadow-xl p-4 rounded-xl border border-slate-100 min-w-[220px] font-sans">';
+
+                                titleLines.forEach(function(title) {
+                                    let label = title.replace('Alter ', '');
+                                    innerHtml += '<p class="font-bold text-slate-800 mb-3 border-b border-slate-100 pb-2 text-[14px]">Im Alter von ' + label + ' Jahren</p>';
+                                });
+
+                                innerHtml += '<div class="space-y-2">';
+                                const colors = ['#646464', '#eab308', '#023e84'];
+                                
+                                bodyLines.forEach(function(body, i) {
+                                    let text = body[0];
+                                    let parts = text.split(':');
+                                    let label = parts[0].trim();
+                                    let val = parts[1].trim();
+                                    
+                                    innerHtml += `
+                                        <div class="flex justify-between items-center gap-6">
+                                            <span class="text-slate-500 flex items-center gap-1.5 font-medium text-[13px]"><div class="w-2.5 h-2.5 rounded-sm" style="background-color: ${colors[i]}"></div> ${label}:</span>
+                                            <span class="font-bold text-slate-800 text-[14px]">${val}</span>
+                                        </div>
+                                    `;
+                                });
+                                innerHtml += '</div></div>';
+                                tooltipEl.innerHTML = innerHtml;
+                            }
+
+                            const position = context.chart.canvas.getBoundingClientRect();
+                            tooltipEl.style.opacity = 1;
+                            
+                            let caretX = tooltipModel.caretX;
+                            if (caretX > position.width / 2) {
+                                tooltipEl.style.left = (position.left + window.pageXOffset + caretX - 15) + 'px';
+                                tooltipEl.style.transform = 'translate(-100%, -50%)';
+                            } else {
+                                tooltipEl.style.left = (position.left + window.pageXOffset + caretX + 15) + 'px';
+                                tooltipEl.style.transform = 'translate(0, -50%)';
+                            }
+                            tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) { label += ':'; }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9', drawBorder: false },
+                        ticks: {
+                            font: { family: 'Roboto', size: 11 }, color: '#94a3b8',
+                            callback: function(value) { return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value); }
+                        }
+                    },
+                    x: {
+                        grid: { display: false, drawBorder: false },
+                        ticks: { font: { family: 'Roboto', size: 11 }, color: '#94a3b8', maxTicksLimit: 8 }
+                    }
+                }
+            }
+        });
+
+        const fmt = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+
+        function formatRiesterInput(input) {
+            let val = input.value.replace(/[^0-9]/g, '');
+            if (val) {
+                input.value = new Intl.NumberFormat('de-DE').format(parseInt(val, 10)) + ' €';
+            } else {
+                input.value = '';
+            }
+        }
+
+        function updateSliderBackground(slider) {
+            const min = parseFloat(slider.min) || 0;
+            const max = parseFloat(slider.max) || 100;
+            const val = parseFloat(slider.value);
+            const percentage = ((val - min) / (max - min)) * 100;
+            slider.style.background = `linear-gradient(to right, #023e84 0%, #023e84 ${percentage}%, #e5e7eb ${percentage}%, #e5e7eb 100%)`;
+        }
+
+        function updateValues() {
+            const ageSlider = document.getElementById('slider-age');
+            const savingsSlider = document.getElementById('slider-savings');
+            const returnSlider = document.getElementById('input-return');
+            
+            const rentenbeginnSlider = document.getElementById('slider-rentenbeginn');
+            const taxSlider = document.getElementById('slider-tax');
+            const endalterSlider = document.getElementById('slider-endalter');
+            const payoutReturnSlider = document.getElementById('slider-payout-return');
+            const rentenfaktorSlider = document.getElementById('slider-rentenfaktor');
+            const kinderzulageDauerSlider = document.getElementById('slider-kinderzulage-dauer');
+
+            updateSliderBackground(ageSlider);
+            updateSliderBackground(savingsSlider);
+            updateSliderBackground(returnSlider);
+            updateSliderBackground(rentenbeginnSlider);
+            updateSliderBackground(taxSlider);
+            updateSliderBackground(endalterSlider);
+            updateSliderBackground(payoutReturnSlider);
+            updateSliderBackground(rentenfaktorSlider);
+            updateSliderBackground(kinderzulageDauerSlider);
+
+            const age = parseInt(ageSlider.value);
+            const savings = parseInt(savingsSlider.value);
+            const children = parseInt(document.getElementById('input-children').value);
+            const returnRateInput = parseFloat(returnSlider.value);
+            const payoutTypeRadio = document.querySelector('input[name="payout_type"]:checked');
+            const payoutType = payoutTypeRadio ? payoutTypeRadio.value : 'auszahlplan';
+            
+            const u25Wrap = document.getElementById('u25-wrap');
+            let isU25 = false;
+            if (age < 25) {
+                u25Wrap.classList.remove('hidden');
+                isU25 = document.getElementById('input-u25').checked;
+            } else {
+                u25Wrap.classList.add('hidden');
+            }
+            
+            const hasRiester = document.getElementById('input-riester-transfer').checked;
+            const riesterWrap = document.getElementById('riester-amount-wrap');
+            let riesterAmount = 0;
+            if (hasRiester) {
+                riesterWrap.classList.remove('hidden');
+                let rawRiester = document.getElementById('input-riester-amount').value.replace(/[^0-9]/g, '');
+                riesterAmount = parseInt(rawRiester, 10) || 0;
+            } else {
+                riesterWrap.classList.add('hidden');
+            }
+            
+            const rentenbeginn = parseInt(rentenbeginnSlider.value);
+            const taxRate = parseFloat(taxSlider.value);
+            const endalter = parseInt(endalterSlider.value);
+            const payoutReturn = parseFloat(payoutReturnSlider.value);
+            const rentenfaktor = parseFloat(rentenfaktorSlider.value);
+            const kinderzulageDauer = parseInt(kinderzulageDauerSlider.value);
+
+            document.getElementById('val-age').innerText = age;
+            document.getElementById('val-savings').innerText = savings;
+            document.getElementById('val-return').innerText = returnRateInput;
+            document.getElementById('val-rentenbeginn').innerText = rentenbeginn;
+            document.getElementById('val-tax').innerText = taxRate;
+            document.getElementById('val-endalter').innerText = endalter;
+            document.getElementById('val-payout-return').innerText = payoutReturn.toString().replace('.', ',');
+            document.getElementById('val-rentenfaktor').innerText = rentenfaktor;
+            document.getElementById('val-kinderzulage-dauer').innerText = kinderzulageDauer;
+            
+            document.getElementById('res-rentenbeginn-text-1').innerText = `Bis Rentenbeginn (Alter ${rentenbeginn})`;
+            document.getElementById('res-rentenbeginn-text-2').innerText = `Bis Rentenbeginn (Alter ${rentenbeginn})`;
+            document.getElementById('res-endalter-text').innerText = endalter;
+
+            const star = document.getElementById('star-indicator');
+            if(savings === 30) {
+                star.style.opacity = '1';
+                const min = parseFloat(savingsSlider.min);
+                const max = parseFloat(savingsSlider.max);
+                const percentage = ((30 - min) / (max - min)) * 100;
+                star.style.left = `calc(${percentage}% + ${10 - percentage * 0.2}px)`;
+            } else {
+                star.style.opacity = '0';
+            }
+
+            const childrenSlidersContainer = document.getElementById('children-sliders');
+            if(children > 0) {
+                childrenSlidersContainer.classList.remove('hidden');
+                childrenSlidersContainer.classList.add('flex');
+            } else {
+                childrenSlidersContainer.classList.add('hidden');
+                childrenSlidersContainer.classList.remove('flex');
+            }
+
+            let childBirthYears = [];
+            for(let i=1; i<=5; i++) {
+                const wrap = document.getElementById(`child-${i}-wrap`);
+                const slider = document.getElementById(`slider-child-${i}`);
+                if(i <= children) {
+                    wrap.classList.remove('hidden');
+                    document.getElementById(`val-child-${i}`).innerText = slider.value;
+                    updateSliderBackground(slider);
+                    childBirthYears.push(parseInt(slider.value));
+                } else {
+                    wrap.classList.add('hidden');
+                }
+            }
+
+            calculate(age, savings, children, isU25, childBirthYears, returnRateInput, payoutType, taxRate, rentenbeginn, endalter, payoutReturn, rentenfaktor, kinderzulageDauer, riesterAmount);
+        }
+
+        function calculate(age, savingsMonth, children, isU25, childBirthYears, returnRateInput, payoutType, taxRate, rentenbeginn, endalter, payoutReturn, rentenfaktor, kinderzulageDauer, riesterAmount) {
+            const retirementAge = rentenbeginn;
+            const years = retirementAge - age;
+            
+            if (years <= 0) return;
+
+            const savingsYear = savingsMonth * 12;
+            const returnRate = returnRateInput / 100;
+
+            let labels = [];
+            let dataOwn = [];
+            let dataSubsidy = [];
+            let dataInterest = [];
+
+            let totalOwn = riesterAmount;
+            let totalSubsidy = 0;
+            let currentCapital = riesterAmount;
+            let firstYearSubsidy = 0;
+
+            for (let y = 1; y <= years; y++) {
+                labels.push('Alter ' + (age + y));
+                
+                // Own contribution
+                totalOwn += savingsYear;
+                let currentYearOwn = savingsYear;
+                let currentYearSubsidy = 0;
+
+                // Grundzulage
+                if (savingsYear >= 120) {
+                    if(savingsYear <= 360) {
+                        currentYearSubsidy += savingsYear * 0.5; // 50%
+                    } else {
+                        currentYearSubsidy += 360 * 0.5; // 180 max
+                        let remaining = Math.min(savingsYear - 360, 1440);
+                        currentYearSubsidy += remaining * 0.25; // 25% up to 1440
+                    }
+
+                    // Kinderzulage (nur bis zum 18. Lebensjahr)
+                    let kinderBasis = Math.min(savingsYear, 300);
+                    let kinderSubsidy = 0;
+                    const currentYear = new Date().getFullYear();
+                    
+                    for(let i=0; i<children; i++) {
+                        const birthYear = childBirthYears[i];
+                        const simYear = currentYear + (y - 1);
+                        const childAge = simYear - birthYear;
+                        if (childAge < kinderzulageDauer) {
+                            kinderSubsidy += kinderBasis;
+                        }
+                    }
+                    currentYearSubsidy += kinderSubsidy;
+
+                    // U25 Bonus in year 1
+                    if(y === 1 && isU25) {
+                        currentYearSubsidy += 200;
+                    }
+                }
+                
+                if(y === 1) {
+                    firstYearSubsidy = currentYearSubsidy - (isU25 && savingsMonth >= 10 ? 200 : 0);
+                }
+
+                totalSubsidy += currentYearSubsidy;
+
+                // Compound interest calculation
+                let yearlyInput = currentYearOwn + currentYearSubsidy;
+                let interestThisYear = currentCapital * returnRate + yearlyInput * (returnRate / 2);
+                
+                currentCapital += yearlyInput + interestThisYear;
+
+                dataOwn.push(totalOwn);
+                dataSubsidy.push(totalSubsidy);
+                dataInterest.push(currentCapital - totalOwn - totalSubsidy);
+            }
+
+            // Update UI
+            document.getElementById('res-yearly-subsidy').innerText = fmt.format(firstYearSubsidy).replace('€','').trim();
+            
+            const ratioContainer = document.getElementById('ratio-container');
+            const signSpan = document.getElementById('res-yearly-subsidy-sign');
+            
+            if (savingsYear >= 120) {
+                signSpan.innerText = '+ ';
+                const ratio = (firstYearSubsidy / savingsYear) * 100;
+                ratioContainer.className = "bg-[#e8f0fa] border border-[#b6d4f0] rounded-xl p-3 inline-flex items-center gap-2";
+                ratioContainer.innerHTML = `<svg class="w-5 h-5 text-[#006fb9] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-semibold text-[#023e84] text-left">Das entspricht einer Förderquote von <span id="res-ratio">${Math.round(ratio)}</span> % auf Ihre Einzahlung.</span>`;
+            } else {
+                signSpan.innerText = '';
+                ratioContainer.className = "bg-amber-50 border border-amber-200 rounded-xl p-3 inline-flex items-center gap-2";
+                ratioContainer.innerHTML = `<svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg><span class="text-sm font-semibold text-amber-700 text-left">Der Mindestbeitrag für Zulagen beträgt 10 € monatlich.</span>`;
+            }
+            
+            document.getElementById('res-own').innerText = fmt.format(totalOwn).replace('€','').trim();
+            document.getElementById('res-subsidy').innerText = fmt.format(totalSubsidy).replace('€','').trim();
+            document.getElementById('res-total').innerText = fmt.format(currentCapital).replace('€','').trim();
+
+            // Calculate Pension
+            let grossPension = 0;
+            if (payoutType === 'verrentung') {
+                grossPension = (currentCapital / 10000) * rentenfaktor;
+                document.getElementById('res-pension-type-label').innerText = 'Verrentung';
+                document.getElementById('label-pension-title').innerText = 'Monatliche Rente';
+                document.getElementById('label-gross-pension').innerText = 'Bruttorente';
+                document.getElementById('label-net-pension').innerText = 'Nettorente';
+                document.getElementById('pension-alert-auszahlplan').classList.add('hidden');
+                document.getElementById('pension-alert-verrentung').classList.remove('hidden');
+            } else {
+                // Auszahlplan
+                const p = (payoutReturn / 100) / 12; // dynamic % p.a.
+                const n = (endalter - retirementAge) * 12; // dynamic years
+                if (currentCapital > 0 && n > 0) {
+                    if (p > 0) {
+                        grossPension = currentCapital * (p * Math.pow(1 + p, n)) / (Math.pow(1 + p, n) - 1);
+                    } else {
+                        grossPension = currentCapital / n;
+                    }
+                } else {
+                    grossPension = 0;
+                }
+                document.getElementById('res-pension-type-label').innerText = 'Auszahlplan';
+                document.getElementById('label-pension-title').innerText = 'Monatliche Auszahlung';
+                document.getElementById('label-gross-pension').innerText = 'Brutto';
+                document.getElementById('label-net-pension').innerText = 'Netto';
+                document.getElementById('pension-alert-auszahlplan').classList.remove('hidden');
+                document.getElementById('pension-alert-verrentung').classList.add('hidden');
+            }
+
+            const taxDeduction = grossPension * (taxRate / 100);
+            const netPension = grossPension - taxDeduction;
+
+            document.getElementById('res-gross').innerText = fmt.format(grossPension).replace('€','').trim();
+            document.getElementById('res-tax').innerText = fmt.format(taxDeduction).replace('€','').trim();
+            document.getElementById('res-net').innerText = fmt.format(netPension).replace('€','').trim();
+
+            // Update Chart
+            wealthChart.data.labels = labels;
+            wealthChart.data.datasets[0].data = dataOwn;
+            wealthChart.data.datasets[1].data = dataSubsidy;
+            wealthChart.data.datasets[2].data = dataInterest;
+            wealthChart.data.datasets[2].label = `Ertrag (${returnRateInput.toString().replace('.', ',')}% p.a.)`;
+            wealthChart.update();
+
+        }
+
+        function initSliders() {
+            const currentYear = new Date().getFullYear();
+            for(let i=1; i<=5; i++) {
+                const slider = document.getElementById(`slider-child-${i}`);
+                if(slider) {
+                    slider.min = currentYear - 18;
+                    slider.max = currentYear + 1; // Allow for birth next year
+                    slider.value = currentYear - 5; // Default 5 years old
+                }
+            }
+        }
+
+        // Recommendation Logic
+        let qrcode = null;
+
+        function updateRecommendationLogic() {
+            const nameField = document.getElementById('rec-adv-name');
+            const phoneField = document.getElementById('rec-adv-phone');
+            const emailField = document.getElementById('rec-adv-email');
+            const clientNameField = document.getElementById('rec-client-name');
+            const recipientNameField = document.getElementById('rec-recipient-name');
+            const setupView = document.getElementById('rec-setup-view');
+            const qrView = document.getElementById('rec-qr-view');
+            const qrContainer = document.getElementById('qrcode-container');
+            
+            const name = nameField ? nameField.value.trim() : '';
+            const phone = phoneField ? phoneField.value.trim() : '';
+            const email = emailField ? emailField.value.trim() : '';
+            const clientName = clientNameField ? clientNameField.value.trim() : '';
+            const recipient = recipientNameField ? recipientNameField.value.trim() : '';
+            
+            if (name || phone || email) {
+                // Save
+                localStorage.setItem('novori_adv_name', name);
+                localStorage.setItem('novori_adv_phone', phone);
+                localStorage.setItem('novori_adv_email', email);
+                
+                // Create the Smart Redirect link for the friend (with obfuscated token)
+                let directWaLink = '';
+                if (phone) {
+                    let phoneClean = phone.replace(/[^0-9+]/g, '');
+                    if (phoneClean.startsWith('0049')) phoneClean = phoneClean.substring(2);
+                    else if (phoneClean.startsWith('0')) phoneClean = '49' + phoneClean.substring(1);
+                    else if (phoneClean.startsWith('+49')) phoneClean = phoneClean.substring(1);
+                    
+                    // Ultra-compact token: phone~advisor~recommender~email~recipient
+                    const compactRaw = `${phoneClean}~${name}~${clientName || ''}~${email || ''}~${recipient || ''}`;
+                    const token = btoa(unescape(encodeURIComponent(compactRaw)))
+                        .replace(/\+/g, '-')
+                        .replace(/\//g, '_')
+                        .replace(/=+$/, '');
+                    
+                    // Build URL to root karte.html with token (shorter URL)
+                    const redirectUrl = new URL('../../karte.html', window.location.href);
+                    redirectUrl.search = '?c=' + token;
+                    
+                    directWaLink = `\n\nHier geht's zur Empfehlungskarte mit direktem Kontakt zu meinem Berater:\n${redirectUrl.href}`;
+                } else {
+                    directWaLink = '';
+                }
+                
+                // Greeting & Closing logic
+                const greeting = recipient ? `Hallo ${recipient},` : 'Hallo,';
+                let closing = 'Viele Grüße';
+                if (clientName) {
+                    closing += `\n${clientName}`;
+                }
+                
+                // Recommendation message with greeting and closing
+                const textRecommend = `${greeting}\n\nschau mal: das neue Altersvorsorge-Depot 2027.\nIch habe meine Vorsorge heute vorbereitet und möchte dir empfehlen, es ebenfalls zu machen.\nNutze das Geschenk vom Staat.${directWaLink}\n\n${closing}`;
+                
+                // Use standard HTTPS link so smartphone cameras recognize it as a clickable URL
+                const waUrl = `https://wa.me/?text=${encodeURIComponent(textRecommend)}`;
+                
+                // Update preview in test mode if element exists
+                const previewEl = document.getElementById('rec-test-preview');
+                if (previewEl) {
+                    previewEl.innerText = textRecommend;
+                }
+                
+                // Show QR
+                setupView.classList.add('hidden');
+                qrView.classList.remove('hidden');
+                qrView.classList.add('flex');
+                
+                if (!qrcode) {
+                    qrcode = new QRCode(qrContainer, {
+                        text: waUrl,
+                        width: 220,
+                        height: 220,
+                        colorDark : "#023e84",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.L
+                    });
+                } else {
+                    qrcode.clear();
+                    qrcode.makeCode(waUrl);
+                }
+            } else {
+                // Show setup
+                setupView.classList.remove('hidden');
+                qrView.classList.add('hidden');
+                qrView.classList.remove('flex');
+            }
+        }
+
+        function editRecommendationSetup() {
+            document.getElementById('rec-setup-view').classList.remove('hidden');
+            document.getElementById('rec-qr-view').classList.add('hidden');
+            document.getElementById('rec-qr-view').classList.remove('flex');
+        }
+
+        function initRecommendation() {
+            const name = localStorage.getItem('novori_adv_name') || '';
+            const phone = localStorage.getItem('novori_adv_phone') || '';
+            const email = localStorage.getItem('novori_adv_email') || '';
+            
+            if (document.getElementById('rec-adv-name')) document.getElementById('rec-adv-name').value = name;
+            if (document.getElementById('rec-adv-phone')) document.getElementById('rec-adv-phone').value = phone;
+            if (document.getElementById('rec-adv-email')) document.getElementById('rec-adv-email').value = email;
+            
+            updateRecommendationLogic();
+        }
+
+        // Initial Call
+        initSliders();
+        initRecommendation();
+        updateValues();
+    </script>
+</body>
+</html>
