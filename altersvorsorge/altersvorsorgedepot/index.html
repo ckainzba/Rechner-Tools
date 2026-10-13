@@ -25,6 +25,13 @@
         input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #023e84; cursor: pointer; border: none; box-shadow: 0 2px 4px rgba(2, 62, 132, 0.25); transition: transform 0.15s ease; }
         input[type=range]::-moz-range-thumb:hover { transform: scale(1.12); }
         details summary::-webkit-details-marker { display: none; }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.96) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-pop-in {
+            animation: popIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 <body class="font-sans antialiased pb-20 bg-white">
@@ -34,10 +41,18 @@
                 <line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
             </svg> Zurück zur Übersicht
         </a>
-        <button onclick="scrollToRecommendationSetup()" id="nav-advisor-badge" class="hidden sm:inline-flex items-center gap-2 text-xs font-bold text-[#023e84] bg-[#e8f0fa] hover:bg-[#dbe9f9] px-3.5 py-2 rounded-xl transition-all duration-200 mb-6 hover:shadow-[0_4px_12px_rgba(2,62,132,0.08)] cursor-pointer">
-            <svg class="w-3.5 h-3.5 text-[#023e84]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            <span id="nav-advisor-name">Berater: -</span>
-        </button>
+        <div class="flex items-center gap-2.5 mb-6">
+            <button onclick="openGlobalSettings()" id="nav-advisor-badge" style="display: none;" class="items-center gap-2 text-xs font-bold text-[#023e84] bg-[#e8f0fa] hover:bg-[#dbe9f9] px-3.5 py-2 rounded-xl transition-all duration-200 hover:shadow-[0_4px_12px_rgba(2,62,132,0.08)] cursor-pointer" title="Beraterdaten anpassen">
+                <svg class="w-3.5 h-3.5 text-[#023e84]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span id="nav-advisor-name"></span>
+            </button>
+            <button onclick="openGlobalSettings()" class="p-2.5 bg-[#e8f0fa] text-[#023e84] hover:bg-[#dbe9f9] rounded-xl transition-all duration-200 flex items-center justify-center hover:shadow-[0_4px_12px_rgba(2,62,132,0.1)] hover:-translate-y-0.5 cursor-pointer" title="Zentrale Einstellungen">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+            </button>
+        </div>
     </div>
 
     <header id="main-header" class="text-center pb-8 pt-4 px-4">
@@ -966,9 +981,13 @@
             const clientNameField = document.getElementById('rec-client-name');
             const recipientField = document.getElementById('rec-recipient-name');
             
-            const advisor = nameField && nameField.value.trim() ? nameField.value.trim() : 'Deinem Berater';
-            const phone = phoneField ? phoneField.value.trim() : '';
-            const email = emailField ? emailField.value.trim() : '';
+            const storedName = localStorage.getItem('rechner_adv_name') || '';
+            const storedPhone = localStorage.getItem('rechner_adv_phone') || '';
+            const storedEmail = localStorage.getItem('rechner_adv_email') || '';
+
+            const advisor = (nameField && nameField.value.trim()) ? nameField.value.trim() : (storedName || 'Deinem Berater');
+            const phone = (phoneField && phoneField.value.trim()) ? phoneField.value.trim() : storedPhone;
+            const email = (emailField && emailField.value.trim()) ? emailField.value.trim() : storedEmail;
             const clientName = clientNameField ? clientNameField.value.trim() : '';
             const recipient = recipientField ? recipientField.value.trim() : '';
             
@@ -1072,6 +1091,62 @@
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
+        function openGlobalSettings() {
+            const name = localStorage.getItem('rechner_adv_name') || '';
+            const phone = localStorage.getItem('rechner_adv_phone') || '';
+            const email = localStorage.getItem('rechner_adv_email') || '';
+            const calendly = localStorage.getItem('rechner_adv_calendly') || '';
+            
+            const nEl = document.getElementById('global-adv-name');
+            const pEl = document.getElementById('global-adv-phone');
+            const eEl = document.getElementById('global-adv-email');
+            const cEl = document.getElementById('global-adv-calendly');
+            if (nEl) nEl.value = name;
+            if (pEl) pEl.value = phone;
+            if (eEl) eEl.value = email;
+            if (cEl) cEl.value = calendly;
+            
+            const modal = document.getElementById('global-settings-overlay');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeGlobalSettings() {
+            const modal = document.getElementById('global-settings-overlay');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function saveGlobalSettings(event) {
+            const name = (document.getElementById('global-adv-name')?.value || '').trim();
+            const phone = (document.getElementById('global-adv-phone')?.value || '').trim();
+            const email = (document.getElementById('global-adv-email')?.value || '').trim();
+            const calendly = (document.getElementById('global-adv-calendly')?.value || '').trim();
+            
+            if (name) localStorage.setItem('rechner_adv_name', name); else localStorage.removeItem('rechner_adv_name');
+            if (phone) localStorage.setItem('rechner_adv_phone', phone); else localStorage.removeItem('rechner_adv_phone');
+            if (email) localStorage.setItem('rechner_adv_email', email); else localStorage.removeItem('rechner_adv_email');
+            if (calendly) localStorage.setItem('rechner_adv_calendly', calendly); else localStorage.removeItem('rechner_adv_calendly');
+            
+            const btn = (event && event.currentTarget && event.currentTarget.tagName === 'BUTTON') ? event.currentTarget : document.getElementById('btn-save-global');
+            if (btn) {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<span>Gespeichert!</span>';
+                btn.classList.replace('bg-[#023e84]', 'bg-green-600');
+                btn.classList.replace('hover:bg-[#012a5e]', 'hover:bg-green-700');
+                setTimeout(() => {
+                    closeGlobalSettings();
+                    setTimeout(() => {
+                        btn.innerHTML = originalHtml;
+                        btn.classList.replace('bg-green-600', 'bg-[#023e84]');
+                        btn.classList.replace('hover:bg-green-700', 'hover:bg-[#012a5e]');
+                    }, 300);
+                }, 700);
+            } else {
+                closeGlobalSettings();
+            }
+            
+            initRecommendation();
+        }
+
         function updateRecommendationLogic(isExplicitSave = false) {
             const nameField = document.getElementById('rec-adv-name');
             const phoneField = document.getElementById('rec-adv-phone');
@@ -1079,25 +1154,37 @@
             const setupView = document.getElementById('rec-setup-view');
             const readyView = document.getElementById('rec-ready-view');
             
-            // Fallback: If fields are empty in the DOM, fill from localStorage first
-            if (nameField && !nameField.value && localStorage.getItem('rechner_adv_name')) {
-                nameField.value = localStorage.getItem('rechner_adv_name');
-            }
-            if (phoneField && !phoneField.value && localStorage.getItem('rechner_adv_phone')) {
-                phoneField.value = localStorage.getItem('rechner_adv_phone');
-            }
-            if (emailField && !emailField.value && localStorage.getItem('rechner_adv_email')) {
-                emailField.value = localStorage.getItem('rechner_adv_email');
-            }
-            
-            const name = nameField ? nameField.value.trim() : '';
-            const phone = phoneField ? phoneField.value.trim() : '';
-            const email = emailField ? emailField.value.trim() : '';
-            
             if (isExplicitSave) {
-                if (name) localStorage.setItem('rechner_adv_name', name); else localStorage.removeItem('rechner_adv_name');
-                if (phone) localStorage.setItem('rechner_adv_phone', phone); else localStorage.removeItem('rechner_adv_phone');
-                if (email) localStorage.setItem('rechner_adv_email', email); else localStorage.removeItem('rechner_adv_email');
+                const nameVal = nameField ? nameField.value.trim() : '';
+                const phoneVal = phoneField ? phoneField.value.trim() : '';
+                const emailVal = emailField ? emailField.value.trim() : '';
+                if (nameVal) localStorage.setItem('rechner_adv_name', nameVal); else localStorage.removeItem('rechner_adv_name');
+                if (phoneVal) localStorage.setItem('rechner_adv_phone', phoneVal); else localStorage.removeItem('rechner_adv_phone');
+                if (emailVal) localStorage.setItem('rechner_adv_email', emailVal); else localStorage.removeItem('rechner_adv_email');
+            }
+            
+            const storedName = localStorage.getItem('rechner_adv_name') || '';
+            const storedPhone = localStorage.getItem('rechner_adv_phone') || '';
+            const storedEmail = localStorage.getItem('rechner_adv_email') || '';
+            
+            const name = (nameField && nameField.value.trim()) ? nameField.value.trim() : storedName;
+            const phone = (phoneField && phoneField.value.trim()) ? phoneField.value.trim() : storedPhone;
+            const email = (emailField && emailField.value.trim()) ? emailField.value.trim() : storedEmail;
+            
+            if (nameField && !nameField.value && storedName) nameField.value = storedName;
+            if (phoneField && !phoneField.value && storedPhone) phoneField.value = storedPhone;
+            if (emailField && !emailField.value && storedEmail) emailField.value = storedEmail;
+            
+            // Update nav badge
+            const navBadge = document.getElementById('nav-advisor-badge');
+            const navName = document.getElementById('nav-advisor-name');
+            if (navBadge && navName) {
+                if (name) {
+                    navName.textContent = `Berater: ${name}`;
+                    navBadge.style.display = 'inline-flex';
+                } else {
+                    navBadge.style.display = 'none';
+                }
             }
             
             if (name || phone || email) {
@@ -1111,37 +1198,27 @@
                 if (readyAdvEmail) readyAdvEmail.textContent = email || '';
                 if (readyAdvSep) readyAdvSep.style.display = (phone && email) ? 'inline' : 'none';
                 
-                // Update nav badge
-                const navBadge = document.getElementById('nav-advisor-badge');
-                const navName = document.getElementById('nav-advisor-name');
-                if (navBadge && navName) {
-                    navName.textContent = name ? `Berater: ${name}` : 'Berater-Profil';
-                    navBadge.classList.remove('hidden');
-                }
-                
                 // Show ready state with PDF download button
-                setupView.classList.add('hidden');
-                readyView.classList.remove('hidden');
-                readyView.classList.add('flex');
+                if (setupView) setupView.classList.add('hidden');
+                if (readyView) {
+                    readyView.classList.remove('hidden');
+                    readyView.classList.add('flex');
+                }
                 
                 // Keep hidden PDF template updated
                 updatePdfCardData();
             } else {
                 // Show setup state
-                setupView.classList.remove('hidden');
-                readyView.classList.add('hidden');
-                readyView.classList.remove('flex');
-                
-                const navBadge = document.getElementById('nav-advisor-badge');
-                if (navBadge) navBadge.classList.add('hidden');
+                if (setupView) setupView.classList.remove('hidden');
+                if (readyView) {
+                    readyView.classList.add('hidden');
+                    readyView.classList.remove('flex');
+                }
             }
         }
 
         function editRecommendationSetup() {
-            initRecommendation();
-            document.getElementById('rec-setup-view').classList.remove('hidden');
-            document.getElementById('rec-ready-view').classList.add('hidden');
-            document.getElementById('rec-ready-view').classList.remove('flex');
+            openGlobalSettings();
         }
 
         async function generateEmpfehlungskartePDF() {
@@ -1151,10 +1228,10 @@
             const card = document.getElementById('pdf-card');
             const overlay = document.getElementById('pdf-loading-overlay');
             
-            const phone = localStorage.getItem('rechner_adv_phone') || '';
+            const phone = (document.getElementById('rec-adv-phone')?.value || localStorage.getItem('rechner_adv_phone') || '').trim();
             if (!phone) {
                 alert('Bitte hinterlegen Sie zuerst Ihre WhatsApp-Telefonnummer.');
-                editRecommendationSetup();
+                openGlobalSettings();
                 return;
             }
             
@@ -1282,6 +1359,27 @@
         }
 
         function initRecommendation() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const qName = urlParams.get('adv_name');
+                const qPhone = urlParams.get('adv_phone');
+                const qEmail = urlParams.get('adv_email');
+                const qCalendly = urlParams.get('adv_calendly');
+                
+                let hadUrlParams = false;
+                if (qName) { localStorage.setItem('rechner_adv_name', qName); hadUrlParams = true; }
+                if (qPhone) { localStorage.setItem('rechner_adv_phone', qPhone); hadUrlParams = true; }
+                if (qEmail) { localStorage.setItem('rechner_adv_email', qEmail); hadUrlParams = true; }
+                if (qCalendly) { localStorage.setItem('rechner_adv_calendly', qCalendly); hadUrlParams = true; }
+                
+                if (hadUrlParams) {
+                    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.replaceState({path: cleanUrl}, '', cleanUrl);
+                }
+            } catch (e) {
+                console.warn('URL params check failed:', e);
+            }
+
             const name = localStorage.getItem('rechner_adv_name') || '';
             const phone = localStorage.getItem('rechner_adv_phone') || '';
             const email = localStorage.getItem('rechner_adv_email') || '';
@@ -1294,6 +1392,17 @@
             if (phoneEl) phoneEl.value = phone;
             if (emailEl) emailEl.value = email;
             
+            const navBadge = document.getElementById('nav-advisor-badge');
+            const navName = document.getElementById('nav-advisor-name');
+            if (navBadge && navName) {
+                if (name) {
+                    navName.textContent = `Berater: ${name}`;
+                    navBadge.style.display = 'inline-flex';
+                } else {
+                    navBadge.style.display = 'none';
+                }
+            }
+
             updateRecommendationLogic(false);
         }
 
@@ -1415,6 +1524,46 @@
                 <p style="font-size: 10px; color: #94a3b8; margin: 0;">Öffnet WhatsApp direkt mit vorbereiteter Nachricht</p>
             </div>
 
+        </div>
+    </div>
+
+    <!-- Global Settings Modal -->
+    <div id="global-settings-overlay" class="fixed inset-0 z-[200] flex items-center justify-center p-6 hidden">
+        <div id="global-settings-backdrop" class="fixed inset-0 z-[199] bg-[#021e3c]/[0.38] backdrop-blur-[3px] cursor-pointer" onclick="closeGlobalSettings()"></div>
+        <div class="bg-white rounded-3xl py-8 px-8 max-w-md w-full text-left shadow-[0_20px_60px_rgba(2,62,132,0.14)] animate-pop-in relative z-[200]">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-extrabold text-[#023e84]">Globale Einstellungen</h2>
+                <button onclick="closeGlobalSettings()" class="text-slate-400 hover:text-slate-600 transition-colors p-2 rounded-full hover:bg-slate-50 cursor-pointer">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <p class="text-[14.5px] text-slate-500 mb-6 leading-relaxed">Hinterlegen Sie hier Ihre Kontaktdaten. Diese werden automatisch für die Empfehlungskarte und in allen Rechnern übernommen.</p>
+            
+            <div class="space-y-4" onkeydown="if(event.key === 'Enter') saveGlobalSettings(event)">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihr Name</label>
+                    <input type="text" id="global-adv-name" placeholder="Max Mustermann" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihre WhatsApp-Nummer</label>
+                    <input type="tel" id="global-adv-phone" placeholder="0171 1234567" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihre E-Mail-Adresse</label>
+                    <input type="email" id="global-adv-email" placeholder="max.mustermann@email.de" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihr Calendly-Link (optional)</label>
+                    <input type="url" id="global-adv-calendly" placeholder="calendly.com/max-mustermann" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-slate-100 flex justify-end gap-3">
+                <button onclick="closeGlobalSettings()" class="px-5 py-2.5 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors cursor-pointer">Abbrechen</button>
+                <button id="btn-save-global" onclick="saveGlobalSettings(event)" class="px-5 py-2.5 text-sm font-bold text-white bg-[#023e84] hover:bg-[#012a5e] rounded-xl transition-colors shadow-sm flex items-center gap-2 cursor-pointer">
+                    <span>Speichern</span>
+                </button>
+            </div>
         </div>
     </div>
 </body>

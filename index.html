@@ -528,6 +528,29 @@
         closeGlobalSettings();
       }
     }
+
+    // Automatically attach advisor parameters to internal links when navigating
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[href]');
+      if (!link) return;
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+      
+      const name = localStorage.getItem('rechner_adv_name') || '';
+      const phone = localStorage.getItem('rechner_adv_phone') || '';
+      const email = localStorage.getItem('rechner_adv_email') || '';
+      const calendly = localStorage.getItem('rechner_adv_calendly') || '';
+      
+      if (name || phone || email || calendly) {
+        const [base, query] = href.split('?');
+        const params = new URLSearchParams(query || '');
+        if (name && !params.has('adv_name')) params.set('adv_name', name);
+        if (phone && !params.has('adv_phone')) params.set('adv_phone', phone);
+        if (email && !params.has('adv_email')) params.set('adv_email', email);
+        if (calendly && !params.has('adv_calendly')) params.set('adv_calendly', calendly);
+        link.setAttribute('href', `${base}?${params.toString()}`);
+      }
+    });
   </script>
 </body>
 </html>
