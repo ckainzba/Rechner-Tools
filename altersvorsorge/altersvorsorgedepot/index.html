@@ -41,18 +41,12 @@
                 <line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
             </svg> Zurück zur Übersicht
         </a>
-        <div class="flex items-center gap-2.5 mb-6">
-            <button onclick="openGlobalSettings()" id="nav-advisor-badge" style="display: none;" class="items-center gap-2 text-xs font-bold text-[#023e84] bg-[#e8f0fa] hover:bg-[#dbe9f9] px-3.5 py-2 rounded-xl transition-all duration-200 hover:shadow-[0_4px_12px_rgba(2,62,132,0.08)] cursor-pointer" title="Beraterdaten anpassen">
-                <svg class="w-3.5 h-3.5 text-[#023e84]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <span id="nav-advisor-name"></span>
-            </button>
-            <button onclick="openGlobalSettings()" class="p-2.5 bg-[#e8f0fa] text-[#023e84] hover:bg-[#dbe9f9] rounded-xl transition-all duration-200 flex items-center justify-center hover:shadow-[0_4px_12px_rgba(2,62,132,0.1)] hover:-translate-y-0.5 cursor-pointer" title="Zentrale Einstellungen">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-            </button>
-        </div>
+        <button onclick="openGlobalSettings()" class="p-2.5 bg-[#e8f0fa] text-[#023e84] hover:bg-[#dbe9f9] rounded-xl transition-all duration-200 flex items-center justify-center hover:shadow-[0_4px_12px_rgba(2,62,132,0.1)] hover:-translate-y-0.5 mb-6 cursor-pointer" title="Zentrale Einstellungen">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+        </button>
     </div>
 
     <header id="main-header" class="text-center pb-8 pt-4 px-4">
@@ -475,22 +469,6 @@
 
                         <!-- Ready State: Download PDF Button -->
                         <div id="rec-ready-view" class="hidden flex-col items-center w-full text-center">
-                            <!-- Advisor Info Badge -->
-                            <div class="w-full bg-white border border-slate-200/90 rounded-xl p-3 mb-3 text-left shadow-xs">
-                                <div class="flex items-center justify-between mb-1">
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hinterlegter Berater</span>
-                                    <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Aktiv
-                                    </span>
-                                </div>
-                                <div class="text-[13.5px] font-bold text-[#023e84]" id="rec-ready-adv-name">Berater</div>
-                                <div class="text-[11.5px] text-slate-500 flex flex-wrap gap-x-1.5 gap-y-0.5 mt-0.5">
-                                    <span id="rec-ready-adv-phone"></span>
-                                    <span id="rec-ready-adv-sep">·</span>
-                                    <span id="rec-ready-adv-email"></span>
-                                </div>
-                            </div>
-
                             <button id="btn-download-pdf" onclick="generateEmpfehlungskartePDF()" class="w-full bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 text-sm mb-2.5 group cursor-pointer">
                                 <svg class="w-5 h-5 flex-shrink-0 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
@@ -1175,29 +1153,7 @@
             if (phoneField && !phoneField.value && storedPhone) phoneField.value = storedPhone;
             if (emailField && !emailField.value && storedEmail) emailField.value = storedEmail;
             
-            // Update nav badge
-            const navBadge = document.getElementById('nav-advisor-badge');
-            const navName = document.getElementById('nav-advisor-name');
-            if (navBadge && navName) {
-                if (name) {
-                    navName.textContent = `Berater: ${name}`;
-                    navBadge.style.display = 'inline-flex';
-                } else {
-                    navBadge.style.display = 'none';
-                }
-            }
-            
             if (name || phone || email) {
-                // Update visible advisor badge in readyView
-                const readyAdvName = document.getElementById('rec-ready-adv-name');
-                const readyAdvPhone = document.getElementById('rec-ready-adv-phone');
-                const readyAdvEmail = document.getElementById('rec-ready-adv-email');
-                const readyAdvSep = document.getElementById('rec-ready-adv-sep');
-                if (readyAdvName) readyAdvName.textContent = name || 'Berater';
-                if (readyAdvPhone) readyAdvPhone.textContent = phone || '';
-                if (readyAdvEmail) readyAdvEmail.textContent = email || '';
-                if (readyAdvSep) readyAdvSep.style.display = (phone && email) ? 'inline' : 'none';
-                
                 // Show ready state with PDF download button
                 if (setupView) setupView.classList.add('hidden');
                 if (readyView) {
@@ -1392,17 +1348,6 @@
             if (phoneEl) phoneEl.value = phone;
             if (emailEl) emailEl.value = email;
             
-            const navBadge = document.getElementById('nav-advisor-badge');
-            const navName = document.getElementById('nav-advisor-name');
-            if (navBadge && navName) {
-                if (name) {
-                    navName.textContent = `Berater: ${name}`;
-                    navBadge.style.display = 'inline-flex';
-                } else {
-                    navBadge.style.display = 'none';
-                }
-            }
-
             updateRecommendationLogic(false);
         }
 
