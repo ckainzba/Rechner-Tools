@@ -1211,6 +1211,9 @@
                 const pdfBlob = pdf.output('blob');
                 const blobUrl = URL.createObjectURL(pdfBlob);
 
+                // 2-Sekunden-Verzögerung, damit die animierte Warteseite sichtbar bleibt
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
                 const downloadLink = document.createElement('a');
                 downloadLink.href = blobUrl;
                 downloadLink.download = filename;
