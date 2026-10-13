@@ -1031,11 +1031,11 @@
                 msg += `\n\nViele Grüße\n${recipient}`;
             }
             
-            const waAppUrl = phoneClean ? `whatsapp://send?phone=${phoneClean}&text=${encodeURIComponent(msg)}` : '#';
-            const waWebUrl = phoneClean ? `https://wa.me/${phoneClean}?text=${encodeURIComponent(msg)}` : '#';
+            const encodedMsg = encodeURIComponent(msg).replace(/\(/g, '%28').replace(/\)/g, '%29');
+            const waWebUrl = phoneClean ? `https://wa.me/${phoneClean}?text=${encodedMsg}` : '#';
             
             const waBtn = document.getElementById('pdf-wa-btn');
-            if (waBtn) waBtn.href = waAppUrl;
+            if (waBtn) waBtn.href = waWebUrl;
             
             // QR Code in PDF (keeps HTTPS URL so smartphone cameras recognize it)
             const qrSection = document.getElementById('pdf-qr-section');
@@ -1132,24 +1132,7 @@
                 </span>
             `;
 
-            // Open window synchronously to avoid popup blocker
-            let pdfWin = null;
-            try {
-                pdfWin = window.open('', '_blank');
-                if (pdfWin) {
-                    pdfWin.document.title = 'Empfehlungskarte wird generiert...';
-                    pdfWin.document.body.innerHTML = `
-                        <div style="font-family: -apple-system, BlinkMacSystemFont, Roboto, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f8fafc; color: #023e84;">
-                            <div style="width: 44px; height: 44px; border: 4px solid #cbd5e1; border-top-color: #023e84; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px;"></div>
-                            <h2 style="margin: 0 0 8px 0; font-size: 19px; font-weight: 700;">Empfehlungskarte wird generiert...</h2>
-                            <p style="margin: 0; color: #64748b; font-size: 14px;">Das PDF öffnet sich in Kürze.</p>
-                            <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
-                        </div>
-                    `;
-                }
-            } catch (e) {
-                console.warn('Popup window note:', e);
-            }
+
 
             try {
                 // Ensure card contents and QR code are up to date
@@ -1226,25 +1209,19 @@
                     pdf.link(x + relX * pdfWidth, y + relY * pdfHeight, (eRect.width / cardRect.width) * pdfWidth, (eRect.height / cardRect.height) * pdfHeight, { url: emailLink.href });
                 }
 
-                // Output PDF blob
+                // Output PDF blob and trigger clean download
                 const pdfBlob = pdf.output('blob');
                 const blobUrl = URL.createObjectURL(pdfBlob);
 
-                // Show PDF in the newly opened tab
-                if (pdfWin) {
-                    pdfWin.location.href = blobUrl;
-                }
-
-                // Download file
                 const downloadLink = document.createElement('a');
                 downloadLink.href = blobUrl;
                 downloadLink.download = filename;
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
                 downloadLink.remove();
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
             } catch (err) {
                 console.error('PDF generation error:', err);
-                if (pdfWin) pdfWin.close();
                 alert('Beim Erstellen des PDFs ist ein Fehler aufgetreten: ' + (err.message || err));
             } finally {
                 if (overlay) overlay.classList.add('hidden');
@@ -1279,7 +1256,7 @@
     <div id="pdf-loading-overlay" data-html2canvas-ignore="true" class="fixed inset-0 bg-white/95 backdrop-blur-sm z-[99999] hidden flex flex-col items-center justify-center text-center p-4">
         <div class="w-14 h-14 border-4 border-slate-200 border-t-[#023e84] rounded-full animate-spin mb-4"></div>
         <h3 class="text-xl font-bold text-[#023e84] mb-1">Empfehlungskarte wird generiert...</h3>
-        <p class="text-sm text-slate-500">Das PDF öffnet sich in Kürze automatisch.</p>
+        <p class="text-sm text-slate-500">Das PDF wird erstellt und in Kürze heruntergeladen.</p>
     </div>
 
     <!-- Hidden PDF Render Template (permanently placed offscreen at left: -9999px for crisp rendering) -->
