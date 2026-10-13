@@ -39,12 +39,6 @@
                 <line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
             </svg> Zurück zur Übersicht
         </a>
-        <button onclick="openGlobalSettings()" class="p-2.5 bg-[#e8f0fa] text-[#023e84] hover:bg-[#dbe9f9] rounded-xl transition-all duration-200 flex items-center justify-center hover:shadow-[0_4px_12px_rgba(2,62,132,0.1)] hover:-translate-y-0.5 mb-6 cursor-pointer" title="Zentrale Einstellungen">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-        </button>
     </div>
 
     <header id="main-header" class="text-center pb-8 pt-4 px-4">
@@ -950,61 +944,6 @@
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        function openGlobalSettings() {
-            const name = localStorage.getItem('rechner_adv_name') || '';
-            const phone = localStorage.getItem('rechner_adv_phone') || '';
-            const email = localStorage.getItem('rechner_adv_email') || '';
-            const calendly = localStorage.getItem('rechner_adv_calendly') || '';
-            
-            const nEl = document.getElementById('global-adv-name');
-            const pEl = document.getElementById('global-adv-phone');
-            const eEl = document.getElementById('global-adv-email');
-            const cEl = document.getElementById('global-adv-calendly');
-            if (nEl) nEl.value = name;
-            if (pEl) pEl.value = phone;
-            if (eEl) eEl.value = email;
-            if (cEl) cEl.value = calendly;
-            
-            const modal = document.getElementById('global-settings-overlay');
-            if (modal) modal.classList.remove('hidden');
-        }
-
-        function closeGlobalSettings() {
-            const modal = document.getElementById('global-settings-overlay');
-            if (modal) modal.classList.add('hidden');
-        }
-
-        function saveGlobalSettings(event) {
-            const name = (document.getElementById('global-adv-name')?.value || '').trim();
-            const phone = (document.getElementById('global-adv-phone')?.value || '').trim();
-            const email = (document.getElementById('global-adv-email')?.value || '').trim();
-            const calendly = (document.getElementById('global-adv-calendly')?.value || '').trim();
-            
-            if (name) localStorage.setItem('rechner_adv_name', name); else localStorage.removeItem('rechner_adv_name');
-            if (phone) localStorage.setItem('rechner_adv_phone', phone); else localStorage.removeItem('rechner_adv_phone');
-            if (email) localStorage.setItem('rechner_adv_email', email); else localStorage.removeItem('rechner_adv_email');
-            if (calendly) localStorage.setItem('rechner_adv_calendly', calendly); else localStorage.removeItem('rechner_adv_calendly');
-            
-            const btn = (event && event.currentTarget && event.currentTarget.tagName === 'BUTTON') ? event.currentTarget : document.getElementById('btn-save-global');
-            if (btn) {
-                const originalHtml = btn.innerHTML;
-                btn.innerHTML = '<span>Gespeichert!</span>';
-                btn.classList.replace('bg-[#023e84]', 'bg-green-600');
-                btn.classList.replace('hover:bg-[#012a5e]', 'hover:bg-green-700');
-                setTimeout(() => {
-                    closeGlobalSettings();
-                    setTimeout(() => {
-                        btn.innerHTML = originalHtml;
-                        btn.classList.replace('bg-green-600', 'bg-[#023e84]');
-                        btn.classList.replace('hover:bg-green-700', 'hover:bg-[#012a5e]');
-                    }, 300);
-                }, 700);
-            } else {
-                closeGlobalSettings();
-            }
-            
-            initRecommendation();
-        }
 
         function updateRecommendationLogic(isExplicitSave = false) {
             const nameField = document.getElementById('rec-adv-name');
@@ -1107,7 +1046,10 @@
         }
 
         function editRecommendationSetup() {
-            openGlobalSettings();
+            initRecommendation();
+            document.getElementById('rec-setup-view').classList.remove('hidden');
+            document.getElementById('rec-qr-view').classList.add('hidden');
+            document.getElementById('rec-qr-view').classList.remove('flex');
         }
 
         function initRecommendation() {
@@ -1162,44 +1104,5 @@
         updateValues();
     </script>
 
-    <!-- Global Settings Modal -->
-    <div id="global-settings-overlay" class="fixed inset-0 z-[200] flex items-center justify-center p-6 hidden">
-        <div id="global-settings-backdrop" class="fixed inset-0 z-[199] bg-[#021e3c]/[0.38] backdrop-blur-[3px] cursor-pointer" onclick="closeGlobalSettings()"></div>
-        <div class="bg-white rounded-3xl py-8 px-8 max-w-md w-full text-left shadow-[0_20px_60px_rgba(2,62,132,0.14)] animate-pop-in relative z-[200]">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-extrabold text-[#023e84]">Globale Einstellungen</h2>
-                <button onclick="closeGlobalSettings()" class="text-slate-400 hover:text-slate-600 transition-colors p-2 rounded-full hover:bg-slate-50 cursor-pointer">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            <p class="text-[14.5px] text-slate-500 mb-6 leading-relaxed">Hinterlegen Sie hier Ihre Kontaktdaten. Diese werden automatisch für die Empfehlungskarte und in allen Rechnern übernommen.</p>
-            
-            <div class="space-y-4" onkeydown="if(event.key === 'Enter') saveGlobalSettings(event)">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihr Name</label>
-                    <input type="text" id="global-adv-name" placeholder="Max Mustermann" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihre WhatsApp-Nummer</label>
-                    <input type="tel" id="global-adv-phone" placeholder="0171 1234567" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihre E-Mail-Adresse</label>
-                    <input type="email" id="global-adv-email" placeholder="max.mustermann@email.de" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihr Calendly-Link (optional)</label>
-                    <input type="url" id="global-adv-calendly" placeholder="calendly.com/max-mustermann" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
-                </div>
-            </div>
-            
-            <div class="mt-8 pt-6 border-t border-slate-100 flex justify-end gap-3">
-                <button onclick="closeGlobalSettings()" class="px-5 py-2.5 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors cursor-pointer">Abbrechen</button>
-                <button id="btn-save-global" onclick="saveGlobalSettings(event)" class="px-5 py-2.5 text-sm font-bold text-white bg-[#023e84] hover:bg-[#012a5e] rounded-xl transition-colors shadow-sm flex items-center gap-2 cursor-pointer">
-                    <span>Speichern</span>
-                </button>
-            </div>
-        </div>
-    </div>
 </body>
 </html>
