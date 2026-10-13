@@ -808,6 +808,32 @@ Beste Grüße
             const calendlyField = document.getElementById('adv-calendly');
             
             if (nameField && phoneField && calendlyField) {
+                // Beraterdaten aus den globalen Einstellungen der Startseite übernehmen (kommen als URL-Parameter)
+                try {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const paramMap = {
+                        adv_name: 'rechner_adv_name',
+                        adv_phone: 'rechner_adv_phone',
+                        adv_email: 'rechner_adv_email',
+                        adv_calendly: 'rechner_adv_calendly'
+                    };
+                    let hadUrlParams = false;
+                    Object.keys(paramMap).forEach(key => {
+                        const value = urlParams.get(key);
+                        if (value) {
+                            localStorage.setItem(paramMap[key], value);
+                            hadUrlParams = true;
+                        }
+                    });
+                    if (hadUrlParams) {
+                        Object.keys(paramMap).forEach(key => urlParams.delete(key));
+                        const remainingQuery = urlParams.toString();
+                        window.history.replaceState({}, '', window.location.pathname + (remainingQuery ? '?' + remainingQuery : '') + window.location.hash);
+                    }
+                } catch (e) {
+                    console.warn('URL params check failed:', e);
+                }
+
                 nameField.value = localStorage.getItem('rechner_adv_name') || '';
                 phoneField.value = localStorage.getItem('rechner_adv_phone') || '';
                 calendlyField.value = localStorage.getItem('rechner_adv_calendly') || '';
