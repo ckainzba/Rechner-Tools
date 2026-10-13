@@ -413,6 +413,10 @@
           <input type="tel" id="global-adv-phone" placeholder="0171 1234567" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
         </div>
         <div>
+          <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihre E-Mail-Adresse</label>
+          <input type="email" id="global-adv-email" placeholder="max.mustermann@email.de" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
+        </div>
+        <div>
           <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihr Calendly-Link (optional)</label>
           <input type="url" id="global-adv-calendly" placeholder="calendly.com/max-mustermann" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
         </div>
@@ -483,6 +487,7 @@
     function openGlobalSettings() {
       document.getElementById('global-adv-name').value = localStorage.getItem('novori_adv_name') || '';
       document.getElementById('global-adv-phone').value = localStorage.getItem('novori_adv_phone') || '';
+      document.getElementById('global-adv-email').value = localStorage.getItem('novori_adv_email') || '';
       document.getElementById('global-adv-calendly').value = localStorage.getItem('novori_adv_calendly') || '';
       
       document.getElementById('global-settings-overlay').classList.remove('hidden');
@@ -495,10 +500,12 @@
     function saveGlobalSettings(event) {
       const name = document.getElementById('global-adv-name').value.trim();
       const phone = document.getElementById('global-adv-phone').value.trim();
+      const email = document.getElementById('global-adv-email').value.trim();
       const calendly = document.getElementById('global-adv-calendly').value.trim();
       
       if(name) localStorage.setItem('novori_adv_name', name); else localStorage.removeItem('novori_adv_name');
       if(phone) localStorage.setItem('novori_adv_phone', phone); else localStorage.removeItem('novori_adv_phone');
+      if(email) localStorage.setItem('novori_adv_email', email); else localStorage.removeItem('novori_adv_email');
       if(calendly) localStorage.setItem('novori_adv_calendly', calendly); else localStorage.removeItem('novori_adv_calendly');
       
       // Visual feedback
