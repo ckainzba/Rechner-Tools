@@ -10,7 +10,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="../../styles.css">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1095,7 +1096,7 @@
             const btn = document.getElementById('btn-download-pdf');
             const label = document.getElementById('btn-pdf-label');
             const originalLabel = label ? label.innerHTML : 'Empfehlungskarte downloaden';
-            const element = document.getElementById('pdf-render-wrapper');
+            const card = document.getElementById('pdf-card');
             const overlay = document.getElementById('pdf-loading-overlay');
             
             const phone = localStorage.getItem('novori_adv_phone') || '';
@@ -1113,9 +1114,6 @@
             else if (clientName) fileSlug += `-${clientName}`;
             fileSlug = fileSlug.replace(/[^a-zA-Z0-9_-]/g, '_');
             const filename = `Empfehlungskarte-${fileSlug}.pdf`;
-            
-            // Save current scroll position
-            const prevScrollY = window.scrollY;
 
             // Show full-screen loading overlay
             if (overlay) overlay.classList.remove('hidden');
@@ -1151,54 +1149,82 @@
                 console.warn('Popup window note:', e);
             }
 
-            // Scroll window to top so html2canvas coordinate calculation has 0 offset
-            window.scrollTo(0, 0);
+            try {
+                // Ensure card contents and QR code are up to date
+                updatePdfCardData();
 
-            // Temporarily make PDF template active at (0,0) behind the overlay
-            if (element) {
-                element.style.display = 'block';
-                element.style.position = 'fixed';
-                element.style.top = '0';
-                element.style.left = '0';
-                element.style.zIndex = '99990';
-            }
+                // Brief pause so QRCode image/canvas elements have painted in DOM
+                await new Promise(resolve => setTimeout(resolve, 250));
 
-            // Sync PDF card data & QR code now that the container is display: block
-            updatePdfCardData();
-
-            // Brief wait for QRCode rendering and layout reflow inside DOM
-            await new Promise(resolve => setTimeout(resolve, 300));
-
-            const opt = {
-                margin: 0,
-                filename: filename,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: {
+                // Capture card element directly via html2canvas (positioned offscreen at left: -9999px)
+                const canvas = await html2canvas(card, {
                     scale: 2,
                     useCORS: true,
-                    letterRendering: true,
-                    logging: false,
-                    scrollY: 0,
-                    scrollX: 0
-                },
-                jsPDF: {
-                    unit: 'mm',
-                    format: 'a4',
-                    orientation: 'portrait'
-                },
-                enableLinks: true
-            };
+                    backgroundColor: '#ffffff',
+                    logging: false
+                });
 
-            try {
-                // Generate PDF and properly await the resulting Blob
-                const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
+                // Initialize jsPDF
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                // Card width on A4 page: 140 mm
+                const pdfWidth = 140;
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                const x = (210 - pdfWidth) / 2;
+                const y = (297 - pdfHeight) / 2;
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.96);
+                pdf.addImage(imgData, 'JPEG', x, y, pdfWidth, pdfHeight);
+
+                // Add active clickable hyperlink for WhatsApp CTA button
+                const waBtn = document.getElementById('pdf-wa-btn');
+                const cardRect = card.getBoundingClientRect();
+                if (waBtn && waBtn.href && waBtn.href !== '#') {
+                    const btnRect = waBtn.getBoundingClientRect();
+                    const relX = (btnRect.left - cardRect.left) / cardRect.width;
+                    const relY = (btnRect.top - cardRect.top) / cardRect.height;
+                    const relW = btnRect.width / cardRect.width;
+                    const relH = btnRect.height / cardRect.height;
+
+                    const linkX = x + relX * pdfWidth;
+                    const linkY = y + relY * pdfHeight;
+                    const linkW = relW * pdfWidth;
+                    const linkH = relH * pdfHeight;
+                    pdf.link(linkX, linkY, linkW, linkH, { url: waBtn.href });
+                }
+
+                // Add clickable link for advisor phone
+                const phoneLink = document.getElementById('pdf-advisor-phone-link');
+                if (phoneLink && phoneLink.href && phoneLink.href.startsWith('tel:')) {
+                    const pRect = phoneLink.getBoundingClientRect();
+                    const relX = (pRect.left - cardRect.left) / cardRect.width;
+                    const relY = (pRect.top - cardRect.top) / cardRect.height;
+                    pdf.link(x + relX * pdfWidth, y + relY * pdfHeight, (pRect.width / cardRect.width) * pdfWidth, (pRect.height / cardRect.height) * pdfHeight, { url: phoneLink.href });
+                }
+
+                // Add clickable link for advisor email
+                const emailLink = document.getElementById('pdf-advisor-email-link');
+                if (emailLink && emailLink.href && emailLink.href.startsWith('mailto:')) {
+                    const eRect = emailLink.getBoundingClientRect();
+                    const relX = (eRect.left - cardRect.left) / cardRect.width;
+                    const relY = (eRect.top - cardRect.top) / cardRect.height;
+                    pdf.link(x + relX * pdfWidth, y + relY * pdfHeight, (eRect.width / cardRect.width) * pdfWidth, (eRect.height / cardRect.height) * pdfHeight, { url: emailLink.href });
+                }
+
+                // Output PDF blob
+                const pdfBlob = pdf.output('blob');
                 const blobUrl = URL.createObjectURL(pdfBlob);
-                
+
                 // Show PDF in the newly opened tab
                 if (pdfWin) {
                     pdfWin.location.href = blobUrl;
                 }
-                
+
                 // Download file
                 const downloadLink = document.createElement('a');
                 downloadLink.href = blobUrl;
@@ -1209,19 +1235,11 @@
             } catch (err) {
                 console.error('PDF generation error:', err);
                 if (pdfWin) pdfWin.close();
-                alert('Beim Erstellen des PDFs ist ein Fehler aufgetreten.');
+                alert('Beim Erstellen des PDFs ist ein Fehler aufgetreten: ' + (err.message || err));
             } finally {
-                // Instantly hide the PDF template again so it never shows on screen
-                if (element) {
-                    element.style.display = 'none';
-                }
-                if (overlay) {
-                    overlay.classList.add('hidden');
-                }
+                if (overlay) overlay.classList.add('hidden');
                 if (btn) btn.disabled = false;
                 if (label) label.innerHTML = originalLabel;
-                // Restore scroll position
-                window.scrollTo(0, prevScrollY);
             }
         }
 
@@ -1254,8 +1272,8 @@
         <p class="text-sm text-slate-500">Das PDF öffnet sich in Kürze automatisch.</p>
     </div>
 
-    <!-- Hidden PDF Render Template for html2pdf (display: none by default) -->
-    <div id="pdf-render-wrapper" style="display: none; width: 620px; min-height: 877px; background: #ffffff; box-sizing: border-box; padding: 24px 0;">
+    <!-- Hidden PDF Render Template (permanently placed offscreen at left: -9999px for crisp rendering) -->
+    <div id="pdf-render-wrapper" style="position: fixed; left: -9999px; top: 0; width: 620px; background: #ffffff; box-sizing: border-box; padding: 24px 0; z-index: -100; pointer-events: none;">
         <div id="pdf-card" style="width: 480px; margin: 0 auto; background: #ffffff; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(2,62,132,0.06); padding: 28px 26px; position: relative; font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif; box-sizing: border-box; text-align: left; color: #1e293b;">
             <!-- Top Gradient Accent -->
             <div style="position: absolute; top: 0; left: 0; right: 0; height: 6px; border-top-left-radius: 24px; border-top-right-radius: 24px; background: linear-gradient(90deg, #023e84 0%, #006fb9 100%);"></div>
