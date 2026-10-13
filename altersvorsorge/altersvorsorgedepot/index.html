@@ -10,6 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="../../styles.css">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -441,22 +442,39 @@
                         </div>
                     </div>
 
-                    <!-- Right: Action Area (Setup or QR) -->
+                    <!-- Right: Action Area (Setup or Download PDF) -->
                     <div class="w-full lg:w-[320px] flex-shrink-0 bg-slate-50 rounded-2xl p-5 border border-slate-100 self-center">
                         <!-- Setup State -->
                         <div id="rec-setup-view" class="hidden flex flex-col gap-3">
-                            <p class="text-xs text-slate-500 mb-1 text-center">Hinterlegen Sie Ihre Kontaktdaten für den Empfehlungs-Link:</p>
+                            <p class="text-xs text-slate-500 mb-1 text-center">Hinterlegen Sie Ihre Kontaktdaten für die Empfehlungskarte:</p>
                             <input type="text" id="rec-adv-name" placeholder="Ihr Name" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
                             <input type="tel" id="rec-adv-phone" placeholder="WhatsApp-Nummer" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
                             <input type="email" id="rec-adv-email" placeholder="E-Mail-Adresse" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
-                            <button onclick="updateRecommendationLogic()" class="w-full bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-3 px-6 rounded-xl transition-colors text-sm shadow-sm mt-1">Code generieren</button>
+                            <button onclick="updateRecommendationLogic()" class="w-full bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-3 px-6 rounded-xl transition-colors text-sm shadow-sm mt-1">Speichern & Weiter</button>
                         </div>
 
-                        <!-- QR State -->
-                        <div id="rec-qr-view" class="hidden flex-col items-center w-full">
-                            <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 mb-3" id="qrcode-container"></div>
-                            <p class="text-[11px] font-medium text-slate-500 mb-3 text-center uppercase tracking-wide">Mandant scannen lassen</p>
-                            <button onclick="editRecommendationSetup()" class="text-[11px] font-bold text-slate-400 hover:text-[#006fb9] transition-colors flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>Ihre Kontaktdaten ändern</button>
+                        <!-- Ready State: Download PDF Button -->
+                        <div id="rec-ready-view" class="hidden flex-col items-center w-full text-center">
+                            <div class="w-16 h-16 bg-[#e8f0fa] text-[#023e84] rounded-2xl flex items-center justify-center mb-3.5 shadow-sm mx-auto">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                            </div>
+                            <button id="btn-download-pdf" onclick="generateEmpfehlungskartePDF()" class="w-full bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 text-sm mb-2.5 group">
+                                <svg class="w-5 h-5 flex-shrink-0 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                                <span id="btn-pdf-label">Empfehlungskarte downloaden</span>
+                            </button>
+                            <p class="text-[11px] font-medium text-slate-400 mb-4">Erstellt eine druckreife PDF-Karte für Ihren Mandanten</p>
+                            <button onclick="editRecommendationSetup()" class="text-[11px] font-bold text-slate-400 hover:text-[#006fb9] transition-colors flex items-center justify-center gap-1.5 mx-auto">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                <span>Ihre Kontaktdaten ändern</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -926,97 +944,252 @@
             }
         }
 
-        // Recommendation Logic
-        let qrcode = null;
+        // Recommendation & PDF Generation Logic
+        let pdfQrcode = null;
 
-        function updateRecommendationLogic() {
+        function updatePdfCardData() {
             const nameField = document.getElementById('rec-adv-name');
             const phoneField = document.getElementById('rec-adv-phone');
             const emailField = document.getElementById('rec-adv-email');
             const clientNameField = document.getElementById('rec-client-name');
             const recipientField = document.getElementById('rec-recipient-name');
-            const setupView = document.getElementById('rec-setup-view');
-            const qrView = document.getElementById('rec-qr-view');
-            const qrContainer = document.getElementById('qrcode-container');
             
-            const name = nameField ? nameField.value.trim() : '';
+            const advisor = nameField && nameField.value.trim() ? nameField.value.trim() : 'Deinem Berater';
             const phone = phoneField ? phoneField.value.trim() : '';
             const email = emailField ? emailField.value.trim() : '';
             const clientName = clientNameField ? clientNameField.value.trim() : '';
             const recipient = recipientField ? recipientField.value.trim() : '';
             
+            // Clean phone number
+            let phoneClean = phone.replace(/[^0-9+]/g, '');
+            if (phoneClean.startsWith('0049')) phoneClean = phoneClean.substring(2);
+            else if (phoneClean.startsWith('0')) phoneClean = '49' + phoneClean.substring(1);
+            else if (phoneClean.startsWith('+49')) phoneClean = phoneClean.substring(1);
+            
+            // Recommender Badge
+            const badgeEl = document.getElementById('pdf-badge-recommender');
+            if (badgeEl) {
+                badgeEl.innerText = clientName ? `Empfehlung von ${clientName}` : 'Persönliche Empfehlung';
+            }
+            
+            // Greeting
+            const greetingEl = document.getElementById('pdf-msg-greeting');
+            if (greetingEl) {
+                greetingEl.innerText = recipient ? `Hallo ${recipient},` : 'Hallo,';
+            }
+            
+            // Author in message box
+            const authorEl = document.getElementById('pdf-author-name');
+            const closingBox = document.getElementById('pdf-closing-box');
+            if (authorEl && closingBox) {
+                if (clientName) {
+                    authorEl.innerText = clientName;
+                    authorEl.style.display = 'block';
+                    closingBox.style.display = 'block';
+                } else {
+                    authorEl.style.display = 'none';
+                    closingBox.style.display = 'none';
+                }
+            }
+            
+            // Advisor Box
+            const advNameEl = document.getElementById('pdf-advisor-name');
+            if (advNameEl) advNameEl.innerText = advisor;
+            
+            const phoneRow = document.getElementById('pdf-phone-row');
+            const phoneEl = document.getElementById('pdf-advisor-phone');
+            const phoneLink = document.getElementById('pdf-advisor-phone-link');
+            if (phoneClean) {
+                if (phoneRow) phoneRow.style.display = 'flex';
+                if (phoneEl) phoneEl.innerText = '+' + phoneClean;
+                if (phoneLink) phoneLink.href = 'tel:+' + phoneClean;
+            } else {
+                if (phoneRow) phoneRow.style.display = 'none';
+            }
+            
+            const emailRow = document.getElementById('pdf-email-row');
+            const emailEl = document.getElementById('pdf-advisor-email');
+            const emailLink = document.getElementById('pdf-advisor-email-link');
+            if (email) {
+                if (emailRow) emailRow.style.display = 'flex';
+                if (emailEl) emailEl.innerText = email;
+                if (emailLink) emailLink.href = 'mailto:' + email;
+            } else {
+                if (emailRow) emailRow.style.display = 'none';
+            }
+            
+            // WhatsApp message for link and QR code
+            let msg = `Hallo ${advisor}!`;
+            if (clientName) {
+                msg += ` Auf Empfehlung von ${clientName} melde ich mich bzgl. Altersvorsorge-Depot 2027.`;
+            } else {
+                msg += ` Ich melde mich bzgl. Altersvorsorge-Depot 2027.`;
+            }
+            msg += ` Wann können wir uns dazu kurz unverbindlich austauschen?`;
+            if (recipient) {
+                msg += `\n\nViele Grüße\n${recipient}`;
+            }
+            
+            const waUrl = phoneClean ? `https://wa.me/${phoneClean}?text=${encodeURIComponent(msg)}` : '#';
+            const waBtn = document.getElementById('pdf-wa-btn');
+            if (waBtn) waBtn.href = waUrl;
+            
+            // QR Code in PDF
+            const qrSection = document.getElementById('pdf-qr-section');
+            const qrContainer = document.getElementById('pdf-qrcode-container');
+            if (phoneClean && qrContainer) {
+                if (qrSection) qrSection.style.display = 'flex';
+                qrContainer.innerHTML = '';
+                pdfQrcode = new QRCode(qrContainer, {
+                    text: waUrl,
+                    width: 110,
+                    height: 110,
+                    colorDark: "#023e84",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+            } else {
+                if (qrSection) qrSection.style.display = 'none';
+            }
+        }
+
+        function updateRecommendationLogic() {
+            const nameField = document.getElementById('rec-adv-name');
+            const phoneField = document.getElementById('rec-adv-phone');
+            const emailField = document.getElementById('rec-adv-email');
+            const setupView = document.getElementById('rec-setup-view');
+            const readyView = document.getElementById('rec-ready-view');
+            
+            const name = nameField ? nameField.value.trim() : '';
+            const phone = phoneField ? phoneField.value.trim() : '';
+            const email = emailField ? emailField.value.trim() : '';
+            
             if (name || phone) {
-                // Save
+                // Save credentials in localStorage
                 localStorage.setItem('novori_adv_name', name);
                 localStorage.setItem('novori_adv_phone', phone);
                 localStorage.setItem('novori_adv_email', email);
                 
-                // Create the Smart Redirect link for the friend (with obfuscated token)
-                let directWaLink = '';
-                if (phone) {
-                    let phoneClean = phone.replace(/[^0-9+]/g, '');
-                    if (phoneClean.startsWith('0049')) phoneClean = phoneClean.substring(2);
-                    else if (phoneClean.startsWith('0')) phoneClean = '49' + phoneClean.substring(1);
-                    else if (phoneClean.startsWith('+49')) phoneClean = phoneClean.substring(1);
-                    
-                    // Ultra-compact token: phone~advisor~recommender~email~recipient~theme
-                    const compactRaw = `${phoneClean}~${name}~${clientName || ''}~${email || ''}~${recipient || ''}~av`;
-                    const token = btoa(unescape(encodeURIComponent(compactRaw)))
-                        .replace(/\+/g, '-')
-                        .replace(/\//g, '_')
-                        .replace(/=+$/, '');
-                    
-                    // Build URL to live recommendation card with token
-                    const redirectUrl = `https://empfehlungskarte.vercel.app/?c=${token}`;
-                    
-                    directWaLink = `\n\nHier geht's zur Empfehlungskarte mit direktem Kontakt zu meinem Berater:\n${redirectUrl}`;
-                } else {
-                    directWaLink = '';
-                }
-                
-                // Greeting & Closing logic
-                const greeting = recipient ? `Hallo ${recipient},` : 'Hallo,';
-                let closing = 'Viele Grüße';
-                if (clientName) {
-                    closing += `\n${clientName}`;
-                }
-                
-                // Recommendation message with greeting and closing
-                const textRecommend = `${greeting}\n\nschau mal: das neue Altersvorsorge-Depot 2027.\nIch habe meine Vorsorge heute vorbereitet und möchte dir empfehlen, es ebenfalls zu machen.\nNutze das Geschenk vom Staat.${directWaLink}\n\n${closing}`;
-                
-                // Use standard HTTPS link so smartphone cameras recognize it as a clickable URL
-                const waUrl = `https://wa.me/?text=${encodeURIComponent(textRecommend)}`;
-                
-                // Show QR
+                // Show ready state with PDF download button
                 setupView.classList.add('hidden');
-                qrView.classList.remove('hidden');
-                qrView.classList.add('flex');
+                readyView.classList.remove('hidden');
+                readyView.classList.add('flex');
                 
-                if (!qrcode) {
-                    qrcode = new QRCode(qrContainer, {
-                        text: waUrl,
-                        width: 220,
-                        height: 220,
-                        colorDark : "#023e84",
-                        colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.M
-                    });
-                } else {
-                    qrcode.clear();
-                    qrcode.makeCode(waUrl);
-                }
+                // Keep hidden PDF template updated
+                updatePdfCardData();
             } else {
-                // Show setup
+                // Show setup state
                 setupView.classList.remove('hidden');
-                qrView.classList.add('hidden');
-                qrView.classList.remove('flex');
+                readyView.classList.add('hidden');
+                readyView.classList.remove('flex');
             }
         }
 
         function editRecommendationSetup() {
             document.getElementById('rec-setup-view').classList.remove('hidden');
-            document.getElementById('rec-qr-view').classList.add('hidden');
-            document.getElementById('rec-qr-view').classList.remove('flex');
+            document.getElementById('rec-ready-view').classList.add('hidden');
+            document.getElementById('rec-ready-view').classList.remove('flex');
+        }
+
+        async function generateEmpfehlungskartePDF() {
+            const btn = document.getElementById('btn-download-pdf');
+            const label = document.getElementById('btn-pdf-label');
+            const originalLabel = label ? label.innerHTML : 'Empfehlungskarte downloaden';
+            
+            // Sync PDF card data
+            updatePdfCardData();
+            
+            const phone = localStorage.getItem('novori_adv_phone') || '';
+            if (!phone) {
+                alert('Bitte hinterlegen Sie zuerst Ihre WhatsApp-Telefonnummer.');
+                editRecommendationSetup();
+                return;
+            }
+            
+            // Create nice filename slug
+            const clientName = (document.getElementById('rec-client-name')?.value || '').trim();
+            const recipient = (document.getElementById('rec-recipient-name')?.value || '').trim();
+            let fileSlug = 'Altersvorsorgedepot';
+            if (recipient) fileSlug += `-${recipient}`;
+            else if (clientName) fileSlug += `-${clientName}`;
+            fileSlug = fileSlug.replace(/[^a-zA-Z0-9_-]/g, '_');
+            const filename = `Empfehlungskarte-${fileSlug}.pdf`;
+            
+            // Button loading state
+            if (btn) btn.disabled = true;
+            if (label) label.innerHTML = `
+                <span class="inline-flex items-center gap-2">
+                    <svg class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    PDF wird erstellt...
+                </span>
+            `;
+
+            // Open window synchronously to avoid popup blocker
+            let pdfWin = null;
+            try {
+                pdfWin = window.open('', '_blank');
+                if (pdfWin) {
+                    pdfWin.document.title = 'Empfehlungskarte wird generiert...';
+                    pdfWin.document.body.innerHTML = `
+                        <div style="font-family: -apple-system, BlinkMacSystemFont, Roboto, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f8fafc; color: #023e84;">
+                            <div style="width: 44px; height: 44px; border: 4px solid #cbd5e1; border-top-color: #023e84; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px;"></div>
+                            <h2 style="margin: 0 0 8px 0; font-size: 19px; font-weight: 700;">Empfehlungskarte wird generiert...</h2>
+                            <p style="margin: 0; color: #64748b; font-size: 14px;">Das PDF öffnet sich in Kürze.</p>
+                            <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                console.warn('Popup window note:', e);
+            }
+
+            // Brief wait for QRCode rendering inside DOM
+            await new Promise(resolve => setTimeout(resolve, 200));
+
+            const element = document.getElementById('pdf-render-wrapper');
+            const opt = {
+                margin: 0,
+                filename: filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    letterRendering: true,
+                    logging: false,
+                    scrollY: 0
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait'
+                },
+                enableLinks: true
+            };
+
+            try {
+                const worker = html2pdf().set(opt).from(element);
+                const pdf = await worker.toPdf().get('pdf');
+                
+                // Show PDF in the newly opened tab
+                const blob = pdf.output('blob');
+                const blobUrl = URL.createObjectURL(blob);
+                if (pdfWin) {
+                    pdfWin.location.href = blobUrl;
+                }
+                
+                // Also trigger download
+                pdf.save(filename);
+            } catch (err) {
+                console.error('PDF generation error:', err);
+                if (pdfWin) pdfWin.close();
+                alert('Beim Erstellen des PDFs ist ein Fehler aufgetreten.');
+            } finally {
+                if (btn) btn.disabled = false;
+                if (label) label.innerHTML = originalLabel;
+            }
         }
 
         function initRecommendation() {
@@ -1040,5 +1213,104 @@
         initRecommendation();
         updateValues();
     </script>
+
+    <!-- Hidden PDF Render Template for html2pdf -->
+    <div id="pdf-render-wrapper" style="position: fixed; left: 0; top: 0; width: 620px; min-height: 877px; z-index: -9999; pointer-events: none; background: #ffffff; box-sizing: border-box; padding: 24px 0;">
+        <div id="pdf-card" style="width: 480px; margin: 0 auto; background: #ffffff; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(2,62,132,0.06); padding: 28px 26px; position: relative; font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif; box-sizing: border-box; text-align: left; color: #1e293b;">
+            <!-- Top Gradient Accent -->
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 6px; border-top-left-radius: 24px; border-top-right-radius: 24px; background: linear-gradient(90deg, #023e84 0%, #006fb9 100%);"></div>
+
+            <!-- Header: Badge & Theme-Icon mittig -->
+            <div style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 4px; margin-bottom: 16px;">
+                <!-- Header Badge -->
+                <div style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #e8f0fa; color: #023e84; margin-bottom: 12px;">
+                    <svg style="width: 13px; height: 13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span id="pdf-badge-recommender">Persönliche Empfehlung</span>
+                </div>
+
+                <!-- Theme Icon -->
+                <div style="width: 68px; height: 68px; background: #e8f0fa; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #023e84; margin-bottom: 4px;">
+                    <svg style="width: 36px; height: 36px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 12 20 22 4 22 4 12"></polyline>
+                        <rect x="2" y="7" width="20" height="5"></rect>
+                        <line x1="12" y1="22" x2="12" y2="7"></line>
+                        <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+                        <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <h1 style="font-size: 21px; font-weight: 800; color: #023e84; margin: 0 0 16px 0; line-height: 1.25; text-align: center;">
+                Das neue Altersvorsorge-Depot 2027
+            </h1>
+
+            <!-- Message Block -->
+            <div style="background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 16px; padding: 16px 18px; margin-bottom: 16px; color: #475569; font-size: 13.5px; line-height: 1.55;">
+                <p id="pdf-msg-greeting" style="font-weight: 600; color: #1e293b; font-size: 14.5px; margin: 0 0 8px 0;">
+                    Hallo,
+                </p>
+                <p style="margin: 0 0 8px 0;">
+                    schau mal: das neue Altersvorsorge-Depot 2027.
+                </p>
+                <p style="margin: 0 0 8px 0;">
+                    Ich habe meine Vorsorge heute vorbereitet und möchte dir empfehlen, es ebenfalls zu machen.
+                </p>
+                <p style="font-weight: 600; color: #023e84; margin: 0;">
+                    Nutze das Geschenk vom Staat.
+                </p>
+                <div id="pdf-closing-box" style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #e2e8f0; color: #475569; font-size: 13px;">
+                    <div>Viele Grüße</div>
+                    <div id="pdf-author-name" style="font-weight: 700; color: #1e293b; margin-top: 2px;"></div>
+                </div>
+            </div>
+
+            <!-- Advisor Contact Box -->
+            <div style="border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px 16px; margin-bottom: 16px; background: #ffffff;">
+                <div style="font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;">Dein persönlicher Berater</div>
+                <div id="pdf-advisor-name" style="font-size: 16px; font-weight: 700; color: #023e84;">Berater</div>
+
+                <div id="pdf-phone-row" style="font-size: 13px; color: #64748b; margin-top: 6px; display: flex; align-items: center; gap: 8px;">
+                    <svg style="width: 14px; height: 14px; color: #006fb9; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    <a id="pdf-advisor-phone-link" href="#" style="font-weight: 500; color: #334155; text-decoration: none;"><span id="pdf-advisor-phone">-</span></a>
+                </div>
+
+                <div id="pdf-email-row" style="font-size: 13px; color: #64748b; margin-top: 6px; display: flex; align-items: center; gap: 8px;">
+                    <svg style="width: 14px; height: 14px; color: #006fb9; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <a id="pdf-advisor-email-link" href="#" style="font-weight: 500; color: #334155; text-decoration: none; word-break: break-all;"><span id="pdf-advisor-email">-</span></a>
+                </div>
+            </div>
+
+            <!-- Primary WhatsApp CTA Button (active hyperlink in PDF) -->
+            <a id="pdf-wa-btn" href="#" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; box-sizing: border-box; background: #25D366; color: #ffffff; font-weight: 700; padding: 12px 18px; border-radius: 14px; text-decoration: none; font-size: 14.5px; margin-bottom: 16px;">
+                <svg style="width: 20px; height: 20px; flex-shrink: 0;" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+                </svg>
+                <span>Direkt per WhatsApp anfragen</span>
+            </a>
+
+            <!-- QR Code Section -->
+            <div id="pdf-qr-section" style="padding-top: 14px; border-top: 1px solid #f1f5f9; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                <div id="pdf-qrcode-container" style="background: #ffffff; padding: 8px; border-radius: 14px; border: 1px solid #e2e8f0; margin-bottom: 6px; display: inline-block;"></div>
+                <p style="font-size: 11px; font-weight: 600; color: #475569; margin: 0 0 2px 0;">
+                    Oder per Smartphone-Kamera scannen
+                </p>
+                <p style="font-size: 10px; color: #94a3b8; margin: 0;">Öffnet WhatsApp direkt mit vorbereiteter Nachricht</p>
+            </div>
+
+            <!-- Footer -->
+            <div style="margin-top: 14px; text-align: center; font-size: 10px; color: #94a3b8; border-top: 1px solid #f8fafc; padding-top: 8px;">
+                <span>Impressum</span> · <span>Datenschutz</span>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
