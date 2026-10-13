@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Empfehlungskarte: Altersvorsorge-Depot 2027</title>
+    <title id="page-title">Persönliche Empfehlung</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -26,7 +26,7 @@
             <!-- Top Gradient Accent -->
             <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#023e84] to-[#006fb9]"></div>
 
-            <!-- Header: Empfehlung von... & Geschenk-Icon mittig -->
+            <!-- Header: Empfehlung von... & Theme-Icon mittig -->
             <div class="flex flex-col items-center text-center mb-5">
                 <!-- Header Badge -->
                 <div class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#e8f0fa] text-[#023e84] mb-4">
@@ -37,21 +37,15 @@
                     <span id="badge-recommender">Persönliche Empfehlung</span>
                 </div>
 
-                <!-- Geschenk-Icon aus dem Rechner -->
-                <div class="w-20 h-20 bg-[#e8f0fa] rounded-[22px] shadow-sm flex items-center justify-center text-[#023e84] mx-auto mb-2">
-                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 12 20 22 4 22 4 12"></polyline>
-                        <rect x="2" y="7" width="20" height="5"></rect>
-                        <line x1="12" y1="22" x2="12" y2="7"></line>
-                        <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
-                        <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
-                    </svg>
+                <!-- Dynamisches Themen-Icon -->
+                <div id="theme-icon-container" class="w-20 h-20 bg-[#e8f0fa] rounded-[22px] shadow-sm flex items-center justify-center text-[#023e84] mx-auto mb-2">
+                    <!-- Icon wird per JavaScript dynamisch eingesetzt -->
                 </div>
             </div>
 
             <!-- Title -->
             <h1 class="text-2xl font-extrabold text-[#023e84] mb-5 leading-tight text-center" id="card-title">
-                Das neue Altersvorsorge-Depot 2027
+                Persönliche Empfehlung
             </h1>
 
             <!-- Message Block -->
@@ -60,12 +54,12 @@
                     Hallo,
                 </p>
                 <p class="mb-3" id="msg-lead">
-                    schau mal: das neue Altersvorsorge-Depot 2027.
+                    schau dir das unbedingt mal an.
                 </p>
-                <p class="mb-3">
+                <p class="mb-3" id="msg-middle">
                     Ich habe meine Vorsorge heute vorbereitet und möchte dir empfehlen, es ebenfalls zu machen.
                 </p>
-                <p class="font-semibold text-[#023e84]">
+                <p class="font-semibold text-[#023e84]" id="msg-highlight">
                     Nutze das Geschenk vom Staat.
                 </p>
                 
@@ -124,21 +118,52 @@
     <!-- Footer -->
     <footer class="pb-6 text-center text-xs text-slate-400">
         <div class="flex items-center justify-center gap-3">
-            <span>Impressum</span>
+            <a href="#" onclick="return false;" class="hover:text-slate-600 transition-colors">Impressum</a>
             <span>·</span>
-            <span>Datenschutz</span>
+            <a href="#" onclick="return false;" class="hover:text-slate-600 transition-colors">Datenschutz</a>
         </div>
     </footer>
 
     <script>
-        // Parse parameters from URL (token ?c= or query params)
+        // Themen-Katalog: Alle Rechner-Texte und Icons an einer zentralen Stelle
+        const THEMES = {
+            av: {
+                title: "Das neue Altersvorsorge-Depot 2027",
+                lead: "schau mal: das neue Altersvorsorge-Depot 2027.",
+                middle: "Ich habe meine Vorsorge heute vorbereitet und möchte dir empfehlen, es ebenfalls zu machen.",
+                highlight: "Nutze das Geschenk vom Staat.",
+                topicName: "Altersvorsorge-Depot 2027",
+                iconSvg: `<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 12 20 22 4 22 4 12"></polyline>
+                    <rect x="2" y="7" width="20" height="5"></rect>
+                    <line x1="12" y1="22" x2="12" y2="7"></line>
+                    <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+                    <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+                </svg>`
+            },
+            fruehstart: {
+                title: "Die clevere Frühstart-Rente für Kinder",
+                lead: "schau mal: die Frühstart-Rente für Kinder.",
+                middle: "Ich habe mir heute durchrechnen lassen, wie extrem Kinder vom Zinseszins profitieren, wenn man früh startet.",
+                highlight: "Sichere deinen Kindern den besten finanziellen Start ins Leben.",
+                topicName: "Frühstart-Rente",
+                iconSvg: `<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+                    <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+                    <path d="M9 12H4s.55-3.03 2-4.5c1.62-1.63 5-2.5 5-2.5"></path>
+                    <path d="M15 15v5s3.03-.55 4.5-2c1.63-1.62 2.5-5 2.5-5"></path>
+                </svg>`
+            }
+        };
+
+        // Parameter aus URL auslesen (?c= oder Query-Params)
         const params = new URLSearchParams(window.location.search);
         let advisor = 'Deinem Berater';
         let phoneRaw = '';
         let recommender = '';
         let email = '';
         let recipient = '';
-        let topic = 'Altersvorsorge-Depot 2027';
+        let themeKey = params.get('t') || 'av';
 
         const codeToken = params.get('c') || params.get('token') || params.get('ref');
         if (codeToken) {
@@ -148,42 +173,52 @@
                 const decodedStr = decodeURIComponent(escape(atob(b64)));
                 
                 if (decodedStr.includes('~')) {
-                    // Ultra-compact format: phone~advisor~recommender~email~recipient~topic
+                    // Ultra-kompaktes Format: phone~advisor~recommender~email~recipient~theme
                     const parts = decodedStr.split('~');
                     if (parts[0]) phoneRaw = parts[0];
                     if (parts[1]) advisor = parts[1];
                     if (parts[2]) recommender = parts[2];
                     if (parts[3]) email = parts[3];
                     if (parts[4]) recipient = parts[4];
-                    if (parts[5]) topic = parts[5];
+                    if (parts[5]) themeKey = parts[5];
                 } else if (decodedStr.startsWith('{')) {
-                    // Legacy JSON format
+                    // Legacy JSON-Format
                     const data = JSON.parse(decodedStr);
                     if (data.b) advisor = data.b;
                     if (data.p) phoneRaw = data.p;
                     if (data.r) recommender = data.r;
-                    if (data.e) email = data.e;
-                    if (data.email) email = data.email;
-                    if (data.to) recipient = data.to;
-                    if (data.an) recipient = data.an;
-                    if (data.t) topic = data.t;
+                    if (data.e || data.email) email = data.e || data.email;
+                    if (data.to || data.an) recipient = data.to || data.an;
+                    if (data.t) themeKey = data.t;
                 }
             } catch (err) {
                 console.error("Token decode error:", err);
             }
         }
 
-        // Fallback to legacy query parameters if not found in token
+        // Fallback zu Legacy-Query-Parametern falls nicht im Token
         if (!phoneRaw) {
             advisor = params.get('b') || params.get('berater') || advisor;
             phoneRaw = params.get('p') || params.get('phone') || '';
             recommender = params.get('von') || params.get('mandant') || recommender;
             email = params.get('e') || params.get('email') || email;
             recipient = params.get('an') || params.get('to') || params.get('empfaenger') || recipient;
-            topic = params.get('t') || params.get('thema') || topic;
+            if (params.get('t')) themeKey = params.get('t');
         }
 
-        // Clean & decode strings
+        // Thema anwenden (Standard: Altersvorsorge-Depot 'av')
+        const currentTheme = THEMES[themeKey] || THEMES.av;
+        const topicName = currentTheme.topicName;
+
+        // UI mit Thema füllen
+        document.getElementById('card-title').innerText = currentTheme.title;
+        document.getElementById('page-title').innerText = `Empfehlung: ${currentTheme.title}`;
+        document.getElementById('msg-lead').innerText = currentTheme.lead;
+        document.getElementById('msg-middle').innerText = currentTheme.middle;
+        document.getElementById('msg-highlight').innerText = currentTheme.highlight;
+        document.getElementById('theme-icon-container').innerHTML = currentTheme.iconSvg;
+
+        // Strings säubern
         const cleanText = (str) => {
             if (!str) return '';
             try {
@@ -196,18 +231,17 @@
         recommender = cleanText(recommender);
         email = cleanText(email);
         recipient = cleanText(recipient);
-        topic = cleanText(topic);
 
-        // Clean phone number
+        // Telefonnummer bereinigen
         let phoneClean = phoneRaw.replace(/[^0-9+]/g, '');
         if (phoneClean.startsWith('0049')) phoneClean = phoneClean.substring(2);
         else if (phoneClean.startsWith('0')) phoneClean = '49' + phoneClean.substring(1);
         else if (phoneClean.startsWith('+49')) phoneClean = phoneClean.substring(1);
 
-        // Update UI Elements
+        // Beraterdaten anzeigen
         document.getElementById('advisor-name').innerText = advisor;
         
-        // Format phone display nicely
+        // Telefonzeile
         if (phoneClean) {
             let displayPhone = '+' + phoneClean;
             document.getElementById('advisor-phone').innerText = displayPhone;
@@ -217,7 +251,7 @@
             document.getElementById('phone-row').style.display = 'none';
         }
 
-        // Format email display
+        // E-Mail-Zeile
         if (email) {
             document.getElementById('advisor-email').innerText = email;
             const emailLink = document.getElementById('advisor-email-link');
@@ -226,13 +260,13 @@
             document.getElementById('email-row').style.display = 'none';
         }
 
-        // Set Greeting: "Hallo Name," or "Hallo,"
+        // Begrüßung: "Hallo Name," oder "Hallo,"
         const greetingEl = document.getElementById('msg-greeting');
         if (greetingEl) {
             greetingEl.innerText = recipient ? `Hallo ${recipient},` : 'Hallo,';
         }
 
-        // Set Recommender & Closing
+        // Empfehler & Grußformel
         const authorEl = document.getElementById('author-name');
         if (recommender) {
             document.getElementById('badge-recommender').innerText = 'Empfehlung von ' + recommender;
@@ -247,12 +281,12 @@
             }
         }
 
-        // Build WhatsApp Message for the friend to send to advisor
+        // WhatsApp-Nachricht vorbereiten
         let msg = `Hallo ${advisor}!`;
         if (recommender) {
-            msg += ` Auf Empfehlung von ${recommender} melde ich mich bzgl. des neuen ${topic}.`;
+            msg += ` Auf Empfehlung von ${recommender} melde ich mich bzgl. ${topicName}.`;
         } else {
-            msg += ` Ich melde mich bzgl. des neuen ${topic}.`;
+            msg += ` Ich melde mich bzgl. ${topicName}.`;
         }
         msg += ` Wann können wir uns dazu kurz unverbindlich austauschen?`;
         if (recipient) {
@@ -262,7 +296,7 @@
         const waUrl = phoneClean ? `whatsapp://send?phone=${phoneClean}&text=${encodeURIComponent(msg)}` : '#';
         document.getElementById('wa-btn').href = waUrl;
 
-        // Render QR Code for WhatsApp
+        // QR-Code für Desktop-Nutzer rendern
         if (phoneClean) {
             const qrWaUrl = `https://wa.me/${phoneClean}?text=${encodeURIComponent(msg)}`;
             const qrContainer = document.getElementById('qrcode-container');
