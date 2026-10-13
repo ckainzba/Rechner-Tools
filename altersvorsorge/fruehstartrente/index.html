@@ -1089,8 +1089,8 @@
             
             if (name || phone) {
                 // Save
-                localStorage.setItem('novori_adv_name', name);
-                localStorage.setItem('novori_adv_phone', phone);
+                localStorage.setItem('rechner_adv_name', name);
+                localStorage.setItem('rechner_adv_phone', phone);
                 
                 // Create the wa.me link for the friend
                 let directWaLink = '';
@@ -1158,8 +1158,8 @@
         }
 
         function initRecommendation() {
-            const name = localStorage.getItem('novori_adv_name') || '';
-            const phone = localStorage.getItem('novori_adv_phone') || '';
+            const name = localStorage.getItem('rechner_adv_name') || '';
+            const phone = localStorage.getItem('rechner_adv_phone') || '';
             
             const nameField = document.getElementById('rec-adv-name');
             const phoneField = document.getElementById('rec-adv-phone');

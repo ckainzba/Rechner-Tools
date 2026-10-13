@@ -947,9 +947,9 @@
             
             if (name || phone || email) {
                 // Save
-                localStorage.setItem('novori_adv_name', name);
-                localStorage.setItem('novori_adv_phone', phone);
-                localStorage.setItem('novori_adv_email', email);
+                localStorage.setItem('rechner_adv_name', name);
+                localStorage.setItem('rechner_adv_phone', phone);
+                localStorage.setItem('rechner_adv_email', email);
                 
                 // Create the Smart Redirect link for the friend (with obfuscated token)
                 let directWaLink = '';
@@ -1020,9 +1020,9 @@
         }
 
         function initRecommendation() {
-            const name = localStorage.getItem('novori_adv_name') || '';
-            const phone = localStorage.getItem('novori_adv_phone') || '';
-            const email = localStorage.getItem('novori_adv_email') || '';
+            const name = localStorage.getItem('rechner_adv_name') || '';
+            const phone = localStorage.getItem('rechner_adv_phone') || '';
+            const email = localStorage.getItem('rechner_adv_email') || '';
             
             if (document.getElementById('rec-adv-name')) document.getElementById('rec-adv-name').value = name;
             if (document.getElementById('rec-adv-phone')) document.getElementById('rec-adv-phone').value = phone;

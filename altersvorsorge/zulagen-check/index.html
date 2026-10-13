@@ -599,9 +599,9 @@ Beste Grüße
             const calendly = calendlyEl ? calendlyEl.value.trim() : '';
             
             // Save to localStorage
-            localStorage.setItem('novori_adv_name', name);
-            localStorage.setItem('novori_adv_phone', phone);
-            localStorage.setItem('novori_adv_calendly', calendly);
+            localStorage.setItem('rechner_adv_name', name);
+            localStorage.setItem('rechner_adv_phone', phone);
+            localStorage.setItem('rechner_adv_calendly', calendly);
             
             // Ermittle die Basis-URL für Kunden automatisch im Hintergrund
             let clientBase = '';
@@ -808,9 +808,9 @@ Beste Grüße
             const calendlyField = document.getElementById('adv-calendly');
             
             if (nameField && phoneField && calendlyField) {
-                nameField.value = localStorage.getItem('novori_adv_name') || '';
-                phoneField.value = localStorage.getItem('novori_adv_phone') || '';
-                calendlyField.value = localStorage.getItem('novori_adv_calendly') || '';
+                nameField.value = localStorage.getItem('rechner_adv_name') || '';
+                phoneField.value = localStorage.getItem('rechner_adv_phone') || '';
+                calendlyField.value = localStorage.getItem('rechner_adv_calendly') || '';
                 updateModalLinks();
             }
         }

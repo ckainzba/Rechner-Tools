@@ -1069,9 +1069,9 @@
             
             if (name || phone) {
                 // Save credentials in localStorage
-                localStorage.setItem('novori_adv_name', name);
-                localStorage.setItem('novori_adv_phone', phone);
-                localStorage.setItem('novori_adv_email', email);
+                localStorage.setItem('rechner_adv_name', name);
+                localStorage.setItem('rechner_adv_phone', phone);
+                localStorage.setItem('rechner_adv_email', email);
                 
                 // Show ready state with PDF download button
                 setupView.classList.add('hidden');
@@ -1101,7 +1101,7 @@
             const card = document.getElementById('pdf-card');
             const overlay = document.getElementById('pdf-loading-overlay');
             
-            const phone = localStorage.getItem('novori_adv_phone') || '';
+            const phone = localStorage.getItem('rechner_adv_phone') || '';
             if (!phone) {
                 alert('Bitte hinterlegen Sie zuerst Ihre WhatsApp-Telefonnummer.');
                 editRecommendationSetup();
@@ -1232,9 +1232,9 @@
         }
 
         function initRecommendation() {
-            const name = localStorage.getItem('novori_adv_name') || '';
-            const phone = localStorage.getItem('novori_adv_phone') || '';
-            const email = localStorage.getItem('novori_adv_email') || '';
+            const name = localStorage.getItem('rechner_adv_name') || '';
+            const phone = localStorage.getItem('rechner_adv_phone') || '';
+            const email = localStorage.getItem('rechner_adv_email') || '';
             
             const nameEl = document.getElementById('rec-adv-name');
             const phoneEl = document.getElementById('rec-adv-phone');

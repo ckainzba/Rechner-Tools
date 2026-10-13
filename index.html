@@ -485,10 +485,10 @@
 
     // Global Settings Logic
     function openGlobalSettings() {
-      document.getElementById('global-adv-name').value = localStorage.getItem('novori_adv_name') || '';
-      document.getElementById('global-adv-phone').value = localStorage.getItem('novori_adv_phone') || '';
-      document.getElementById('global-adv-email').value = localStorage.getItem('novori_adv_email') || '';
-      document.getElementById('global-adv-calendly').value = localStorage.getItem('novori_adv_calendly') || '';
+      document.getElementById('global-adv-name').value = localStorage.getItem('rechner_adv_name') || '';
+      document.getElementById('global-adv-phone').value = localStorage.getItem('rechner_adv_phone') || '';
+      document.getElementById('global-adv-email').value = localStorage.getItem('rechner_adv_email') || '';
+      document.getElementById('global-adv-calendly').value = localStorage.getItem('rechner_adv_calendly') || '';
       
       document.getElementById('global-settings-overlay').classList.remove('hidden');
     }
@@ -503,10 +503,10 @@
       const email = document.getElementById('global-adv-email').value.trim();
       const calendly = document.getElementById('global-adv-calendly').value.trim();
       
-      if(name) localStorage.setItem('novori_adv_name', name); else localStorage.removeItem('novori_adv_name');
-      if(phone) localStorage.setItem('novori_adv_phone', phone); else localStorage.removeItem('novori_adv_phone');
-      if(email) localStorage.setItem('novori_adv_email', email); else localStorage.removeItem('novori_adv_email');
-      if(calendly) localStorage.setItem('novori_adv_calendly', calendly); else localStorage.removeItem('novori_adv_calendly');
+      if(name) localStorage.setItem('rechner_adv_name', name); else localStorage.removeItem('rechner_adv_name');
+      if(phone) localStorage.setItem('rechner_adv_phone', phone); else localStorage.removeItem('rechner_adv_phone');
+      if(email) localStorage.setItem('rechner_adv_email', email); else localStorage.removeItem('rechner_adv_email');
+      if(calendly) localStorage.setItem('rechner_adv_calendly', calendly); else localStorage.removeItem('rechner_adv_calendly');
       
       // Visual feedback
       const btn = event.currentTarget;
