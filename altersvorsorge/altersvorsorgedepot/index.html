@@ -403,36 +403,52 @@
                 </details>
 
                 <!-- Recommendation Card -->
-                <div class="mt-8 bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col lg:flex-row gap-8 items-center justify-between">
-                    <!-- Left: Icon & Text -->
-                    <div class="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 w-full lg:w-auto flex-1">
-                        <div class="w-20 h-20 bg-[#e8f0fa] rounded-[20px] shadow-sm flex items-center justify-center flex-shrink-0 text-[#023e84]">
-                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 12 20 22 4 22 4 12"></polyline>
-                                <rect x="2" y="7" width="20" height="5"></rect>
-                                <line x1="12" y1="22" x2="12" y2="7"></line>
-                                <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
-                                <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
-                            </svg>
+                <div class="mt-8 bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col lg:flex-row gap-8 items-start justify-between">
+                    <!-- Left: Header + Full-width Inputs -->
+                    <div class="w-full flex-1 flex flex-col gap-5">
+                        <!-- Top: Icon & Headline -->
+                        <div class="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-5">
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#e8f0fa] rounded-[20px] shadow-sm flex items-center justify-center flex-shrink-0 text-[#023e84]">
+                                <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 12 20 22 4 22 4 12"></polyline>
+                                    <rect x="2" y="7" width="20" height="5"></rect>
+                                    <line x1="12" y1="22" x2="12" y2="7"></line>
+                                    <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+                                    <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-2xl md:text-[28px] font-extrabold text-[#023e84] mb-2 leading-tight">Wem gönnen Sie noch ein Geschenk vom Staat?</h3>
+                                <p class="text-[15px] text-slate-500">Empfehlen Sie die neue Altersvorsorgeförderung einfach weiter.</p>
+                            </div>
                         </div>
-                        <div class="flex-1 w-full max-w-lg">
-                            <h3 class="text-2xl md:text-[28px] font-extrabold text-[#023e84] mb-3 leading-tight">Wem gönnen Sie noch ein Geschenk vom Staat?</h3>
-                            <p class="text-[15px] text-slate-500 mb-5">Empfehlen Sie die neue Altersvorsorgeförderung einfach weiter.</p>
-                            
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                <label class="block text-[11px] font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Von wem kommt die Empfehlung?</label>
-                                <input type="text" id="rec-client-name" placeholder="Name des Mandanten eingeben..." class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-2.5 outline-none transition-colors shadow-sm" oninput="updateRecommendationLogic()">
+
+                        <!-- Bottom: Input Fields starting under the icon -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-100 w-full">
+                            <div>
+                                <label class="h-5 flex items-center text-[11px] font-bold text-slate-500 mb-1.5 uppercase tracking-wide">
+                                    Name des Mandanten
+                                </label>
+                                <input type="text" id="rec-client-name" placeholder="z. B. Anna Müller..." class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-2.5 outline-none transition-colors shadow-sm" oninput="updateRecommendationLogic()">
+                            </div>
+                            <div>
+                                <label class="h-5 flex items-center gap-1.5 text-[11px] font-bold text-slate-500 mb-1.5 uppercase tracking-wide whitespace-nowrap">
+                                    <span>Vorname der Empfehlung</span>
+                                    <span class="text-slate-400 font-normal lowercase">(optional)</span>
+                                </label>
+                                <input type="text" id="rec-recipient-name" placeholder="z. B. Lisa..." class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-2.5 outline-none transition-colors shadow-sm" oninput="updateRecommendationLogic()">
                             </div>
                         </div>
                     </div>
 
                     <!-- Right: Action Area (Setup or QR) -->
-                    <div class="w-full sm:w-[320px] flex-shrink-0 bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                    <div class="w-full lg:w-[320px] flex-shrink-0 bg-slate-50 rounded-2xl p-5 border border-slate-100 self-center">
                         <!-- Setup State -->
                         <div id="rec-setup-view" class="hidden flex flex-col gap-3">
                             <p class="text-xs text-slate-500 mb-1 text-center">Hinterlegen Sie Ihre Kontaktdaten für den Empfehlungs-Link:</p>
                             <input type="text" id="rec-adv-name" placeholder="Ihr Name" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
                             <input type="tel" id="rec-adv-phone" placeholder="WhatsApp-Nummer" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
+                            <input type="email" id="rec-adv-email" placeholder="E-Mail-Adresse" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
                             <button onclick="updateRecommendationLogic()" class="w-full bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-3 px-6 rounded-xl transition-colors text-sm shadow-sm mt-1">Code generieren</button>
                         </div>
 
@@ -916,21 +932,26 @@
         function updateRecommendationLogic() {
             const nameField = document.getElementById('rec-adv-name');
             const phoneField = document.getElementById('rec-adv-phone');
+            const emailField = document.getElementById('rec-adv-email');
             const clientNameField = document.getElementById('rec-client-name');
+            const recipientField = document.getElementById('rec-recipient-name');
             const setupView = document.getElementById('rec-setup-view');
             const qrView = document.getElementById('rec-qr-view');
             const qrContainer = document.getElementById('qrcode-container');
             
-            const name = nameField.value.trim();
-            const phone = phoneField.value.trim();
+            const name = nameField ? nameField.value.trim() : '';
+            const phone = phoneField ? phoneField.value.trim() : '';
+            const email = emailField ? emailField.value.trim() : '';
             const clientName = clientNameField ? clientNameField.value.trim() : '';
+            const recipient = recipientField ? recipientField.value.trim() : '';
             
             if (name || phone) {
                 // Save
                 localStorage.setItem('novori_adv_name', name);
                 localStorage.setItem('novori_adv_phone', phone);
+                localStorage.setItem('novori_adv_email', email);
                 
-                // Create the wa.me link for the friend
+                // Create the Smart Redirect link for the friend (with obfuscated token)
                 let directWaLink = '';
                 if (phone) {
                     let phoneClean = phone.replace(/[^0-9+]/g, '');
@@ -938,20 +959,30 @@
                     else if (phoneClean.startsWith('0')) phoneClean = '49' + phoneClean.substring(1);
                     else if (phoneClean.startsWith('+49')) phoneClean = phoneClean.substring(1);
                     
-                    let msgToAdvisor = "";
-                    if (clientName) {
-                        msgToAdvisor = `Hallo! Auf Empfehlung von ${clientName} melde ich mich bzgl. des neuen Altersvorsorgedepots. Wann können wir uns dazu kurz austauschen?`;
-                    } else {
-                        msgToAdvisor = `Hallo! Ich melde mich bzgl. des neuen Altersvorsorgedepots. Wann können wir uns dazu kurz austauschen?`;
-                    }
+                    // Ultra-compact token: phone~advisor~recommender~email~recipient~theme
+                    const compactRaw = `${phoneClean}~${name}~${clientName || ''}~${email || ''}~${recipient || ''}~av`;
+                    const token = btoa(unescape(encodeURIComponent(compactRaw)))
+                        .replace(/\+/g, '-')
+                        .replace(/\//g, '_')
+                        .replace(/=+$/, '');
                     
-                    directWaLink = `\n\nChatte direkt mit ihm über diesen Link:\nhttps://wa.me/${phoneClean}?text=${encodeURIComponent(msgToAdvisor)}`;
+                    // Build URL to live recommendation card with token
+                    const redirectUrl = `https://empfehlungskarte.vercel.app/?c=${token}`;
+                    
+                    directWaLink = `\n\nHier geht's zur Empfehlungskarte mit direktem Kontakt zu meinem Berater:\n${redirectUrl}`;
                 } else {
                     directWaLink = '';
                 }
                 
-                // Construct the full recommendation message
-                const textRecommend = `Hey! Mein Berater ${name} hat mir gerade gezeigt, dass mir der Staat für meine Altersvorsorge jedes Jahr ordentlich Geld schenkt! Lass dir das auch mal durchrechnen.${directWaLink}`;
+                // Greeting & Closing logic
+                const greeting = recipient ? `Hallo ${recipient},` : 'Hallo,';
+                let closing = 'Viele Grüße';
+                if (clientName) {
+                    closing += `\n${clientName}`;
+                }
+                
+                // Recommendation message with greeting and closing
+                const textRecommend = `${greeting}\n\nschau mal: das neue Altersvorsorge-Depot 2027.\nIch habe meine Vorsorge heute vorbereitet und möchte dir empfehlen, es ebenfalls zu machen.\nNutze das Geschenk vom Staat.${directWaLink}\n\n${closing}`;
                 
                 // Use standard HTTPS link so smartphone cameras recognize it as a clickable URL
                 const waUrl = `https://wa.me/?text=${encodeURIComponent(textRecommend)}`;
@@ -968,7 +999,7 @@
                         height: 220,
                         colorDark : "#023e84",
                         colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.L
+                        correctLevel : QRCode.CorrectLevel.M
                     });
                 } else {
                     qrcode.clear();
@@ -991,9 +1022,15 @@
         function initRecommendation() {
             const name = localStorage.getItem('novori_adv_name') || '';
             const phone = localStorage.getItem('novori_adv_phone') || '';
+            const email = localStorage.getItem('novori_adv_email') || '';
             
-            document.getElementById('rec-adv-name').value = name;
-            document.getElementById('rec-adv-phone').value = phone;
+            const nameEl = document.getElementById('rec-adv-name');
+            const phoneEl = document.getElementById('rec-adv-phone');
+            const emailEl = document.getElementById('rec-adv-email');
+            
+            if (nameEl) nameEl.value = name;
+            if (phoneEl) phoneEl.value = phone;
+            if (emailEl) emailEl.value = email;
             
             updateRecommendationLogic();
         }
