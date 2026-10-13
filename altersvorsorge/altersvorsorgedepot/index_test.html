@@ -467,7 +467,7 @@
                         <span class="px-2 py-0.5 rounded bg-amber-200 text-amber-800 text-[10px] uppercase tracking-wider">Test-Sandbox</span>
                         <span>Empfehlungskarten-Weg (ohne Foto, sauberer Link)</span>
                     </div>
-                    <p class="text-amber-800 mb-2">Der QR-Code oben erzeugt jetzt den Text aus deinem Screenshot mit dem kurzen Link zur zentralen <code>karte.html</code> im Hauptverzeichnis.</p>
+                    <p class="text-amber-800 mb-2">Der QR-Code oben erzeugt jetzt den Text aus deinem Screenshot mit dem kurzen Link zur Empfehlungskarte auf <code>empfehlungskarte.vercel.app</code>.</p>
                     <div class="bg-white/90 p-3 rounded-xl border border-amber-200 font-mono text-[11px] text-slate-700 break-all whitespace-pre-wrap" id="rec-test-preview">Noch keine Daten hinterlegt. Tragen Sie rechts Ihre Kontaktdaten ein.</div>
                 </div>
             </div>
@@ -976,11 +976,10 @@
                         .replace(/\//g, '_')
                         .replace(/=+$/, '');
                     
-                    // Build URL to centralized /empfehlung/ card with token
-                    const redirectUrl = new URL('../../empfehlung/', window.location.href);
-                    redirectUrl.search = '?c=' + token;
+                    // Build URL to live recommendation card with token
+                    const redirectUrl = `https://empfehlungskarte.vercel.app/?c=${token}`;
                     
-                    directWaLink = `\n\nHier geht's zur Empfehlungskarte mit direktem Kontakt zu meinem Berater:\n${redirectUrl.href}`;
+                    directWaLink = `\n\nHier geht's zur Empfehlungskarte mit direktem Kontakt zu meinem Berater:\n${redirectUrl}`;
                 } else {
                     directWaLink = '';
                 }
