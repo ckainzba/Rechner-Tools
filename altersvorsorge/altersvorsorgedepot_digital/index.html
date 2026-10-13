@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Altersvorsorgedepot-Rechner</title>
+    <title>Altersvorsorgedepot-Rechner (Digital)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;800&display=swap" rel="stylesheet">
@@ -35,7 +35,7 @@
     </div>
 
     <header id="main-header" class="text-center pb-8 pt-4 px-4">
-        <div class="badge-brand">Reform der privaten Altersvorsorge</div>
+        <div class="badge-brand">Reform der privaten Altersvorsorge · Digital</div>
         <h1 class="text-3xl md:text-4xl font-extrabold text-[#023e84] mb-4 tracking-tight">Altersvorsorgedepot-Rechner</h1>
         <p class="text-slate-500 max-w-2xl mx-auto text-[15px] leading-relaxed">
             Berechnen Sie, wie viel Geld Ihnen der Staat im neuen Altersvorsorgedepot dazu schenkt – und wie sich Ihr Vermögen entwickelt.
@@ -459,16 +459,6 @@
                             <button onclick="editRecommendationSetup()" class="text-[11px] font-bold text-slate-400 hover:text-[#006fb9] transition-colors flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>Ihre Kontaktdaten ändern</button>
                         </div>
                     </div>
-                </div>
-
-                <!-- Test Sandbox Info Box -->
-                <div class="mt-4 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
-                    <div class="flex items-center gap-2 font-bold mb-1">
-                        <span class="px-2 py-0.5 rounded bg-amber-200 text-amber-800 text-[10px] uppercase tracking-wider">Test-Sandbox</span>
-                        <span>Empfehlungskarten-Weg (ohne Foto, sauberer Link)</span>
-                    </div>
-                    <p class="text-amber-800 mb-2">Der QR-Code oben erzeugt jetzt den Text aus deinem Screenshot mit dem kurzen Link zur Empfehlungskarte auf <code>empfehlungskarte.vercel.app</code>.</p>
-                    <div class="bg-white/90 p-3 rounded-xl border border-amber-200 font-mono text-[11px] text-slate-700 break-all whitespace-pre-wrap" id="rec-test-preview">Noch keine Daten hinterlegt. Tragen Sie rechts Ihre Kontaktdaten ein.</div>
                 </div>
             </div>
         </div>
@@ -996,12 +986,6 @@
                 
                 // Use standard HTTPS link so smartphone cameras recognize it as a clickable URL
                 const waUrl = `https://wa.me/?text=${encodeURIComponent(textRecommend)}`;
-                
-                // Update preview in test mode if element exists
-                const previewEl = document.getElementById('rec-test-preview');
-                if (previewEl) {
-                    previewEl.innerText = textRecommend;
-                }
                 
                 // Show QR
                 setupView.classList.add('hidden');
