@@ -28,12 +28,16 @@
     </style>
 </head>
 <body class="font-sans antialiased pb-20 bg-white">
-    <div id="advisor-nav" class="max-w-[1440px] mx-auto px-4 sm:px-6 pt-8 mt-4">
+    <div id="advisor-nav" class="max-w-[1440px] mx-auto px-4 sm:px-6 pt-8 mt-4 flex justify-between items-center">
         <a href="../../index.html" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-[#023e84] transition-colors mb-6 group">
             <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
             </svg> Zurück zur Übersicht
         </a>
+        <button onclick="scrollToRecommendationSetup()" id="nav-advisor-badge" class="hidden sm:inline-flex items-center gap-2 text-xs font-bold text-[#023e84] bg-[#e8f0fa] hover:bg-[#dbe9f9] px-3.5 py-2 rounded-xl transition-all duration-200 mb-6 hover:shadow-[0_4px_12px_rgba(2,62,132,0.08)] cursor-pointer">
+            <svg class="w-3.5 h-3.5 text-[#023e84]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span id="nav-advisor-name">Berater: -</span>
+        </button>
     </div>
 
     <header id="main-header" class="text-center pb-8 pt-4 px-4">
@@ -447,32 +451,39 @@
                     <div class="w-full lg:w-[320px] flex-shrink-0 bg-slate-50 rounded-2xl p-5 border border-slate-100 self-center">
                         <!-- Setup State -->
                         <div id="rec-setup-view" class="hidden flex flex-col gap-3">
-                            <p class="text-xs text-slate-500 mb-1 text-center">Hinterlegen Sie Ihre Kontaktdaten für die Empfehlungskarte:</p>
+                            <p class="text-xs text-slate-500 mb-1 text-center font-medium">Hinterlegen Sie Ihre Kontaktdaten für die Empfehlungskarte:</p>
                             <input type="text" id="rec-adv-name" placeholder="Ihr Name" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
                             <input type="tel" id="rec-adv-phone" placeholder="WhatsApp-Nummer" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
                             <input type="email" id="rec-adv-email" placeholder="E-Mail-Adresse" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
-                            <button onclick="updateRecommendationLogic()" class="w-full bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-3 px-6 rounded-xl transition-colors text-sm shadow-sm mt-1">Speichern & Weiter</button>
+                            <button onclick="updateRecommendationLogic(true)" class="w-full bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-3 px-6 rounded-xl transition-colors text-sm shadow-sm mt-1 cursor-pointer">Speichern & Weiter</button>
                         </div>
 
                         <!-- Ready State: Download PDF Button -->
                         <div id="rec-ready-view" class="hidden flex-col items-center w-full text-center">
-                            <div class="w-16 h-16 bg-[#e8f0fa] text-[#023e84] rounded-2xl flex items-center justify-center mb-3.5 shadow-sm mx-auto">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                    <polyline points="14 2 14 8 20 8"></polyline>
-                                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                                    <polyline points="10 9 9 9 8 9"></polyline>
-                                </svg>
+                            <!-- Advisor Info Badge -->
+                            <div class="w-full bg-white border border-slate-200/90 rounded-xl p-3 mb-3 text-left shadow-xs">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hinterlegter Berater</span>
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Aktiv
+                                    </span>
+                                </div>
+                                <div class="text-[13.5px] font-bold text-[#023e84]" id="rec-ready-adv-name">Berater</div>
+                                <div class="text-[11.5px] text-slate-500 flex flex-wrap gap-x-1.5 gap-y-0.5 mt-0.5">
+                                    <span id="rec-ready-adv-phone"></span>
+                                    <span id="rec-ready-adv-sep">·</span>
+                                    <span id="rec-ready-adv-email"></span>
+                                </div>
                             </div>
-                            <button id="btn-download-pdf" onclick="generateEmpfehlungskartePDF()" class="w-full bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 text-sm mb-2.5 group">
+
+                            <button id="btn-download-pdf" onclick="generateEmpfehlungskartePDF()" class="w-full bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 text-sm mb-2.5 group cursor-pointer">
                                 <svg class="w-5 h-5 flex-shrink-0 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                 </svg>
                                 <span id="btn-pdf-label">Empfehlungskarte downloaden</span>
                             </button>
                             <p class="text-[11px] font-medium text-slate-400 mb-4">Erstellt eine druckreife PDF-Karte für Ihren Mandanten</p>
-                            <button onclick="editRecommendationSetup()" class="text-[11px] font-bold text-slate-400 hover:text-[#006fb9] transition-colors flex items-center justify-center gap-1.5 mx-auto">
+                            <button onclick="editRecommendationSetup()" class="text-[11px] font-bold text-slate-400 hover:text-[#006fb9] transition-colors flex items-center justify-center gap-1.5 mx-auto cursor-pointer">
                                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                 <span>Ihre Kontaktdaten ändern</span>
                             </button>
@@ -1056,22 +1067,57 @@
             }
         }
 
-        function updateRecommendationLogic() {
+        function scrollToRecommendationSetup() {
+            const el = document.getElementById('rec-ready-view') || document.getElementById('rec-setup-view');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function updateRecommendationLogic(isExplicitSave = false) {
             const nameField = document.getElementById('rec-adv-name');
             const phoneField = document.getElementById('rec-adv-phone');
             const emailField = document.getElementById('rec-adv-email');
             const setupView = document.getElementById('rec-setup-view');
             const readyView = document.getElementById('rec-ready-view');
             
+            // Fallback: If fields are empty in the DOM, fill from localStorage first
+            if (nameField && !nameField.value && localStorage.getItem('rechner_adv_name')) {
+                nameField.value = localStorage.getItem('rechner_adv_name');
+            }
+            if (phoneField && !phoneField.value && localStorage.getItem('rechner_adv_phone')) {
+                phoneField.value = localStorage.getItem('rechner_adv_phone');
+            }
+            if (emailField && !emailField.value && localStorage.getItem('rechner_adv_email')) {
+                emailField.value = localStorage.getItem('rechner_adv_email');
+            }
+            
             const name = nameField ? nameField.value.trim() : '';
             const phone = phoneField ? phoneField.value.trim() : '';
             const email = emailField ? emailField.value.trim() : '';
             
-            if (name || phone) {
-                // Save credentials in localStorage
-                localStorage.setItem('rechner_adv_name', name);
-                localStorage.setItem('rechner_adv_phone', phone);
-                localStorage.setItem('rechner_adv_email', email);
+            if (isExplicitSave) {
+                if (name) localStorage.setItem('rechner_adv_name', name); else localStorage.removeItem('rechner_adv_name');
+                if (phone) localStorage.setItem('rechner_adv_phone', phone); else localStorage.removeItem('rechner_adv_phone');
+                if (email) localStorage.setItem('rechner_adv_email', email); else localStorage.removeItem('rechner_adv_email');
+            }
+            
+            if (name || phone || email) {
+                // Update visible advisor badge in readyView
+                const readyAdvName = document.getElementById('rec-ready-adv-name');
+                const readyAdvPhone = document.getElementById('rec-ready-adv-phone');
+                const readyAdvEmail = document.getElementById('rec-ready-adv-email');
+                const readyAdvSep = document.getElementById('rec-ready-adv-sep');
+                if (readyAdvName) readyAdvName.textContent = name || 'Berater';
+                if (readyAdvPhone) readyAdvPhone.textContent = phone || '';
+                if (readyAdvEmail) readyAdvEmail.textContent = email || '';
+                if (readyAdvSep) readyAdvSep.style.display = (phone && email) ? 'inline' : 'none';
+                
+                // Update nav badge
+                const navBadge = document.getElementById('nav-advisor-badge');
+                const navName = document.getElementById('nav-advisor-name');
+                if (navBadge && navName) {
+                    navName.textContent = name ? `Berater: ${name}` : 'Berater-Profil';
+                    navBadge.classList.remove('hidden');
+                }
                 
                 // Show ready state with PDF download button
                 setupView.classList.add('hidden');
@@ -1085,10 +1131,14 @@
                 setupView.classList.remove('hidden');
                 readyView.classList.add('hidden');
                 readyView.classList.remove('flex');
+                
+                const navBadge = document.getElementById('nav-advisor-badge');
+                if (navBadge) navBadge.classList.add('hidden');
             }
         }
 
         function editRecommendationSetup() {
+            initRecommendation();
             document.getElementById('rec-setup-view').classList.remove('hidden');
             document.getElementById('rec-ready-view').classList.add('hidden');
             document.getElementById('rec-ready-view').classList.remove('flex');
@@ -1244,8 +1294,21 @@
             if (phoneEl) phoneEl.value = phone;
             if (emailEl) emailEl.value = email;
             
-            updateRecommendationLogic();
+            updateRecommendationLogic(false);
         }
+
+        // Live-Sync across open tabs & navigation cache
+        window.addEventListener('storage', (e) => {
+            if (!e.key || e.key.startsWith('rechner_adv_')) {
+                initRecommendation();
+            }
+        });
+        window.addEventListener('pageshow', () => {
+            initRecommendation();
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            initRecommendation();
+        });
 
         // Initial Call
         initSliders();

@@ -815,6 +815,16 @@ Beste Grüße
             }
         }
 
+        // Live-Sync across open tabs & navigation cache
+        window.addEventListener('storage', (e) => {
+            if (!e.key || e.key.startsWith('rechner_adv_')) {
+                initAdvisorData();
+            }
+        });
+        window.addEventListener('pageshow', () => {
+            initAdvisorData();
+        });
+
         // Initial Call
         initSliders();
         checkClientMode();

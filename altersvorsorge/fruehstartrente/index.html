@@ -1152,6 +1152,7 @@
         }
 
         function editRecommendationSetup() {
+            initRecommendation();
             document.getElementById('rec-setup-view').classList.remove('hidden');
             document.getElementById('rec-qr-view').classList.add('hidden');
             document.getElementById('rec-qr-view').classList.remove('flex');
@@ -1172,7 +1173,15 @@
             }
         }
 
-        // Initialize recommendation logic
+        // Live-Sync across open tabs & navigation cache
+        window.addEventListener('storage', (e) => {
+            if (!e.key || e.key.startsWith('rechner_adv_')) {
+                initRecommendation();
+            }
+        });
+        window.addEventListener('pageshow', () => {
+            initRecommendation();
+        });
         window.addEventListener('DOMContentLoaded', () => {
             initRecommendation();
         });

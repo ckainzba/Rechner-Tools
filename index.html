@@ -403,7 +403,7 @@
       </div>
       <p class="text-[14.5px] text-slate-500 mb-6 leading-relaxed">Hinterlegen Sie hier Ihre Kontaktdaten. Diese werden automatisch in allen Rechnern übernommen.</p>
       
-      <div class="space-y-4">
+      <div class="space-y-4" onkeydown="if(event.key === 'Enter') saveGlobalSettings(event)">
         <div>
           <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihr Name</label>
           <input type="text" id="global-adv-name" placeholder="Max Mustermann" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
@@ -423,8 +423,8 @@
       </div>
       
       <div class="mt-8 pt-6 border-t border-slate-100 flex justify-end gap-3">
-        <button onclick="closeGlobalSettings()" class="px-5 py-2.5 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">Abbrechen</button>
-        <button onclick="saveGlobalSettings(event)" class="px-5 py-2.5 text-sm font-bold text-white bg-[#023e84] hover:bg-[#012a5e] rounded-xl transition-colors shadow-sm flex items-center gap-2">
+        <button onclick="closeGlobalSettings()" class="px-5 py-2.5 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors cursor-pointer">Abbrechen</button>
+        <button id="btn-save-global" onclick="saveGlobalSettings(event)" class="px-5 py-2.5 text-sm font-bold text-white bg-[#023e84] hover:bg-[#012a5e] rounded-xl transition-colors shadow-sm flex items-center gap-2 cursor-pointer">
           <span>Speichern</span>
         </button>
       </div>
@@ -509,20 +509,24 @@
       if(calendly) localStorage.setItem('rechner_adv_calendly', calendly); else localStorage.removeItem('rechner_adv_calendly');
       
       // Visual feedback
-      const btn = event.currentTarget;
-      const originalHtml = btn.innerHTML;
-      btn.innerHTML = '<span>Gespeichert!</span>';
-      btn.classList.replace('bg-[#023e84]', 'bg-green-600');
-      btn.classList.replace('hover:bg-[#012a5e]', 'hover:bg-green-700');
-      
-      setTimeout(() => {
-        closeGlobalSettings();
+      const btn = (event && event.currentTarget && event.currentTarget.tagName === 'BUTTON') ? event.currentTarget : document.getElementById('btn-save-global');
+      if (btn) {
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<span>Gespeichert!</span>';
+        btn.classList.replace('bg-[#023e84]', 'bg-green-600');
+        btn.classList.replace('hover:bg-[#012a5e]', 'hover:bg-green-700');
+        
         setTimeout(() => {
-          btn.innerHTML = originalHtml;
-          btn.classList.replace('bg-green-600', 'bg-[#023e84]');
-          btn.classList.replace('hover:bg-green-700', 'hover:bg-[#012a5e]');
-        }, 300);
-      }, 800);
+          closeGlobalSettings();
+          setTimeout(() => {
+            btn.innerHTML = originalHtml;
+            btn.classList.replace('bg-green-600', 'bg-[#023e84]');
+            btn.classList.replace('hover:bg-green-700', 'hover:bg-[#012a5e]');
+          }, 300);
+        }, 700);
+      } else {
+        closeGlobalSettings();
+      }
     }
   </script>
 </body>
