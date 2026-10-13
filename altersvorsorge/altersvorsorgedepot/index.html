@@ -1095,9 +1095,8 @@
             const btn = document.getElementById('btn-download-pdf');
             const label = document.getElementById('btn-pdf-label');
             const originalLabel = label ? label.innerHTML : 'Empfehlungskarte downloaden';
-            
-            // Sync PDF card data
-            updatePdfCardData();
+            const element = document.getElementById('pdf-render-wrapper');
+            const overlay = document.getElementById('pdf-loading-overlay');
             
             const phone = localStorage.getItem('novori_adv_phone') || '';
             if (!phone) {
@@ -1115,6 +1114,21 @@
             fileSlug = fileSlug.replace(/[^a-zA-Z0-9_-]/g, '_');
             const filename = `Empfehlungskarte-${fileSlug}.pdf`;
             
+            // Show full-screen loading overlay
+            if (overlay) overlay.classList.remove('hidden');
+
+            // Temporarily make PDF template active behind the overlay
+            if (element) {
+                element.style.display = 'block';
+                element.style.position = 'fixed';
+                element.style.top = '0';
+                element.style.left = '0';
+                element.style.zIndex = '99990';
+            }
+
+            // Sync PDF card data & QR code now that the container is display: block
+            updatePdfCardData();
+
             // Button loading state
             if (btn) btn.disabled = true;
             if (label) label.innerHTML = `
@@ -1149,7 +1163,6 @@
             // Brief wait for QRCode rendering inside DOM
             await new Promise(resolve => setTimeout(resolve, 200));
 
-            const element = document.getElementById('pdf-render-wrapper');
             const opt = {
                 margin: 0,
                 filename: filename,
@@ -1187,6 +1200,13 @@
                 if (pdfWin) pdfWin.close();
                 alert('Beim Erstellen des PDFs ist ein Fehler aufgetreten.');
             } finally {
+                // Instantly hide the PDF template again so it never shows on screen
+                if (element) {
+                    element.style.display = 'none';
+                }
+                if (overlay) {
+                    overlay.classList.add('hidden');
+                }
                 if (btn) btn.disabled = false;
                 if (label) label.innerHTML = originalLabel;
             }
@@ -1214,8 +1234,15 @@
         updateValues();
     </script>
 
-    <!-- Hidden PDF Render Template for html2pdf -->
-    <div id="pdf-render-wrapper" style="position: fixed; left: 0; top: 0; width: 620px; min-height: 877px; z-index: -9999; pointer-events: none; background: #ffffff; box-sizing: border-box; padding: 24px 0;">
+    <!-- Fullscreen Loading Overlay during PDF Generation -->
+    <div id="pdf-loading-overlay" class="fixed inset-0 bg-white/95 backdrop-blur-sm z-[99999] hidden flex flex-col items-center justify-center text-center p-4">
+        <div class="w-14 h-14 border-4 border-slate-200 border-t-[#023e84] rounded-full animate-spin mb-4"></div>
+        <h3 class="text-xl font-bold text-[#023e84] mb-1">Empfehlungskarte wird generiert...</h3>
+        <p class="text-sm text-slate-500">Das PDF öffnet sich in Kürze automatisch.</p>
+    </div>
+
+    <!-- Hidden PDF Render Template for html2pdf (display: none by default) -->
+    <div id="pdf-render-wrapper" style="display: none; width: 620px; min-height: 877px; background: #ffffff; box-sizing: border-box; padding: 24px 0;">
         <div id="pdf-card" style="width: 480px; margin: 0 auto; background: #ffffff; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(2,62,132,0.06); padding: 28px 26px; position: relative; font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif; box-sizing: border-box; text-align: left; color: #1e293b;">
             <!-- Top Gradient Accent -->
             <div style="position: absolute; top: 0; left: 0; right: 0; height: 6px; border-top-left-radius: 24px; border-top-right-radius: 24px; background: linear-gradient(90deg, #023e84 0%, #006fb9 100%);"></div>
