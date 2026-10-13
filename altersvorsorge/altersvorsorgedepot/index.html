@@ -1061,6 +1061,8 @@
         function scrollToRecommendationSetup() {
             const el = document.getElementById('rec-ready-view') || document.getElementById('rec-setup-view');
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
         function updateRecommendationLogic(isExplicitSave = false) {
             const nameField = document.getElementById('rec-adv-name');
             const phoneField = document.getElementById('rec-adv-phone');
