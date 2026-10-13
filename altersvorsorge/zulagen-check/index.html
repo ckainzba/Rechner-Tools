@@ -510,7 +510,7 @@ Beste Grüße
             updateWhatsAppClientLink(savingsMonth, firstYearSubsidy);
         }
 
-        let advisorName = "meinem Berater";
+        let advisorName = "";
         let advisorPhone = "";
         let advisorCalendly = "";
 
@@ -518,23 +518,26 @@ Beste Grüße
             const formattedSavings = fmt.format(savingsMonth).replace(',00', '');
             const formattedSubsidy = fmt.format(firstYearSubsidy).replace(',00', '');
             
-            // Text 1: Contact Advisor
-            let firstName = advisorName !== "meinem Berater" ? advisorName.split(' ')[0] : '';
-            const textContact = `Hallo${firstName ? ' ' + firstName : ''}! Ich habe mir gerade ausgerechnet, dass ich bei ${formattedSavings} monatlicher Sparrate vom Staat eine jährliche Zulage von ${formattedSubsidy} erhalte. Ich würde das neue Altersvorsorgedepot gerne umsetzen. Wann können wir sprechen?`;
-            
             const waContactLink = document.getElementById('wa-contact-link');
+            const calendlyLink = document.getElementById('calendly-link');
+            const waRecommendLink = document.getElementById('wa-recommend-link');
+            const ctaSection = document.getElementById('client-cta-section');
+
+            // Button 1: Kontaktieren (nur sichtbar mit Telefonnummer)
             if (waContactLink) {
                 if (advisorPhone) {
+                    let firstName = advisorName ? advisorName.split(' ')[0] : '';
+                    const textContact = `Hallo${firstName ? ' ' + firstName : ''}! Ich habe mir gerade ausgerechnet, dass ich bei ${formattedSavings} monatlicher Sparrate vom Staat eine jährliche Zulage von ${formattedSubsidy} erhalte. Ich würde das neue Altersvorsorgedepot gerne umsetzen. Wann können wir sprechen?`;
                     let phoneClean = advisorPhone.replace(/[^0-9+]/g, '');
                     if (phoneClean.startsWith('0')) phoneClean = '+49' + phoneClean.substring(1);
                     waContactLink.href = `whatsapp://send?phone=${phoneClean}&text=${encodeURIComponent(textContact)}`;
+                    waContactLink.classList.remove('hidden');
                 } else {
-                    waContactLink.href = `whatsapp://send?text=${encodeURIComponent(textContact)}`;
+                    waContactLink.classList.add('hidden');
                 }
             }
 
-            // Text 1.5: Calendly
-            const calendlyLink = document.getElementById('calendly-link');
+            // Button 2: Termin buchen (nur sichtbar mit Calendly-Link)
             if (calendlyLink) {
                 if (advisorCalendly) {
                     let href = advisorCalendly;
@@ -548,23 +551,39 @@ Beste Grüße
                 }
             }
 
-            // Text 2: Recommend
-            let directWaLink = '';
-            if (advisorPhone) {
-                let phoneClean = advisorPhone.replace(/[^0-9+]/g, '');
-                if (phoneClean.startsWith('0049')) phoneClean = phoneClean.substring(2);
-                else if (phoneClean.startsWith('0')) phoneClean = '49' + phoneClean.substring(1);
-                else if (phoneClean.startsWith('+49')) phoneClean = phoneClean.substring(1);
-                
-                let msgToAdvisor = `Hallo! Ich melde mich bzgl. des neuen Altersvorsorgedepots. Wann können wir uns dazu kurz austauschen?`;
-                directWaLink = `\n\nChatte direkt mit ihm über diesen Link:\nhttps://wa.me/${phoneClean}?text=${encodeURIComponent(msgToAdvisor)}`;
+            // Button 3: Weiterempfehlen (nur sinnvoll mit Telefonnummer des Beraters)
+            if (waRecommendLink) {
+                if (advisorPhone) {
+                    let phoneClean = advisorPhone.replace(/[^0-9+]/g, '');
+                    if (phoneClean.startsWith('0049')) phoneClean = phoneClean.substring(2);
+                    else if (phoneClean.startsWith('0')) phoneClean = '49' + phoneClean.substring(1);
+                    else if (phoneClean.startsWith('+49')) phoneClean = phoneClean.substring(1);
+                    
+                    let msgToAdvisor = `Hallo! Ich melde mich bzgl. des neuen Altersvorsorgedepots. Wann können wir uns dazu kurz austauschen?`;
+                    let directWaLink = `\n\nChatte direkt mit ihm über diesen Link:\nhttps://wa.me/${phoneClean}?text=${encodeURIComponent(msgToAdvisor)}`;
+                    
+                    const advNameDisplay = advisorName || "meinem Berater";
+                    const textRecommend = `Hey! Mein Berater ${advNameDisplay} hat mir gerade gezeigt, dass mir der Staat für meine Altersvorsorge jedes Jahr ordentlich Geld schenkt! Lass dir das auch mal durchrechnen.${directWaLink}`;
+                    
+                    waRecommendLink.href = `whatsapp://send?text=${encodeURIComponent(textRecommend)}`;
+                    waRecommendLink.classList.remove('hidden');
+                } else {
+                    waRecommendLink.classList.add('hidden');
+                }
             }
-            
-            const advNameDisplay = advisorName && advisorName !== "meinem Berater" ? advisorName : "meinem Berater";
-            const textRecommend = `Hey! Mein Berater ${advNameDisplay} hat mir gerade gezeigt, dass mir der Staat für meine Altersvorsorge jedes Jahr ordentlich Geld schenkt! Lass dir das auch mal durchrechnen.${directWaLink}`;
-            
-            const waRecommendLink = document.getElementById('wa-recommend-link');
-            if(waRecommendLink) waRecommendLink.href = `whatsapp://send?text=${encodeURIComponent(textRecommend)}`;
+
+            // Gesamte CTA-Leiste nur anzeigen, wenn überhaupt Kontaktdaten existieren
+            if (ctaSection) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const host = window.location.hostname.toLowerCase();
+                const isClientMode = host.includes('zulagen-check') || host.startsWith('check.') || urlParams.get('mode') === 'client';
+
+                if (isClientMode && (advisorPhone || advisorCalendly)) {
+                    ctaSection.classList.remove('hidden');
+                } else {
+                    ctaSection.classList.add('hidden');
+                }
+            }
         }
 
         // Campaign Modal Logic
@@ -708,7 +727,6 @@ Beste Grüße
                 if (campModal) campModal.remove();
 
                 document.getElementById('client-intro').classList.remove('hidden');
-                document.getElementById('client-cta-section').classList.remove('hidden');
                 
                 const advParam = urlParams.get('b') || urlParams.get('adv');
                 if (advParam) {
@@ -734,9 +752,6 @@ Beste Grüße
                                 advisorCalendly = 'https://calendly.com/' + advisorCalendly;
                             }
                         }
-                        
-                        const introHtml = `<b>${advisorName}</b> hat Ihnen diesen Rechner geschickt. Spielen Sie hier mit den Reglern und finden Sie heraus, wie viel Förderung Ihnen persönlich zusteht!`;
-                        document.getElementById('client-intro').innerHTML = introHtml;
                     } catch(e) {
                         console.error("Could not parse advisor data", e);
                     }
@@ -766,26 +781,23 @@ Beste Grüße
             document.getElementById('profession-buttons').classList.add('hidden');
             document.getElementById('ineligible-screen').classList.remove('hidden');
             
-            // Clone the WhatsApp contact button
+            const container = document.getElementById('ineligible-cta');
+            container.innerHTML = '';
+
+            // Clone the WhatsApp contact button nur wenn Berater-Telefonnummer vorhanden ist
             const originalBtn = document.getElementById('wa-contact-link');
-            if (originalBtn) {
+            if (originalBtn && advisorPhone) {
                 const ctaBtn = originalBtn.cloneNode(true);
                 ctaBtn.id = 'wa-contact-link-cloned';
-                ctaBtn.classList.remove('flex-1');
+                ctaBtn.classList.remove('flex-1', 'hidden');
                 
-                let firstName = advisorName !== "meinem Berater" ? advisorName.split(' ')[0] : '';
+                let firstName = advisorName ? advisorName.split(' ')[0] : '';
                 const encodedText = encodeURIComponent(`Hallo${firstName ? ' ' + firstName : ''}! Ich habe mir den Zulagen-Check angesehen und falle scheinbar unter keine der klassischen Gruppen. Können wir kurz sprechen, welche Möglichkeiten zur Förderung oder Alternativen ich für meine private Altersvorsorge habe?`);
                 
-                if (advisorPhone) {
-                    let phoneClean = advisorPhone.replace(/[^0-9+]/g, '');
-                    if (phoneClean.startsWith('0')) phoneClean = '+49' + phoneClean.substring(1);
-                    ctaBtn.href = `whatsapp://send?phone=${phoneClean}&text=${encodedText}`;
-                } else {
-                    ctaBtn.href = `whatsapp://send?text=${encodedText}`;
-                }
+                let phoneClean = advisorPhone.replace(/[^0-9+]/g, '');
+                if (phoneClean.startsWith('0')) phoneClean = '+49' + phoneClean.substring(1);
+                ctaBtn.href = `whatsapp://send?phone=${phoneClean}&text=${encodedText}`;
                 
-                const container = document.getElementById('ineligible-cta');
-                container.innerHTML = '';
                 container.appendChild(ctaBtn);
             }
         }
