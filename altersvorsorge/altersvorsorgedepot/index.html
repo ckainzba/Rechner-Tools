@@ -1114,20 +1114,11 @@
             fileSlug = fileSlug.replace(/[^a-zA-Z0-9_-]/g, '_');
             const filename = `Empfehlungskarte-${fileSlug}.pdf`;
             
+            // Save current scroll position
+            const prevScrollY = window.scrollY;
+
             // Show full-screen loading overlay
             if (overlay) overlay.classList.remove('hidden');
-
-            // Temporarily make PDF template active behind the overlay
-            if (element) {
-                element.style.display = 'block';
-                element.style.position = 'fixed';
-                element.style.top = '0';
-                element.style.left = '0';
-                element.style.zIndex = '99990';
-            }
-
-            // Sync PDF card data & QR code now that the container is display: block
-            updatePdfCardData();
 
             // Button loading state
             if (btn) btn.disabled = true;
@@ -1160,8 +1151,23 @@
                 console.warn('Popup window note:', e);
             }
 
-            // Brief wait for QRCode rendering inside DOM
-            await new Promise(resolve => setTimeout(resolve, 200));
+            // Scroll window to top so html2canvas coordinate calculation has 0 offset
+            window.scrollTo(0, 0);
+
+            // Temporarily make PDF template active at (0,0) behind the overlay
+            if (element) {
+                element.style.display = 'block';
+                element.style.position = 'fixed';
+                element.style.top = '0';
+                element.style.left = '0';
+                element.style.zIndex = '99990';
+            }
+
+            // Sync PDF card data & QR code now that the container is display: block
+            updatePdfCardData();
+
+            // Brief wait for QRCode rendering and layout reflow inside DOM
+            await new Promise(resolve => setTimeout(resolve, 300));
 
             const opt = {
                 margin: 0,
@@ -1172,7 +1178,8 @@
                     useCORS: true,
                     letterRendering: true,
                     logging: false,
-                    scrollY: 0
+                    scrollY: 0,
+                    scrollX: 0
                 },
                 jsPDF: {
                     unit: 'mm',
@@ -1183,18 +1190,22 @@
             };
 
             try {
-                const worker = html2pdf().set(opt).from(element);
-                const pdf = await worker.toPdf().get('pdf');
+                // Generate PDF and properly await the resulting Blob
+                const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
+                const blobUrl = URL.createObjectURL(pdfBlob);
                 
                 // Show PDF in the newly opened tab
-                const blob = pdf.output('blob');
-                const blobUrl = URL.createObjectURL(blob);
                 if (pdfWin) {
                     pdfWin.location.href = blobUrl;
                 }
                 
-                // Also trigger download
-                pdf.save(filename);
+                // Download file
+                const downloadLink = document.createElement('a');
+                downloadLink.href = blobUrl;
+                downloadLink.download = filename;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                downloadLink.remove();
             } catch (err) {
                 console.error('PDF generation error:', err);
                 if (pdfWin) pdfWin.close();
@@ -1209,6 +1220,8 @@
                 }
                 if (btn) btn.disabled = false;
                 if (label) label.innerHTML = originalLabel;
+                // Restore scroll position
+                window.scrollTo(0, prevScrollY);
             }
         }
 
@@ -1235,7 +1248,7 @@
     </script>
 
     <!-- Fullscreen Loading Overlay during PDF Generation -->
-    <div id="pdf-loading-overlay" class="fixed inset-0 bg-white/95 backdrop-blur-sm z-[99999] hidden flex flex-col items-center justify-center text-center p-4">
+    <div id="pdf-loading-overlay" data-html2canvas-ignore="true" class="fixed inset-0 bg-white/95 backdrop-blur-sm z-[99999] hidden flex flex-col items-center justify-center text-center p-4">
         <div class="w-14 h-14 border-4 border-slate-200 border-t-[#023e84] rounded-full animate-spin mb-4"></div>
         <h3 class="text-xl font-bold text-[#023e84] mb-1">Empfehlungskarte wird generiert...</h3>
         <p class="text-sm text-slate-500">Das PDF öffnet sich in Kürze automatisch.</p>
