@@ -1122,16 +1122,29 @@
                     if (phoneClean.startsWith('0049')) phoneClean = phoneClean.substring(2);
                     else if (phoneClean.startsWith('0')) phoneClean = '49' + phoneClean.substring(1);
                     else if (phoneClean.startsWith('+49')) phoneClean = phoneClean.substring(1);
+                    else if (phoneClean.startsWith('+')) phoneClean = phoneClean.substring(1);
                     
-                    // Ultra-kompaktes Token mit Thema "fruehstart"
-                    // phone~advisor~recommender~email~recipient~theme
-                    const compactRaw = `${phoneClean}~${name}~${clientName || ''}~~${recipient || ''}~fruehstart`;
+                    // Kompakt-Format V2: Handynummer als Base36-Zahl
+                    let phoneComp = phoneClean;
+                    if (/^\d+$/.test(phoneClean)) {
+                        const num = Number(phoneClean);
+                        if (!isNaN(num) && num <= Number.MAX_SAFE_INTEGER) {
+                            phoneComp = num.toString(36);
+                        }
+                    }
+
+                    // V2 Array: ['2', phoneComp, name, clientName, '', recipient, 'f']
+                    const arr = ['2', phoneComp, name || '', clientName || '', '', recipient || '', 'f'];
+                    while (arr.length > 2 && arr[arr.length - 1] === '') {
+                        arr.pop();
+                    }
+                    const compactRaw = arr.join('~');
                     const token = btoa(unescape(encodeURIComponent(compactRaw)))
                         .replace(/\+/g, '-')
                         .replace(/\//g, '_')
                         .replace(/=+$/, '');
                     
-                    const cardUrl = `https://empfehlungskarte.vercel.app/?c=${token}`;
+                    const cardUrl = `https://empfehlungskarte.vercel.app/#c=${token}`;
                     directWaLink = `\n\nHier geht's zur Empfehlungskarte mit direktem Kontakt zu meinem Berater:\n${cardUrl}`;
                 } else {
                     directWaLink = '';

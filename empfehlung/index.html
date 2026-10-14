@@ -156,7 +156,8 @@
             }
         };
 
-        // Parameter aus URL auslesen (?c= oder Query-Params)
+        // Parameter aus URL auslesen (Hash #, Query ?c= oder Query-Params)
+        const hashVal = window.location.hash ? window.location.hash.replace(/^#\/?(c=)?/, '') : '';
         const params = new URLSearchParams(window.location.search);
         let advisor = 'Deinem Berater';
         let phoneRaw = '';
@@ -165,15 +166,34 @@
         let recipient = '';
         let themeKey = params.get('t') || 'av';
 
-        const codeToken = params.get('c') || params.get('token') || params.get('ref');
+        const codeToken = hashVal || params.get('c') || params.get('token') || params.get('ref');
         if (codeToken) {
             try {
                 let b64 = codeToken.replace(/-/g, '+').replace(/_/g, '/');
                 while (b64.length % 4) b64 += '=';
                 const decodedStr = decodeURIComponent(escape(atob(b64)));
                 
-                if (decodedStr.includes('~')) {
-                    // Ultra-kompaktes Format: phone~advisor~recommender~email~recipient~theme
+                if (decodedStr.startsWith('2~')) {
+                    // V2 Ultrakompakt: '2'~phoneB36~advisor~recommender~email~recipient~theme
+                    const parts = decodedStr.split('~');
+                    const pRaw = parts[1] || '';
+                    if (/^[0-9a-z]+$/i.test(pRaw)) {
+                        const parsedNum = parseInt(pRaw, 36);
+                        if (!isNaN(parsedNum)) phoneRaw = parsedNum.toString();
+                        else phoneRaw = pRaw;
+                    } else {
+                        phoneRaw = pRaw;
+                    }
+                    if (parts[2]) advisor = parts[2];
+                    if (parts[3]) recommender = parts[3];
+                    if (parts[4]) email = parts[4];
+                    if (parts[5]) recipient = parts[5];
+                    const t = parts[6] || '';
+                    if (t === 'f') themeKey = 'fruehstart';
+                    else if (t === '' || t === 'a') themeKey = 'av';
+                    else if (t) themeKey = t;
+                } else if (decodedStr.includes('~')) {
+                    // V1 Format: phone~advisor~recommender~email~recipient~theme
                     const parts = decodedStr.split('~');
                     if (parts[0]) phoneRaw = parts[0];
                     if (parts[1]) advisor = parts[1];
