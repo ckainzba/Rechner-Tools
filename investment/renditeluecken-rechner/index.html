@@ -1057,13 +1057,20 @@ Herzliche Grüße,
             });
         }
 
+        function isClientMode() {
+            const host = window.location.hostname.toLowerCase();
+            const isClientDomain = host.includes('renditeluecken') || host.includes('renditeluecke');
+            return isClientDomain || new URLSearchParams(window.location.search).get('mode') === 'client';
+        }
+
         // Init
         document.addEventListener('DOMContentLoaded', () => {
             // Check for client mode to hide advisor nav
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('mode') === 'client') {
+            if (isClientMode()) {
                 const nav = document.getElementById('advisor-nav');
-                if(nav) nav.style.display = 'none';
+                if(nav) nav.remove();
+                const modal = document.getElementById('campaign-modal');
+                if(modal) modal.remove();
                 const header = document.getElementById('main-header');
                 if(header) header.style.display = 'none';
                 
@@ -1092,9 +1099,6 @@ Herzliche Grüße,
         const originalCampaignTexts = {};
         const CTA_CONTACT_TEXT = (first) => `Hallo${first ? ' ' + first : ''}! Ich habe gerade meine Renditelücke berechnet und war überrascht. Ich hätte dazu gerne einen Beratungstermin. Wann können wir kurz sprechen?`;
 
-        function isClientMode() {
-            return new URLSearchParams(window.location.search).get('mode') === 'client';
-        }
 
         function updateClientCta() {
             const section = document.getElementById('client-cta-section');
@@ -1139,7 +1143,23 @@ Herzliche Grüße,
             localStorage.setItem('rechner_adv_phone', phone);
             localStorage.setItem('rechner_adv_calendly', calendly);
 
-            let clientUrl = window.location.href.split('#')[0].split('?')[0] + '?mode=client';
+            let clientBase = '';
+            const currentHost = window.location.hostname.toLowerCase();
+            if (currentHost.includes('renditeluecken') || currentHost.includes('renditeluecke')) {
+                clientBase = window.location.origin;
+            } else {
+                clientBase = 'https://renditelueckenrechner.vercel.app';
+            }
+
+            let clientUrl = clientBase;
+            if (!clientUrl.endsWith('/')) clientUrl += '/';
+
+            const isClientDom = clientBase.toLowerCase().includes('renditeluecken') || clientBase.toLowerCase().includes('renditeluecke');
+            let params = [];
+            if (!isClientDom) {
+                params.push('mode=client');
+            }
+
             if (name || phone || calendly) {
                 let phoneClean = phone ? phone.replace(/[^0-9+]/g, '') : '';
                 if (phoneClean.startsWith('0049')) phoneClean = '+49' + phoneClean.substring(4);
@@ -1149,7 +1169,11 @@ Herzliche Grüße,
                 if (calClean) parts.push(calClean);
                 const token = btoa(unescape(encodeURIComponent(parts.join('~'))))
                     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-                clientUrl += '&b=' + token;
+                params.push('b=' + token);
+            }
+
+            if (params.length > 0) {
+                clientUrl += '?' + params.join('&');
             }
 
             ['copy-wa', 'copy-li', 'copy-mail'].forEach(id => {
