@@ -423,11 +423,17 @@
                     </div>
                 </div>
 
-                <!-- CTA Button -->
-                <div id="client-cta-section" class="hidden mt-2 mb-6">
-                    <a href="whatsapp://send?text=Hallo%2C%20ich%20habe%20gerade%20meine%20Renditel%C3%BCcke%20berechnet%20und%20war%20%C3%BCberrascht.%20Ich%20h%C3%A4tte%20dazu%20gerne%20einen%20Beratungstermin." class="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-4 px-6 rounded-2xl shadow-[0_8px_20px_rgba(37,211,102,0.25)] hover:shadow-[0_12px_25px_rgba(37,211,102,0.35)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3">
-                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                        Ergebnis mit Berater teilen
+                <!-- CTA Buttons (nur im Client-Mode, abhängig von hinterlegten Kontaktdaten) -->
+                <div id="client-cta-section" class="hidden mt-2 mb-6 flex flex-col md:flex-row gap-4">
+                    <!-- Button 1: Kontaktieren -->
+                    <a id="wa-contact-link" href="#" class="flex-1 bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-5 px-4 rounded-2xl shadow-[0_8px_20px_rgba(37,211,102,0.25)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                        <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                        <span class="text-[15px] sm:text-base leading-tight">Berater kontaktieren</span>
+                    </a>
+                    <!-- Button 2: Termin vereinbaren -->
+                    <a id="calendly-link" href="#" target="_blank" class="hidden flex-1 bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-5 px-4 rounded-2xl shadow-[0_8px_20px_rgba(2,62,132,0.25)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                        <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <span class="text-[15px] sm:text-base leading-tight">Termin vereinbaren</span>
                     </a>
                 </div>
 
@@ -541,6 +547,25 @@
                 </button>
             </div>
             <div class="p-6 space-y-8">
+                <!-- Kontaktdaten des Beraters -->
+                <div id="advisor-setup" class="p-5 bg-[#e8f0fa] rounded-xl border border-[#cce0f5]">
+                    <h4 class="font-bold text-[#023e84] mb-2">Ihre Kontaktdaten</h4>
+                    <p class="text-[13px] text-[#006fb9] mb-4 leading-relaxed">Tragen Sie hier optional Ihren Namen, Ihre WhatsApp-Nummer und Ihren Terminbuchungs-Link ein. Die Daten werden verschleiert im Link mitgegeben, damit Ihre Mandanten Sie direkt per WhatsApp kontaktieren oder einen Termin vereinbaren können.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-[13px] font-semibold text-[#023e84] mb-1">Ihr Name</label>
+                            <input type="text" id="adv-name" placeholder="z.B. Max Mustermann" class="w-full bg-white border border-[#cce0f5] text-slate-700 text-sm rounded-lg focus:ring-[#006fb9] focus:border-[#006fb9] px-3 py-2 outline-none transition-colors" oninput="updateModalLinks()">
+                        </div>
+                        <div>
+                            <label class="block text-[13px] font-semibold text-[#023e84] mb-1">WhatsApp-Nummer (optional)</label>
+                            <input type="tel" id="adv-phone" placeholder="z.B. 0151 1234567" class="w-full bg-white border border-[#cce0f5] text-slate-700 text-sm rounded-lg focus:ring-[#006fb9] focus:border-[#006fb9] px-3 py-2 outline-none transition-colors" oninput="updateModalLinks()">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[13px] font-semibold text-[#023e84] mb-1">Terminbuchungs-Link (optional)</label>
+                        <input type="url" id="adv-calendly" placeholder="z.B. calendly.com/ihr-name" class="w-full bg-white border border-[#cce0f5] text-slate-700 text-sm rounded-lg focus:ring-[#006fb9] focus:border-[#006fb9] px-3 py-2 outline-none transition-colors" oninput="updateModalLinks()">
+                    </div>
+                </div>
                 
                 <!-- WhatsApp -->
                 <div>
@@ -602,20 +627,6 @@ Herzliche Grüße,
     </div>
 
     <script>
-        function openCampaignModal() {
-            // Dynamically replace link placeholders
-            const baseUrl = window.location.href.split('?')[0];
-            const clientUrl = baseUrl + '?mode=client';
-            
-            ['copy-wa', 'copy-li', 'copy-mail'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el.innerHTML.includes('[Link zum Rechner]')) {
-                    el.innerHTML = el.innerHTML.replace(/\[Link zum Rechner\]/g, clientUrl);
-                }
-            });
-            
-            document.getElementById('campaign-modal').classList.remove('hidden');
-        }
 
         function closeCampaignModal() {
             document.getElementById('campaign-modal').classList.add('hidden');
@@ -1061,9 +1072,6 @@ Herzliche Grüße,
 
                 const introText = document.getElementById('client-intro-text');
                 if(introText) introText.classList.remove('hidden');
-
-                const ctaSection = document.getElementById('client-cta-section');
-                if(ctaSection) ctaSection.classList.remove('hidden');
             }
 
             updateSliderTrack(document.getElementById('capital-range'));
@@ -1075,6 +1083,150 @@ Herzliche Grüße,
                     calculateAndDraw();
                 }
             });
+        });
+    </script>
+
+    <script>
+        // ── Berater-Kontaktdaten, Kampagnen-Links & Client-Mode-Buttons ──
+        let advisorName = '', advisorPhone = '', advisorCalendly = '';
+        const originalCampaignTexts = {};
+        const CTA_CONTACT_TEXT = (first) => `Hallo${first ? ' ' + first : ''}! Ich habe gerade meine Renditelücke berechnet und war überrascht. Ich hätte dazu gerne einen Beratungstermin. Wann können wir kurz sprechen?`;
+
+        function isClientMode() {
+            return new URLSearchParams(window.location.search).get('mode') === 'client';
+        }
+
+        function updateClientCta() {
+            const section = document.getElementById('client-cta-section');
+            if (!section) return;
+            const waLink = document.getElementById('wa-contact-link');
+            const calLink = document.getElementById('calendly-link');
+
+            if (waLink) {
+                if (advisorPhone) {
+                    const first = advisorName ? advisorName.split(' ')[0] : '';
+                    let p = advisorPhone.replace(/[^0-9+]/g, '');
+                    if (p.startsWith('0049')) p = '+49' + p.substring(4);
+                    else if (p.startsWith('0')) p = '+49' + p.substring(1);
+                    waLink.href = `whatsapp://send?phone=${p}&text=${encodeURIComponent(CTA_CONTACT_TEXT(first))}`;
+                    waLink.classList.remove('hidden');
+                } else {
+                    waLink.classList.add('hidden');
+                }
+            }
+            if (calLink) {
+                if (advisorCalendly) {
+                    calLink.href = /^https?:\/\//i.test(advisorCalendly) ? advisorCalendly : 'https://' + advisorCalendly;
+                    calLink.classList.remove('hidden');
+                } else {
+                    calLink.classList.add('hidden');
+                }
+            }
+            if (isClientMode() && (advisorPhone || advisorCalendly)) section.classList.remove('hidden');
+            else section.classList.add('hidden');
+        }
+
+        function updateModalLinks() {
+            const nameEl = document.getElementById('adv-name');
+            const phoneEl = document.getElementById('adv-phone');
+            const calEl = document.getElementById('adv-calendly');
+            if (!nameEl || !phoneEl || !calEl) return;
+
+            const name = nameEl.value.trim();
+            const phone = phoneEl.value.trim();
+            const calendly = calEl.value.trim();
+            localStorage.setItem('rechner_adv_name', name);
+            localStorage.setItem('rechner_adv_phone', phone);
+            localStorage.setItem('rechner_adv_calendly', calendly);
+
+            let clientUrl = window.location.href.split('#')[0].split('?')[0] + '?mode=client';
+            if (name || phone || calendly) {
+                let phoneClean = phone ? phone.replace(/[^0-9+]/g, '') : '';
+                if (phoneClean.startsWith('0049')) phoneClean = '+49' + phoneClean.substring(4);
+                const calClean = calendly ? calendly.replace(/^https?:\/\/(www\.)?calendly\.com\//i, '').replace(/\/$/, '') : '';
+                const parts = [name];
+                if (phoneClean || calClean) parts.push(phoneClean);
+                if (calClean) parts.push(calClean);
+                const token = btoa(unescape(encodeURIComponent(parts.join('~'))))
+                    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+                clientUrl += '&b=' + token;
+            }
+
+            ['copy-wa', 'copy-li', 'copy-mail'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (!(id in originalCampaignTexts)) originalCampaignTexts[id] = el.textContent;
+                let text = originalCampaignTexts[id].replace(/\[Link zum Rechner\]/g, clientUrl);
+                if (name) text = text.replace(/\[Ihr Name\]/g, name);
+                el.textContent = text;
+            });
+        }
+
+        function initAdvisorData() {
+            // Globale Einstellungen der Startseite (kommen als URL-Parameter) übernehmen
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const map = { adv_name: 'rechner_adv_name', adv_phone: 'rechner_adv_phone', adv_email: 'rechner_adv_email', adv_calendly: 'rechner_adv_calendly' };
+                let had = false;
+                Object.keys(map).forEach(k => {
+                    const v = params.get(k);
+                    if (v) { localStorage.setItem(map[k], v); had = true; }
+                });
+                if (had) {
+                    Object.keys(map).forEach(k => params.delete(k));
+                    const rest = params.toString();
+                    window.history.replaceState({}, '', window.location.pathname + (rest ? '?' + rest : '') + window.location.hash);
+                }
+            } catch (e) { console.warn('URL params check failed:', e); }
+
+            const nameEl = document.getElementById('adv-name');
+            const phoneEl = document.getElementById('adv-phone');
+            const calEl = document.getElementById('adv-calendly');
+            if (nameEl && phoneEl && calEl) {
+                nameEl.value = localStorage.getItem('rechner_adv_name') || '';
+                phoneEl.value = localStorage.getItem('rechner_adv_phone') || '';
+                calEl.value = localStorage.getItem('rechner_adv_calendly') || '';
+                updateModalLinks();
+            }
+        }
+
+        function initClientAdvisor() {
+            // Sicherheitsmaßnahme: Berater-Navigation und Kampagnen-Modal aus dem DOM entfernen
+            const nav = document.getElementById('advisor-nav');
+            if (nav) nav.remove();
+            const modal = document.getElementById('campaign-modal');
+            if (modal) modal.remove();
+
+            const b = new URLSearchParams(window.location.search).get('b');
+            if (!b) return;
+            try {
+                let b64 = b.replace(/-/g, '+').replace(/_/g, '/');
+                while (b64.length % 4) b64 += '=';
+                let decoded;
+                try { decoded = decodeURIComponent(escape(atob(b64))); }
+                catch (e) { decoded = decodeURIComponent(atob(b64)); }
+                const parts = decoded.includes('~') ? decoded.split('~') : decoded.split('|');
+                if (parts[0]) advisorName = parts[0];
+                if (parts[1]) advisorPhone = parts[1];
+                if (parts[2]) advisorCalendly = (!parts[2].includes('.') && !parts[2].includes('/')) ? 'https://calendly.com/' + parts[2] : parts[2];
+            } catch (e) { console.error('Could not parse advisor data', e); }
+        }
+
+        function openCampaignModal() {
+            updateModalLinks();
+            document.getElementById('campaign-modal').classList.remove('hidden');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (isClientMode()) initClientAdvisor();
+            else initAdvisorData();
+            updateClientCta();
+        });
+        window.addEventListener('storage', (e) => {
+            if (!isClientMode() && (!e.key || e.key.startsWith('rechner_adv_'))) initAdvisorData();
+        });
+        window.addEventListener('pageshow', () => {
+            if (!isClientMode()) initAdvisorData();
         });
     </script>
 </body>
