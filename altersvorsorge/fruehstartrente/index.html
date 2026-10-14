@@ -546,7 +546,8 @@
                     <p class="text-xs text-slate-500 mb-1 text-center font-medium">Hinterlegen Sie Ihre Kontaktdaten für den Empfehlungs-Link:</p>
                     <input type="text" id="rec-adv-name" placeholder="Ihr Name" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
                     <input type="tel" id="rec-adv-phone" placeholder="WhatsApp-Nummer" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
-                    <button onclick="updateRecommendationLogic()" class="w-full bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-3 px-6 rounded-xl transition-colors text-sm shadow-sm mt-1">Code generieren</button>
+                    <input type="email" id="rec-adv-email" placeholder="E-Mail-Adresse" class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
+                    <button onclick="updateRecommendationLogic(true)" class="w-full bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-3 px-6 rounded-xl transition-colors text-sm shadow-sm mt-1 cursor-pointer">Code generieren</button>
                 </div>
 
                 <!-- QR State -->
@@ -1090,31 +1091,40 @@
         // Recommendation Logic
         let qrcode = null;
 
-        function updateRecommendationLogic() {
+        function updateRecommendationLogic(isExplicitSave = false) {
             const nameField = document.getElementById('rec-adv-name');
             const phoneField = document.getElementById('rec-adv-phone');
+            const emailField = document.getElementById('rec-adv-email');
             const clientNameField = document.getElementById('rec-client-name');
             const recipientNameField = document.getElementById('rec-recipient-name');
             const setupView = document.getElementById('rec-setup-view');
             const qrView = document.getElementById('rec-qr-view');
             const qrContainer = document.getElementById('qrcode-container');
             
+            if (isExplicitSave) {
+                const nameVal = nameField ? nameField.value.trim() : '';
+                const phoneVal = phoneField ? phoneField.value.trim() : '';
+                const emailVal = emailField ? emailField.value.trim() : '';
+                if (nameVal) localStorage.setItem('rechner_adv_name', nameVal); else localStorage.removeItem('rechner_adv_name');
+                if (phoneVal) localStorage.setItem('rechner_adv_phone', phoneVal); else localStorage.removeItem('rechner_adv_phone');
+                if (emailVal) localStorage.setItem('rechner_adv_email', emailVal); else localStorage.removeItem('rechner_adv_email');
+            }
+            
             const storedName = localStorage.getItem('rechner_adv_name') || '';
             const storedPhone = localStorage.getItem('rechner_adv_phone') || '';
+            const storedEmail = localStorage.getItem('rechner_adv_email') || '';
 
             const name = (nameField && nameField.value.trim()) ? nameField.value.trim() : storedName;
             const phone = (phoneField && phoneField.value.trim()) ? phoneField.value.trim() : storedPhone;
+            const email = (emailField && emailField.value.trim()) ? emailField.value.trim() : storedEmail;
             const clientName = clientNameField ? clientNameField.value.trim() : '';
             const recipient = recipientNameField ? recipientNameField.value.trim() : '';
 
             if (nameField && !nameField.value && storedName) nameField.value = storedName;
             if (phoneField && !phoneField.value && storedPhone) phoneField.value = storedPhone;
+            if (emailField && !emailField.value && storedEmail) emailField.value = storedEmail;
             
-            if (name || phone) {
-                // Save
-                if (nameField && nameField.value.trim()) localStorage.setItem('rechner_adv_name', nameField.value.trim());
-                if (phoneField && phoneField.value.trim()) localStorage.setItem('rechner_adv_phone', phoneField.value.trim());
-                
+            if (name || phone || email) {
                 // Create the wa.me link for the friend
                 let directWaLink = '';
                 if (phone) {
@@ -1133,8 +1143,8 @@
                         }
                     }
 
-                    // V2 Array: ['2', phoneComp, name, clientName, '', recipient, 'f']
-                    const arr = ['2', phoneComp, name || '', clientName || '', '', recipient || '', 'f'];
+                    // V2 Array: ['2', phoneComp, name, clientName, email, recipient, 'f']
+                    const arr = ['2', phoneComp, name || '', clientName || '', email || '', recipient || '', 'f'];
                     while (arr.length > 2 && arr[arr.length - 1] === '') {
                         arr.pop();
                     }
@@ -1203,17 +1213,41 @@
         }
 
         function initRecommendation() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const qName = urlParams.get('adv_name');
+                const qPhone = urlParams.get('adv_phone');
+                const qEmail = urlParams.get('adv_email');
+                const qCalendly = urlParams.get('adv_calendly');
+                
+                let hadUrlParams = false;
+                if (qName) { localStorage.setItem('rechner_adv_name', qName); hadUrlParams = true; }
+                if (qPhone) { localStorage.setItem('rechner_adv_phone', qPhone); hadUrlParams = true; }
+                if (qEmail) { localStorage.setItem('rechner_adv_email', qEmail); hadUrlParams = true; }
+                if (qCalendly) { localStorage.setItem('rechner_adv_calendly', qCalendly); hadUrlParams = true; }
+                
+                if (hadUrlParams) {
+                    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.replaceState({path: cleanUrl}, '', cleanUrl);
+                }
+            } catch (e) {
+                console.warn('URL params check failed:', e);
+            }
+
             const name = localStorage.getItem('rechner_adv_name') || '';
             const phone = localStorage.getItem('rechner_adv_phone') || '';
+            const email = localStorage.getItem('rechner_adv_email') || '';
             
             const nameField = document.getElementById('rec-adv-name');
             const phoneField = document.getElementById('rec-adv-phone');
+            const emailField = document.getElementById('rec-adv-email');
             
-            if(nameField) nameField.value = name;
-            if(phoneField) phoneField.value = phone;
+            if (nameField) nameField.value = name;
+            if (phoneField) phoneField.value = phone;
+            if (emailField) emailField.value = email;
             
             if (document.getElementById('rec-setup-view')) {
-                updateRecommendationLogic();
+                updateRecommendationLogic(false);
             }
         }
 
