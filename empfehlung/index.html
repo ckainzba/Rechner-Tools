@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title id="page-title">Persönliche Empfehlung</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +22,7 @@
 
     <div class="w-full max-w-md my-auto py-6">
         <!-- Empfehlungskarte Card -->
-        <div class="bg-white rounded-3xl shadow-[0_20px_50px_rgba(2,62,132,0.08)] border border-slate-100 p-7 md:p-8 relative overflow-hidden">
+        <div id="main-card" class="bg-white rounded-3xl shadow-[0_20px_50px_rgba(2,62,132,0.08)] border border-slate-100 p-7 md:p-8 relative overflow-hidden">
             
             <!-- Top Gradient Accent -->
             <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#023e84] to-[#006fb9]"></div>
@@ -113,6 +114,38 @@
                 <p class="text-[11px] text-slate-400 mt-0.5">Öffnet WhatsApp direkt mit vorbereiteter Nachricht</p>
             </div>
         </div>
+
+        <!-- Access Denied Card (Erscheint nur bei Aufruf ohne gültigen Einladungslink) -->
+        <div id="access-denied-card" class="hidden bg-white rounded-3xl shadow-[0_20px_50px_rgba(2,62,132,0.08)] border border-slate-100 p-8 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#023e84] to-[#006fb9]"></div>
+            
+            <div class="w-16 h-16 bg-[#e8f0fa] rounded-2xl flex items-center justify-center text-[#023e84] mx-auto mb-5 shadow-sm">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+            </div>
+
+            <div class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 mb-4">
+                Persönliche Einladung erforderlich
+            </div>
+
+            <h1 class="text-2xl font-extrabold text-[#023e84] mb-3 leading-tight">
+                Persönliche Empfehlungskarte
+            </h1>
+
+            <p class="text-sm text-slate-500 leading-relaxed mb-6">
+                Diese Empfehlungskarte kann nur über einen persönlichen Einladungslink (z.&nbsp;B. aus einer WhatsApp-Nachricht oder per QR-Code) geöffnet werden.
+            </p>
+
+            <a id="overview-btn" href="https://rechner-tools.vercel.app/" class="inline-flex items-center justify-center gap-2 w-full bg-[#023e84] hover:bg-[#012a5e] text-white font-semibold py-3.5 px-5 rounded-xl transition-all shadow-sm text-sm cursor-pointer">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>Zur Rechner-Übersicht</span>
+            </a>
+        </div>
     </div>
 
     <!-- Footer -->
@@ -125,6 +158,7 @@
     </footer>
 
     <script>
+    (function() {
         // Themen-Katalog: Alle Rechner-Texte und Icons an einer zentralen Stelle
         const THEMES = {
             av: {
@@ -218,13 +252,35 @@
 
         // Fallback zu Legacy-Query-Parametern falls nicht im Token
         if (!phoneRaw) {
-            advisor = params.get('b') || params.get('berater') || advisor;
+            advisor = params.get('b') || params.get('berater') || '';
             phoneRaw = params.get('p') || params.get('phone') || '';
             recommender = params.get('von') || params.get('mandant') || recommender;
             email = params.get('e') || params.get('email') || email;
             recipient = params.get('an') || params.get('to') || params.get('empfaenger') || recipient;
             if (params.get('t')) themeKey = params.get('t');
         }
+
+        // Gatekeeper-Schutz: Wenn kein gültiges Token bzw. keine Telefonnummer vorliegt,
+        // sperren wir den Zugriff und zeigen die Hinweisseite
+        if (!phoneRaw) {
+            const mainCard = document.getElementById('main-card');
+            const deniedCard = document.getElementById('access-denied-card');
+            if (mainCard) mainCard.classList.add('hidden');
+            if (deniedCard) deniedCard.classList.remove('hidden');
+            document.getElementById('page-title').innerText = "Persönliche Empfehlungskarte";
+
+            const overviewBtn = document.getElementById('overview-btn');
+            if (overviewBtn) {
+                if (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1')) {
+                    overviewBtn.href = '../index.html';
+                } else {
+                    overviewBtn.href = 'https://rechner-tools.vercel.app/';
+                }
+            }
+            return;
+        }
+
+        if (!advisor) advisor = 'Deinem Berater';
 
         // Thema anwenden (Standard: Altersvorsorge-Depot 'av')
         const currentTheme = THEMES[themeKey] || THEMES.av;
@@ -335,6 +391,7 @@
             const qrSec = document.getElementById('qr-section');
             if (qrSec) qrSec.style.display = 'none';
         }
+    })();
     </script>
 </body>
 </html>
