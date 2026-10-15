@@ -1075,7 +1075,11 @@ Herzliche Grüße,
                 const modal = document.getElementById('campaign-modal');
                 if(modal) modal.remove();
                 const header = document.getElementById('main-header');
-                if(header) header.style.display = 'none';
+                if(header) {
+                    header.style.display = 'none';
+                    header.classList.remove('pt-4');
+                    header.classList.add('pt-12', 'md:pt-16');
+                }
                 
                 const sfWrap = document.getElementById('sales-flow-wrap');
                 if(sfWrap) sfWrap.classList.add('mt-12', 'md:mt-24');
