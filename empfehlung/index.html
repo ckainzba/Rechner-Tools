@@ -134,17 +134,9 @@
                 Persönliche Empfehlungskarte
             </h1>
 
-            <p class="text-sm text-slate-500 leading-relaxed mb-6">
+            <p class="text-sm text-slate-500 leading-relaxed">
                 Diese Empfehlungskarte kann nur über einen persönlichen Einladungslink (z.&nbsp;B. aus einer WhatsApp-Nachricht oder per QR-Code) geöffnet werden.
             </p>
-
-            <a id="overview-btn" href="https://rechner-tools.vercel.app/" class="inline-flex items-center justify-center gap-2 w-full bg-[#023e84] hover:bg-[#012a5e] text-white font-semibold py-3.5 px-5 rounded-xl transition-all shadow-sm text-sm cursor-pointer">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
-                <span>Zur Rechner-Übersicht</span>
-            </a>
         </div>
     </div>
 
@@ -268,15 +260,6 @@
             if (mainCard) mainCard.classList.add('hidden');
             if (deniedCard) deniedCard.classList.remove('hidden');
             document.getElementById('page-title').innerText = "Persönliche Empfehlungskarte";
-
-            const overviewBtn = document.getElementById('overview-btn');
-            if (overviewBtn) {
-                if (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1')) {
-                    overviewBtn.href = '../index.html';
-                } else {
-                    overviewBtn.href = 'https://rechner-tools.vercel.app/';
-                }
-            }
             return;
         }
 
