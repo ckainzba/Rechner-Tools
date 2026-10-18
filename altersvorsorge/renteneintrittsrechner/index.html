@@ -53,232 +53,327 @@
         </p>
     </header>
 
-    <div class="max-w-[1440px] mx-auto px-4 md:px-6" id="main-calc-wrap">
-        <div class="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 xl:gap-8 items-start">
+    <!-- Master hidden inputs for compatibility -->
+    <input type="hidden" id="input-desired-age" value="63">
+    <span id="out-desired-age-val" class="hidden">63 Jahre</span>
+
+    <!-- Step Progress Bar -->
+    <div class="max-w-xl mx-auto mb-8 px-4" id="step-indicator-bar">
+        <div class="flex items-center justify-between relative">
+            <div class="absolute left-6 right-6 top-4 h-1 bg-slate-200 z-0"></div>
+            <div id="step-progress-bar" class="absolute left-6 top-4 h-1 bg-[#023e84] z-0 transition-all duration-300 w-0"></div>
             
-            <!-- Left Column: Inputs -->
-            <div class="lg:sticky lg:top-8">
-                <div class="card-panel p-6 md:p-8">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <line x1="4" x2="20" y1="21" y2="21" />
-                                <line x1="4" x2="20" y1="14" y2="14" />
-                                <line x1="4" x2="20" y1="7" y2="7" />
-                                <polyline points="14 17 14 21 18 21" />
-                                <polyline points="8 10 8 14 12 14" />
-                                <polyline points="14 3 14 7 18 7" />
-                            </svg>
-                        </div>
-                        <h2 class="text-lg font-bold text-[#023e84]">Eingabe</h2>
-                    </div>
-
-                    <!-- Person -->
-                    <div class="mb-8">
-                        <div class="flex justify-between items-center mb-2">
-                            <label class="text-sm font-semibold text-slate-700">Wunsch-Renteneintrittsalter</label>
-                            <div class="font-bold text-[#023e84] bg-[#e8f0fa] px-3 py-1 rounded-lg text-sm" id="out-desired-age-val">67 Jahre</div>
-                        </div>
-                        <input type="range" id="input-desired-age" min="63" max="70" step="1" value="67" class="slider w-full mb-1" oninput="updateSliderUI(this); calculate()">
-                        <div class="flex justify-between text-xs text-slate-400 font-medium mt-1">
-                            <span>63 Jahre</span>
-                            <span>70 Jahre</span>
-                        </div>
-                    </div>
-
-                    <div class="mb-6">
-                        <label class="block text-[15px] font-semibold text-slate-700 mb-2">Geburtsdatum</label>
-                        <input type="date" id="input-birthdate" class="input-field" value="1990-01-01" onchange="calculate()">
-                    </div>
-
-                    <div class="border-t border-slate-100 pt-6 mb-6">
-                        <h3 class="font-bold text-[#023e84] mb-4">Erwerbsleben</h3>
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label class="block text-[13px] font-semibold text-slate-500 mb-2">Arbeitsbeginn (Monat)</label>
-                                <input type="number" id="input-work-start-month" class="input-field" value="11" min="1" max="12" onchange="calculate()">
-                            </div>
-                            <div>
-                                <label class="block text-[13px] font-semibold text-slate-500 mb-2">Arbeitsbeginn (Jahr)</label>
-                                <input type="number" id="input-work-start-year" class="input-field" value="2000" min="1950" max="2100" onchange="calculate()">
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-[13px] font-semibold text-slate-500 mb-2">Lücken im Versicherungsverlauf (Monate)</label>
-                            <input type="number" id="input-gaps" class="input-field" value="0" min="0" onchange="calculate()">
-                        </div>
-                        <div>
-                            <label class="block text-[13px] font-semibold text-slate-500 mb-2">Monatsbruttoentgelt (€)</label>
-                            <input type="text" id="input-salary" class="input-field" value="4.000" oninput="formatCurrencyInput(this); calculate()">
-                        </div>
-                    </div>
-
-                    <div class="border-t border-slate-100 pt-6">
-                        <h3 class="font-bold text-[#023e84] mb-4">Rentenansprüche</h3>
-                        <label class="block text-[13px] font-semibold text-slate-500 mb-2">Kennen Sie Ihre Ansprüche?</label>
-                        <div class="flex mb-4">
-                            <button class="toggle-btn" id="btn-knows-pension-no" onclick="setKnowsPension(false)">nein</button>
-                            <button class="toggle-btn active" id="btn-knows-pension-yes" onclick="setKnowsPension(true)">ja</button>
-                        </div>
-                        <div id="wrap-pension-amount">
-                            <label class="block text-[13px] font-semibold text-slate-500 mb-2">Regelaltersrente (€)</label>
-                            <input type="text" id="input-pension-amount" class="input-field" value="1.500" oninput="formatCurrencyInput(this); calculate()">
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Right Column: Results -->
-            <div class="min-w-0">
-                
-                <!-- Hero Banner: Rente zum gewünschten Renteneintritt (Zentriert) -->
-                <div class="bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-6 text-center">
-                    <h3 class="text-[#023e84] font-bold text-lg mb-2">Rente zum gewünschten Renteneintritt:</h3>
-                    <div class="text-4xl md:text-5xl font-extrabold text-[#023e84] mb-4">
-                        <span id="hero-desired-pension">0 €</span>
-                    </div>
-                    
-                    <div class="bg-[#e8f0fa] border border-[#b6d4f0] rounded-xl px-4 py-2.5 inline-flex items-center gap-2">
-                        <svg class="w-5 h-5 text-[#006fb9] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span class="text-sm font-semibold text-[#023e84]">bei Rentenbeginn mit <span id="hero-desired-age">63</span> Jahren</span>
-                    </div>
-                </div>
-
-                <!-- 3 Sub-Cards Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
-                    <!-- Card 1: Rente regulär -->
-                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden group">
-                        <div class="flex justify-between items-start mb-1">
-                            <span class="text-sm font-medium text-slate-500">Rente regulär</span>
-                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg transition-transform group-hover:scale-110">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            </div>
-                        </div>
-                        <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
-                            <span id="hero-regular-pension">0 €</span>
-                        </div>
-                        <div class="text-xs text-[#006fb9] mt-1 font-medium">ohne Abschläge mit <span id="hero-rag-age">67</span> Jahren</div>
-                    </div>
-
-                    <!-- Card 2: Monatlicher Abschlag / Zuschlag -->
-                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden group" id="hero-gap-card">
-                        <div class="flex justify-between items-start mb-1">
-                            <span class="text-sm font-medium text-slate-500" id="hero-gap-label">Ihr monatlicher Abschlag</span>
-                            <div class="p-2 bg-[#fef2f2] text-[#991b1b] rounded-lg transition-transform group-hover:scale-110" id="hero-gap-icon">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
-                            </div>
-                        </div>
-                        <div class="text-2xl font-extrabold text-[#991b1b] flex items-baseline gap-1 mt-1">
-                            <span id="hero-gap">- 0 €</span>
-                        </div>
-                        <div class="text-xs mt-1 font-medium text-[#991b1b]" id="hero-gap-sub">Lebenslang jeden Monat</div>
-                    </div>
-
-                    <!-- Card 3: Gesamter Kapitalbedarf -->
-                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden group">
-                        <div class="flex justify-between items-start mb-1">
-                            <span class="text-sm font-medium text-slate-500">Gesamter Kapitalbedarf</span>
-                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg transition-transform group-hover:scale-110">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10h12"/><path stroke-linecap="round" stroke-linejoin="round" d="M4 14h9"/><path stroke-linecap="round" stroke-linejoin="round" d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
-                            </div>
-                        </div>
-                        <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
-                            <span id="out-capital-need">0 €</span>
-                        </div>
-                        <div class="text-xs text-[#006fb9] mt-1 font-medium" id="out-capital-sub">zum Rentenbeginn</div>
-                    </div>
-                </div>
-
-                <!-- Chart -->
-                <div id="chart-section" class="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-8">
-                    <div class="border-b border-slate-100 flex gap-6 pb-2">
-                        <button class="pb-2 border-b-2 border-[#023e84] font-bold text-[#023e84] text-[15px]">Renten-Differenz</button>
-                    </div>
-                    <div class="h-[350px] mt-6">
-                        <canvas id="pensionChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Insights -->
-                <h3 class="text-lg font-bold text-[#023e84] mb-4">Smart Insights</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                        <div class="bg-[#e8f0fa] border border-[#cce0f5] rounded-xl p-4 flex gap-3">
-                            <div class="mt-0.5 text-[#006fb9] shrink-0">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                            </div>
-                            <div class="text-[13px] text-[#023e84] leading-relaxed" id="insight-capital-container">
-                                <b>Für jeden Monat</b>, den Sie vor der Regelaltersgrenze in Rente gehen, benötigen Sie zum Zeitpunkt des Rentenbeginns ein Kapital von <b id="insight-capital">1.799 €</b>, um die Kürzung auszugleichen.
-                            </div>
-                        </div>
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex gap-3">
-                            <div class="mt-0.5 text-slate-400 shrink-0">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
-                            </div>
-                            <div class="text-[13px] text-slate-600 leading-relaxed">
-                                Ihr <b>frühester Rentenbeginn</b> ist <b id="insight-early">mit 63 Jahren</b> möglich (ggf. mit Abschlägen).
-                            </div>
-                        </div>
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex gap-3">
-                            <div class="mt-0.5 text-slate-400 shrink-0">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            </div>
-                            <div class="text-[13px] text-slate-600 leading-relaxed" id="insight-basis">
-                                Grundlage Ihrer Prognose ist Ihre angegebene Renteninformation.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Details Table -->
-                <div id="details-table-section" class="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-8 overflow-hidden">
-                    <table class="w-full text-left text-[14px] text-slate-600">
-                        <tr class="border-b border-slate-200">
-                            <td class="py-3 pr-4">Regelaltersgrenze</td>
-                            <td class="py-3 font-bold text-[#023e84] text-right" id="tab-rag">mit 67 Jahren</td>
-                        </tr>
-                        <tr class="border-b border-slate-200">
-                            <td class="py-3 pr-4">Abschlagsfreie Rente mit 63 Jahren möglich</td>
-                            <td class="py-3 font-bold text-[#023e84] text-right" id="tab-63">nein</td>
-                        </tr>
-                        <tr class="border-b border-slate-200">
-                            <td class="py-3 pr-4">Abschlagsfreie Rente mit 65 Jahren möglich</td>
-                            <td class="py-3 font-bold text-[#023e84] text-right" id="tab-65">nein</td>
-                        </tr>
-                        <tr class="border-b border-slate-200">
-                            <td class="py-3 pr-4">Frühester Rentenbeginn</td>
-                            <td class="py-3 font-bold text-[#023e84] text-right" id="tab-early">mit 63 Jahren</td>
-                        </tr>
-                        <tr class="border-b border-slate-200">
-                            <td class="py-3 pr-4">1. Monat vorgezogene Rente reduziert die Versorgung um</td>
-                            <td class="py-3 font-bold text-[#023e84] text-right" id="tab-pen">7,53 €</td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 pr-4">1. Monat späterer Rentenbeginn erhöht die Versorgung um</td>
-                            <td class="py-3 font-bold text-[#023e84] text-right" id="tab-bon">10,53 €</td>
-                        </tr>
-                    </table>
-                </div>
-
-                <!-- CTA Buttons (nur im Client-Mode, abhängig von hinterlegten Kontaktdaten) -->
-                <div id="client-cta-section" class="hidden mt-6 mb-16 flex flex-col sm:flex-row gap-4">
-                    <!-- Button 1: Per WhatsApp kontaktieren -->
-                    <a id="wa-contact-link" href="#" target="_blank" class="hidden flex-1 bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-5 px-6 rounded-2xl shadow-[0_8px_20px_rgba(37,211,102,0.25)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3">
-                        <svg class="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                        <span class="text-[15px] sm:text-base leading-tight">Per WhatsApp kontaktieren</span>
-                    </a>
-                    <!-- Button 2: Termin vereinbaren -->
-                    <a id="calendly-link" href="#" target="_blank" class="hidden flex-1 bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-5 px-6 rounded-2xl shadow-[0_8px_20px_rgba(2,62,132,0.25)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3">
-                        <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                        <span class="text-[15px] sm:text-base leading-tight">Termin vereinbaren</span>
-                    </a>
-                </div>
-
-            </div>
-
+            <!-- Step 1 Dot -->
+            <button type="button" onclick="goToStep(1)" id="step-dot-1" class="relative z-10 flex flex-col items-center group cursor-pointer focus:outline-none">
+                <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm bg-[#023e84] text-white shadow-md transition-all scale-105 ring-4 ring-[#e8f0fa]">1</div>
+                <span class="text-xs font-bold text-[#023e84] mt-2 hidden sm:block">Wunschalter</span>
+            </button>
+            
+            <!-- Step 2 Dot -->
+            <button type="button" onclick="goToStep(2)" id="step-dot-2" class="relative z-10 flex flex-col items-center group cursor-pointer focus:outline-none">
+                <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm bg-white border-2 border-slate-300 text-slate-400 transition-all">2</div>
+                <span class="text-xs font-medium text-slate-400 mt-2 hidden sm:block">Ihre Angaben</span>
+            </button>
+            
+            <!-- Step 3 Dot -->
+            <button type="button" onclick="goToStep(3)" id="step-dot-3" class="relative z-10 flex flex-col items-center group cursor-pointer focus:outline-none">
+                <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm bg-white border-2 border-slate-300 text-slate-400 transition-all">3</div>
+                <span class="text-xs font-medium text-slate-400 mt-2 hidden sm:block">Ergebnis</span>
+            </button>
         </div>
     </div>
 
-    <!-- Marketing Modal -->
+    <!-- MAIN FLOW WRAPPER -->
+    <div class="max-w-[1440px] mx-auto px-4 md:px-6" id="main-calc-wrap">
+        
+        <!-- STEP 1: Wunsch-Renteneintrittsalter -->
+        <div id="step-1" class="max-w-2xl mx-auto">
+            <div class="card-panel p-8 md:p-10 rounded-3xl shadow-[0_4px_24px_rgba(2,62,132,0.06)] border border-slate-100 text-center">
+                <div class="w-16 h-16 rounded-2xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <svg class="w-8 h-8 text-[#023e84]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+
+                <h2 class="text-2xl md:text-3xl font-extrabold text-[#023e84] mb-3 tracking-tight">Mit welchem Alter möchten Sie in Rente gehen?</h2>
+                <p class="text-slate-500 max-w-lg mx-auto text-[15px] leading-relaxed mb-8">
+                    Wählen Sie Ihr gewünschtes Renteneintrittsalter. Im nächsten Schritt erfassen wir die Ausgangsdaten zur genauen Berechnung.
+                </p>
+
+                <div class="bg-slate-50/80 p-6 md:p-8 rounded-2xl border border-slate-100 mb-8 max-w-md mx-auto">
+                    <div class="text-5xl md:text-6xl font-black text-[#023e84] mb-2 tracking-tight">
+                        <span id="step1-desired-age-val">63</span> <span class="text-2xl font-bold text-slate-400">Jahre</span>
+                    </div>
+                    <div id="step1-age-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#e8f0fa] text-[#023e84] mb-6">
+                        <span>Frühestmöglicher Renteneintritt</span>
+                    </div>
+
+                    <input type="range" id="step1-desired-age" min="63" max="70" step="1" value="63" class="slider w-full mb-2" oninput="syncDesiredAge(this.value)">
+                    <div class="flex justify-between text-xs text-slate-400 font-semibold px-1 mt-1">
+                        <span>63 Jahre</span>
+                        <span>67 Jahre (Regulär)</span>
+                        <span>70 Jahre</span>
+                    </div>
+                </div>
+
+                <button type="button" onclick="goToStep(2)" class="w-full sm:w-auto min-w-[240px] bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-4 px-8 rounded-2xl shadow-[0_8px_20px_rgba(2,62,132,0.25)] transition-all duration-300 transform hover:-translate-y-0.5 inline-flex items-center justify-center gap-3 text-base">
+                    <span>Weiter zu Ihren Angaben</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 2: Ihre Eckdaten -->
+        <div id="step-2" class="max-w-2xl mx-auto hidden">
+            <div class="card-panel p-8 md:p-10 rounded-3xl shadow-[0_4px_24px_rgba(2,62,132,0.06)] border border-slate-100">
+                <button type="button" onclick="goToStep(1)" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-[#023e84] transition-colors mb-6 group">
+                    <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+                    <span>Zurück zu Schritt 1</span>
+                </button>
+
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center flex-shrink-0">
+                        <svg class="w-5 h-5 text-[#023e84]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-bold text-[#023e84]">Ihre Angaben zur Rentenberechnung</h2>
+                        <p class="text-sm text-slate-500">Diese Eckdaten ermöglichen eine genaue Berechnung.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Geburtsdatum -->
+                    <div>
+                        <label class="block text-[14px] font-semibold text-slate-700 mb-2">Geburtsdatum</label>
+                        <input type="date" id="input-birthdate" class="input-field" value="1990-01-01" onchange="calculate()">
+                    </div>
+
+                    <!-- Erwerbsleben -->
+                    <div class="border-t border-slate-100 pt-6">
+                        <h3 class="font-bold text-[#023e84] text-base mb-4">Erwerbsleben</h3>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-[13px] font-semibold text-slate-600 mb-1.5">Arbeitsbeginn (Monat)</label>
+                                <input type="number" id="input-work-start-month" class="input-field" value="11" min="1" max="12" onchange="calculate()">
+                            </div>
+                            <div>
+                                <label class="block text-[13px] font-semibold text-slate-600 mb-1.5">Arbeitsbeginn (Jahr)</label>
+                                <input type="number" id="input-work-start-year" class="input-field" value="2000" min="1950" max="2100" onchange="calculate()">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[13px] font-semibold text-slate-600 mb-1.5">Lücken im Versicherungsverlauf (Monate)</label>
+                            <input type="number" id="input-gaps" class="input-field" value="0" min="0" onchange="calculate()">
+                        </div>
+                    </div>
+
+                    <!-- Rentenansprüche -->
+                    <div class="border-t border-slate-100 pt-6">
+                        <h3 class="font-bold text-[#023e84] text-base mb-3">Rentenansprüche</h3>
+                        <label class="block text-[13px] font-semibold text-slate-600 mb-2">Kennen Sie Ihren aktuellen Anspruch aus der Renteninformation?</label>
+                        <div class="flex mb-4">
+                            <button type="button" class="toggle-btn" id="btn-knows-pension-no" onclick="setKnowsPension(false)">Nein (über Gehalt schätzen)</button>
+                            <button type="button" class="toggle-btn active" id="btn-knows-pension-yes" onclick="setKnowsPension(true)">Ja (aus Renteninfo)</button>
+                        </div>
+
+                        <div id="wrap-pension-amount">
+                            <label class="block text-[13px] font-semibold text-slate-600 mb-1.5">Monatliche Regelaltersrente laut Renteninfo (€)</label>
+                            <input type="text" id="input-pension-amount" class="input-field" value="1.500" oninput="formatCurrencyInput(this); calculate()">
+                        </div>
+
+                        <div id="wrap-salary" class="hidden">
+                            <label class="block text-[13px] font-semibold text-slate-600 mb-1.5">Aktuelles monatliches Bruttoentgelt (€)</label>
+                            <input type="text" id="input-salary" class="input-field" value="4.000" oninput="formatCurrencyInput(this); calculate()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-slate-100 flex justify-end">
+                    <button type="button" onclick="goToStep(3)" class="w-full sm:w-auto bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-4 px-8 rounded-2xl shadow-[0_8px_20px_rgba(2,62,132,0.25)] transition-all duration-300 transform hover:-translate-y-0.5 inline-flex items-center justify-center gap-3 text-base">
+                        <span>Ergebnis & Kapitalbedarf berechnen</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: Das Gesamtergebnis -->
+        <div id="step-3" class="max-w-5xl mx-auto hidden">
+            
+            <div class="flex items-center justify-between mb-6">
+                <button type="button" onclick="goToStep(2)" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-[#023e84] transition-colors group">
+                    <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+                    <span>Angaben anpassen</span>
+                </button>
+                <button type="button" onclick="goToStep(1)" class="text-xs font-semibold text-[#006fb9] hover:underline">
+                    Wunschalter neu wählen
+                </button>
+            </div>
+
+            <!-- Hero Banner: Rente zum gewünschten Renteneintritt (Zentriert) -->
+            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-6 text-center">
+                <h3 class="text-[#023e84] font-bold text-lg mb-2">Rente zum gewünschten Renteneintritt:</h3>
+                <div class="text-4xl md:text-5xl font-extrabold text-[#023e84] mb-4">
+                    <span id="hero-desired-pension">0 €</span>
+                </div>
+                
+                <div class="bg-[#e8f0fa] border border-[#b6d4f0] rounded-xl px-4 py-2.5 inline-flex items-center gap-2">
+                    <svg class="w-5 h-5 text-[#006fb9] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="text-sm font-semibold text-[#023e84]">bei Rentenbeginn mit <span id="hero-desired-age">63</span> Jahren</span>
+                </div>
+
+                <!-- Live Age Slider inside Hero Card -->
+                <div class="mt-6 pt-5 border-t border-slate-100 max-w-md mx-auto">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Wunschalter live anpassen:</label>
+                        <div class="font-extrabold text-[#023e84] bg-[#e8f0fa] px-2.5 py-0.5 rounded text-xs" id="step3-desired-age-val">63 Jahre</div>
+                    </div>
+                    <input type="range" id="step3-desired-age" min="63" max="70" step="1" value="63" class="slider w-full mb-1" oninput="syncDesiredAge(this.value)">
+                    <div class="flex justify-between text-[11px] text-slate-400 font-medium px-1">
+                        <span>63 J</span>
+                        <span>65 J</span>
+                        <span>67 J (Regulär)</span>
+                        <span>70 J</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3 Sub-Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
+                <!-- Card 1: Rente regulär -->
+                <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden group">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-sm font-medium text-slate-500">Rente regulär</span>
+                        <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg transition-transform group-hover:scale-110">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
+                        <span id="hero-regular-pension">0 €</span>
+                    </div>
+                    <div class="text-xs text-[#006fb9] mt-1 font-medium">ohne Abschläge mit <span id="hero-rag-age">67</span> Jahren</div>
+                </div>
+
+                <!-- Card 2: Monatlicher Abschlag / Zuschlag -->
+                <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden group" id="hero-gap-card">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-sm font-medium text-slate-500" id="hero-gap-label">Ihr monatlicher Abschlag</span>
+                        <div class="p-2 bg-[#fef2f2] text-[#991b1b] rounded-lg transition-transform group-hover:scale-110" id="hero-gap-icon">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-[#991b1b] flex items-baseline gap-1 mt-1">
+                        <span id="hero-gap">- 0 €</span>
+                    </div>
+                    <div class="text-xs mt-1 font-medium text-[#991b1b]" id="hero-gap-sub">Lebenslang jeden Monat</div>
+                </div>
+
+                <!-- Card 3: Gesamter Kapitalbedarf -->
+                <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden group">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-sm font-medium text-slate-500">Gesamter Kapitalbedarf</span>
+                        <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg transition-transform group-hover:scale-110">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10h12"/><path stroke-linecap="round" stroke-linejoin="round" d="M4 14h9"/><path stroke-linecap="round" stroke-linejoin="round" d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
+                        <span id="out-capital-need">0 €</span>
+                    </div>
+                    <div class="text-xs text-[#006fb9] mt-1 font-medium" id="out-capital-sub">zum Rentenbeginn</div>
+                </div>
+            </div>
+
+            <!-- Insights -->
+            <h3 class="text-lg font-bold text-[#023e84] mb-4">Smart Insights</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-[#e8f0fa] border border-[#cce0f5] rounded-xl p-4 flex gap-3">
+                    <div class="mt-0.5 text-[#006fb9] shrink-0">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                    </div>
+                    <div class="text-[13px] text-[#023e84] leading-relaxed" id="insight-capital-container">
+                        <b>Für jeden Monat</b>, den Sie vor der Regelaltersgrenze in Rente gehen, benötigen Sie zum Zeitpunkt des Rentenbeginns ein Kapital von <b id="insight-capital">1.799 €</b>, um die Kürzung auszugleichen.
+                    </div>
+                </div>
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex gap-3">
+                    <div class="mt-0.5 text-slate-400 shrink-0">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+                    </div>
+                    <div class="text-[13px] text-slate-600 leading-relaxed">
+                        Ihr <b>frühester Rentenbeginn</b> ist <b id="insight-early">mit 63 Jahren</b> möglich (ggf. mit Abschlägen).
+                    </div>
+                </div>
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex gap-3">
+                    <div class="mt-0.5 text-slate-400 shrink-0">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <div class="text-[13px] text-slate-600 leading-relaxed" id="insight-basis">
+                        Grundlage Ihrer Prognose ist Ihre angegebene Renteninformation.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart (Berater-Modus) -->
+            <div id="chart-section" class="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-8">
+                <div class="border-b border-slate-100 flex gap-6 pb-2">
+                    <button type="button" class="pb-2 border-b-2 border-[#023e84] font-bold text-[#023e84] text-[15px]">Renten-Differenz</button>
+                </div>
+                <div class="h-[350px] mt-6">
+                    <canvas id="pensionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Details Table (Berater-Modus) -->
+            <div id="details-table-section" class="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-8 overflow-hidden">
+                <table class="w-full text-left text-[14px] text-slate-600">
+                    <tr class="border-b border-slate-200">
+                        <td class="py-3 pr-4">Regelaltersgrenze</td>
+                        <td class="py-3 font-bold text-[#023e84] text-right" id="tab-rag">mit 67 Jahren</td>
+                    </tr>
+                    <tr class="border-b border-slate-200">
+                        <td class="py-3 pr-4">Abschlagsfreie Rente mit 63 Jahren möglich</td>
+                        <td class="py-3 font-bold text-[#023e84] text-right" id="tab-63">nein</td>
+                    </tr>
+                    <tr class="border-b border-slate-200">
+                        <td class="py-3 pr-4">Abschlagsfreie Rente mit 65 Jahren möglich</td>
+                        <td class="py-3 font-bold text-[#023e84] text-right" id="tab-65">nein</td>
+                    </tr>
+                    <tr class="border-b border-slate-200">
+                        <td class="py-3 pr-4">Frühester Rentenbeginn</td>
+                        <td class="py-3 font-bold text-[#023e84] text-right" id="tab-early">mit 63 Jahren</td>
+                    </tr>
+                    <tr class="border-b border-slate-200">
+                        <td class="py-3 pr-4">1. Monat vorgezogene Rente reduziert die Versorgung um</td>
+                        <td class="py-3 font-bold text-[#023e84] text-right" id="tab-pen">7,53 €</td>
+                    </tr>
+                    <tr>
+                        <td class="py-3 pr-4">1. Monat späterer Rentenbeginn erhöht die Versorgung um</td>
+                        <td class="py-3 font-bold text-[#023e84] text-right" id="tab-bon">10,53 €</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- CTA Buttons (nur im Client-Mode, abhängig von hinterlegten Kontaktdaten) -->
+            <div id="client-cta-section" class="hidden mt-6 mb-16 flex flex-col sm:flex-row gap-4">
+                <!-- Button 1: Per WhatsApp kontaktieren -->
+                <a id="wa-contact-link" href="#" target="_blank" class="hidden flex-1 bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-5 px-6 rounded-2xl shadow-[0_8px_20px_rgba(37,211,102,0.25)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                    <svg class="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                    <span class="text-[15px] sm:text-base leading-tight">Per WhatsApp kontaktieren</span>
+                </a>
+                <!-- Button 2: Termin vereinbaren -->
+                <a id="calendly-link" href="#" target="_blank" class="hidden flex-1 bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-5 px-6 rounded-2xl shadow-[0_8px_20px_rgba(2,62,132,0.25)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <span class="text-[15px] sm:text-base leading-tight">Termin vereinbaren</span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+<!-- Marketing Modal -->
     <div id="campaign-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
             <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white/95 backdrop-blur z-10">
@@ -381,10 +476,125 @@ Beste Grüße,
 
     <!-- JS Logic -->
     <script>
+        let currentStep = 1;
+
+        function goToStep(step) {
+            currentStep = step;
+            
+            // Steps umschalten
+            const s1 = document.getElementById('step-1');
+            const s2 = document.getElementById('step-2');
+            const s3 = document.getElementById('step-3');
+            
+            if (s1) s1.classList.toggle('hidden', step !== 1);
+            if (s2) s2.classList.toggle('hidden', step !== 2);
+            if (s3) s3.classList.toggle('hidden', step !== 3);
+            
+            // Step Progress Bar (Linie)
+            const bar = document.getElementById('step-progress-bar');
+            if (bar) {
+                if (step === 1) bar.style.width = '0%';
+                else if (step === 2) bar.style.width = '50%';
+                else if (step === 3) bar.style.width = '100%';
+            }
+            
+            // Step Dots aktualisieren
+            for (let i = 1; i <= 3; i++) {
+                const dotBtn = document.getElementById(`step-dot-${i}`);
+                if (!dotBtn) continue;
+                const circle = dotBtn.querySelector('div');
+                const label = dotBtn.querySelector('span');
+                
+                if (i < step) {
+                    // Erledigter Schritt: Grün mit Haken
+                    if (circle) {
+                        circle.className = 'w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm bg-emerald-600 text-white shadow-sm transition-all';
+                        circle.innerHTML = '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                    }
+                    if (label) label.className = 'text-xs font-semibold text-emerald-700 mt-2 hidden sm:block';
+                } else if (i === step) {
+                    // Aktiver Schritt: Brand-Blau mit Ring
+                    if (circle) {
+                        circle.className = 'w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm bg-[#023e84] text-white shadow-md transition-all scale-105 ring-4 ring-[#e8f0fa]';
+                        circle.innerHTML = i.toString();
+                    }
+                    if (label) label.className = 'text-xs font-bold text-[#023e84] mt-2 hidden sm:block';
+                } else {
+                    // Zukünftiger Schritt: Dezent grau
+                    if (circle) {
+                        circle.className = 'w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm bg-white border-2 border-slate-300 text-slate-400 transition-all';
+                        circle.innerHTML = i.toString();
+                    }
+                    if (label) label.className = 'text-xs font-medium text-slate-400 mt-2 hidden sm:block';
+                }
+            }
+            
+            // Wenn Schritt 3 aufgerufen wird: Berechnung und Chart aktualisieren
+            if (step === 3) {
+                calculate();
+            }
+            
+            // Geschmeidig nach oben scrollen
+            const indicator = document.getElementById('step-indicator-bar');
+            if (indicator) {
+                indicator.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function syncDesiredAge(val) {
+            val = parseInt(val, 10);
+            if (isNaN(val)) val = 63;
+            
+            // Master Input synchronisieren
+            const masterInput = document.getElementById('input-desired-age');
+            if (masterInput) masterInput.value = val;
+            
+            // Step 1 UI
+            const s1Input = document.getElementById('step1-desired-age');
+            if (s1Input) {
+                s1Input.value = val;
+                updateSliderTrack(s1Input);
+            }
+            const s1Val = document.getElementById('step1-desired-age-val');
+            if (s1Val) s1Val.innerText = val;
+            
+            const badge = document.getElementById('step1-age-badge');
+            if (badge) {
+                if (val === 63) {
+                    badge.innerHTML = '<span>Frühestmöglicher Renteneintritt (mit Abschlägen)</span>';
+                    badge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#e8f0fa] text-[#023e84] mb-6';
+                } else if (val < 67) {
+                    badge.innerHTML = '<span>Vorzeitiger Ruhestand (mit Abschlägen)</span>';
+                    badge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200 mb-6';
+                } else if (val === 67) {
+                    badge.innerHTML = '<span>Regelaltersgrenze (ohne Abschläge)</span>';
+                    badge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 mb-6';
+                } else {
+                    badge.innerHTML = '<span>Späterer Ruhestand (mit Rentenzuschlag)</span>';
+                    badge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-800 border border-blue-200 mb-6';
+                }
+            }
+            
+            // Step 3 UI (Live-Slider in Hero-Card)
+            const s3Input = document.getElementById('step3-desired-age');
+            if (s3Input) {
+                s3Input.value = val;
+                updateSliderTrack(s3Input);
+            }
+            const s3Val = document.getElementById('step3-desired-age-val');
+            if (s3Val) s3Val.innerText = val + ' Jahre';
+            
+            calculate();
+        }
+
+        function updateSliderTrack(slider) {
+            if (!slider || !slider.min || !slider.max) return;
+            const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+            slider.style.background = `linear-gradient(to right, #023e84 0%, #023e84 ${pct}%, #e2e8f0 ${pct}%, #e2e8f0 100%)`;
+        }
+
         function updateSliderUI(inp) {
-            document.getElementById('out-desired-age-val').innerText = inp.value + ' Jahre';
-            const pct = ((inp.value - inp.min) / (inp.max - inp.min)) * 100;
-            inp.style.background = 'linear-gradient(to right, #023e84 0%, #023e84 ' + pct + '%, #e5e7eb ' + pct + '%, #e5e7eb 100%)';
+            updateSliderTrack(inp);
         }
 
         function openCampaignModal() {
@@ -424,11 +634,17 @@ Beste Grüße,
 
         function setKnowsPension(val) {
             knowsPension = val;
-            document.getElementById('btn-knows-pension-yes').classList.toggle('active', val);
-            document.getElementById('btn-knows-pension-no').classList.toggle('active', !val);
+            const btnYes = document.getElementById('btn-knows-pension-yes');
+            const btnNo = document.getElementById('btn-knows-pension-no');
+            if (btnYes) btnYes.classList.toggle('active', val);
+            if (btnNo) btnNo.classList.toggle('active', !val);
             
-            const wrap = document.getElementById('wrap-pension-amount');
-            wrap.style.display = val ? 'block' : 'none';
+            const wrapPension = document.getElementById('wrap-pension-amount');
+            if (wrapPension) wrapPension.classList.toggle('hidden', !val);
+            
+            const wrapSalary = document.getElementById('wrap-salary');
+            if (wrapSalary) wrapSalary.classList.toggle('hidden', val);
+            
             calculate();
         }
 
@@ -882,7 +1098,8 @@ Beste Grüße,
             }
             updateClientCta();
             setKnowsPension(false);
-            updateSliderUI(document.getElementById('input-desired-age'));
+            syncDesiredAge(63);
+            goToStep(1);
         });
 
         window.addEventListener('storage', (e) => {
