@@ -164,29 +164,28 @@
                                 <input type="number" id="input-work-start-year" class="input-field" value="2000" min="1950" max="2100" onchange="calculate()">
                             </div>
                         </div>
-                        <div>
+                        <div class="mb-4">
                             <label class="block text-[13px] font-semibold text-slate-600 mb-1.5">Lücken im Versicherungsverlauf (Monate)</label>
                             <input type="number" id="input-gaps" class="input-field" value="0" min="0" onchange="calculate()">
+                        </div>
+                        <div>
+                            <label class="block text-[13px] font-semibold text-slate-600 mb-1.5">Monatsbruttoentgelt (€)</label>
+                            <input type="text" id="input-salary" class="input-field" value="4.000" oninput="formatCurrencyInput(this); calculate()">
                         </div>
                     </div>
 
                     <!-- Rentenansprüche -->
                     <div class="border-t border-slate-100 pt-6">
                         <h3 class="font-bold text-[#023e84] text-base mb-3">Rentenansprüche</h3>
-                        <label class="block text-[13px] font-semibold text-slate-600 mb-2">Kennen Sie Ihren aktuellen Anspruch aus der Renteninformation?</label>
+                        <label class="block text-[13px] font-semibold text-slate-600 mb-2">Kennen Sie Ihre Ansprüche?</label>
                         <div class="flex mb-4">
-                            <button type="button" class="toggle-btn" id="btn-knows-pension-no" onclick="setKnowsPension(false)">Nein (über Gehalt schätzen)</button>
-                            <button type="button" class="toggle-btn active" id="btn-knows-pension-yes" onclick="setKnowsPension(true)">Ja (aus Renteninfo)</button>
+                            <button type="button" class="toggle-btn active" id="btn-knows-pension-no" onclick="setKnowsPension(false)">nein</button>
+                            <button type="button" class="toggle-btn" id="btn-knows-pension-yes" onclick="setKnowsPension(true)">ja</button>
                         </div>
 
-                        <div id="wrap-pension-amount">
-                            <label class="block text-[13px] font-semibold text-slate-600 mb-1.5">Monatliche Regelaltersrente laut Renteninfo (€)</label>
+                        <div id="wrap-pension-amount" class="hidden">
+                            <label class="block text-[13px] font-semibold text-slate-600 mb-1.5">Regelaltersrente (€)</label>
                             <input type="text" id="input-pension-amount" class="input-field" value="1.500" oninput="formatCurrencyInput(this); calculate()">
-                        </div>
-
-                        <div id="wrap-salary" class="hidden">
-                            <label class="block text-[13px] font-semibold text-slate-600 mb-1.5">Aktuelles monatliches Bruttoentgelt (€)</label>
-                            <input type="text" id="input-salary" class="input-field" value="4.000" oninput="formatCurrencyInput(this); calculate()">
                         </div>
                     </div>
                 </div>
@@ -641,9 +640,6 @@ Beste Grüße,
             
             const wrapPension = document.getElementById('wrap-pension-amount');
             if (wrapPension) wrapPension.classList.toggle('hidden', !val);
-            
-            const wrapSalary = document.getElementById('wrap-salary');
-            if (wrapSalary) wrapSalary.classList.toggle('hidden', val);
             
             calculate();
         }
