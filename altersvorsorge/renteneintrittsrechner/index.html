@@ -16,19 +16,19 @@
         .card-panel { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03); transition: box-shadow 0.2s, border-color 0.2s; }
         .card-panel:hover { box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06); }
         
-        .input-field { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; color: #334155; font-size: 15px; font-weight: 600; border-radius: 8px; padding: 10px 14px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+        .input-field { width: 100%; min-height: 44px; background: #f8fafc; border: 1px solid #e2e8f0; color: #334155; font-size: 16px; font-weight: 600; border-radius: 8px; padding: 10px 14px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
         .input-field:focus { border-color: #006fb9; box-shadow: 0 0 0 3px rgba(0, 111, 185, 0.15); background: #ffffff; }
         
-        .toggle-btn { padding: 10px 16px; border: 1px solid #e2e8f0; background: #f8fafc; color: #64748b; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; flex: 1; text-align: center; }
+        .toggle-btn { min-height: 44px; padding: 10px 16px; border: 1px solid #e2e8f0; background: #f8fafc; color: #64748b; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; flex: 1; text-align: center; -webkit-tap-highlight-color: transparent; }
         .toggle-btn.active { background: #023e84; border-color: #023e84; color: #ffffff; }
         .toggle-btn:first-child { border-radius: 8px 0 0 8px; }
         .toggle-btn:last-child { border-radius: 0 8px 8px 0; margin-left: -1px; }
 
-        .slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: #e5e7eb; outline: none; }
-        .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #023e84; cursor: pointer; box-shadow: 0 2px 4px rgba(2, 62, 132, 0.25); transition: all 0.15s ease; }
-        .slider::-webkit-slider-thumb:hover { transform: scale(1.12); box-shadow: 0 3px 6px rgba(2, 62, 132, 0.35); }
-        .slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #023e84; cursor: pointer; border: none; box-shadow: 0 2px 4px rgba(2, 62, 132, 0.25); transition: all 0.15s ease; }
-        .slider::-moz-range-thumb:hover { transform: scale(1.12); box-shadow: 0 3px 6px rgba(2, 62, 132, 0.35); }
+        .slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: #e5e7eb; outline: none; touch-action: pan-y; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #023e84; cursor: pointer; box-shadow: 0 2px 5px rgba(2, 62, 132, 0.3); transition: all 0.15s ease; }
+        .slider::-webkit-slider-thumb:hover, .slider::-webkit-slider-thumb:active { transform: scale(1.15); box-shadow: 0 3px 8px rgba(2, 62, 132, 0.4); }
+        .slider::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #023e84; cursor: pointer; border: none; box-shadow: 0 2px 5px rgba(2, 62, 132, 0.3); transition: all 0.15s ease; }
+        .slider::-moz-range-thumb:hover, .slider::-moz-range-thumb:active { transform: scale(1.15); box-shadow: 0 3px 8px rgba(2, 62, 132, 0.4); }
     </style>
 </head>
 <body class="font-sans antialiased pb-20 bg-white">
