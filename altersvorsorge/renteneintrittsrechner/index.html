@@ -107,10 +107,10 @@
                     </div>
 
                     <input type="range" id="step1-desired-age" min="63" max="70" step="1" value="67" class="slider w-full mb-2" oninput="syncDesiredAge(this.value)">
-                    <div class="flex justify-between text-xs text-slate-400 font-semibold px-1 mt-1">
-                        <span>63 Jahre</span>
-                        <span>67 Jahre</span>
-                        <span>70 Jahre</span>
+                    <div class="relative text-xs text-slate-400 font-semibold mt-1 h-5 select-none">
+                        <span class="absolute left-0">63 Jahre</span>
+                        <span class="absolute text-center whitespace-nowrap" style="left: calc(10px + (100% - 20px) * 0.5714); transform: translateX(-50%);">67 Jahre</span>
+                        <span class="absolute right-0">70 Jahre</span>
                     </div>
                 </div>
 
@@ -228,11 +228,11 @@
                         <div class="font-extrabold text-[#023e84] bg-[#e8f0fa] px-2.5 py-0.5 rounded text-xs" id="step3-desired-age-val">67 Jahre</div>
                     </div>
                     <input type="range" id="step3-desired-age" min="63" max="70" step="1" value="67" class="slider w-full mb-1" oninput="syncDesiredAge(this.value)">
-                    <div class="flex justify-between text-[11px] text-slate-400 font-medium px-1">
-                        <span>63 J</span>
-                        <span>65 J</span>
-                        <span>67 J</span>
-                        <span>70 J</span>
+                    <div class="relative text-[11px] text-slate-400 font-medium mt-1 h-4 select-none">
+                        <span class="absolute left-0">63 J</span>
+                        <span class="absolute text-center whitespace-nowrap" style="left: calc(10px + (100% - 20px) * 0.2857); transform: translateX(-50%);">65 J</span>
+                        <span class="absolute text-center whitespace-nowrap" style="left: calc(10px + (100% - 20px) * 0.5714); transform: translateX(-50%);">67 J</span>
+                        <span class="absolute right-0">70 J</span>
                     </div>
                 </div>
             </div>
