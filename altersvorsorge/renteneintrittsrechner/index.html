@@ -191,7 +191,7 @@
                 </div>
 
                 <!-- Chart -->
-                <div class="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-8">
+                <div id="chart-section" class="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-8">
                     <div class="border-b border-slate-100 flex gap-6 pb-2">
                         <button class="pb-2 border-b-2 border-[#023e84] font-bold text-[#023e84] text-[15px]">Renten-Differenz</button>
                     </div>
@@ -230,7 +230,7 @@
                     </div>
 
                     <!-- Details Table -->
-                <div class="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-8 overflow-hidden">
+                <div id="details-table-section" class="bg-white p-6 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-8 overflow-hidden">
                     <table class="w-full text-left text-[14px] text-slate-600">
                         <tr class="border-b border-slate-200">
                             <td class="py-3 pr-4">Regelaltersgrenze</td>
@@ -576,18 +576,26 @@ Beste Grüße,
             let earlyAge = canRetireAt63 ? 63 : rag.years;
             document.getElementById('insight-early').innerText = `mit ${earlyAge} Jahren`;
             
-            document.getElementById('tab-rag').innerText = ragText;
-            document.getElementById('tab-63').innerText = (beitragsjahre >= 45 && rag.years > 63) ? 'ja' : 'nein';
-            document.getElementById('tab-65').innerText = (beitragsjahre >= 45) ? 'ja' : 'nein';
-            document.getElementById('tab-early').innerText = `mit ${earlyAge} Jahren`;
-            document.getElementById('tab-pen').innerText = fmt.format(penaltyPerMonth);
-            document.getElementById('tab-bon').innerText = fmt.format(bonusPerMonth);
+            const tabRag = document.getElementById('tab-rag');
+            if (tabRag) tabRag.innerText = ragText;
+            const tab63 = document.getElementById('tab-63');
+            if (tab63) tab63.innerText = (beitragsjahre >= 45 && rag.years > 63) ? 'ja' : 'nein';
+            const tab65 = document.getElementById('tab-65');
+            if (tab65) tab65.innerText = (beitragsjahre >= 45) ? 'ja' : 'nein';
+            const tabEarly = document.getElementById('tab-early');
+            if (tabEarly) tabEarly.innerText = `mit ${earlyAge} Jahren`;
+            const tabPen = document.getElementById('tab-pen');
+            if (tabPen) tabPen.innerText = fmt.format(penaltyPerMonth);
+            const tabBon = document.getElementById('tab-bon');
+            if (tabBon) tabBon.innerText = fmt.format(bonusPerMonth);
 
             updateChart(rag, basePension, penaltyPerMonth, bonusPerMonth);
         }
 
         function updateChart(rag, basePension, penaltyPerMonth, bonusPerMonth) {
-            const ctx = document.getElementById('pensionChart').getContext('2d');
+            const chartCanvas = document.getElementById('pensionChart');
+            if (!chartCanvas) return;
+            const ctx = chartCanvas.getContext('2d');
             let labels = [];
             let data = [];
             
@@ -836,6 +844,12 @@ Beste Grüße,
             if (nav) nav.remove();
             const modal = document.getElementById('campaign-modal');
             if (modal) modal.remove();
+
+            // Im Client-Mode: Chart und Details-Tabelle für eine fokussierte Lead-Ansicht entfernen
+            const chartSection = document.getElementById('chart-section');
+            if (chartSection) chartSection.remove();
+            const tableSection = document.getElementById('details-table-section');
+            if (tableSection) tableSection.remove();
 
             const header = document.getElementById('main-header');
             if (header) {
