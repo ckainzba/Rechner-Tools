@@ -268,7 +268,7 @@
                 </p>
             </div>
 
-            <div id="comparison-box" class="p-5 rounded-xl mb-6 text-[15px] leading-relaxed shadow-sm" style="display: none;"></div>
+            <div id="comparison-box" class="bg-[#f8fafc] border border-[#cce0f5] rounded-2xl p-4 sm:p-5 mb-8 flex items-start sm:items-center gap-4 text-[15px] leading-relaxed text-[#023e84] shadow-sm" style="display: none;"></div>
             <!-- Result Cards (Donuts) -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                 <!-- 80% -->
@@ -482,23 +482,29 @@
       const diff = avgAge - estimatedAge;
       const compBox = document.getElementById('comparison-box');
       
+      let iconSvg = '';
+      let textHtml = '';
+
       if (diff > 1) {
-        compBox.innerHTML = `Sie haben <strong>${estimatedAge} Jahre</strong> geschätzt. Die Statistik sagt jedoch <strong>${avgAge} Jahre</strong>. Das sind <strong>${diff} Jahre länger</strong>, für die Ihre Vorsorge reichen muss!`;
-        compBox.style.backgroundColor = '#FEF3C7';
-        compBox.style.color = '#92400E';
-        compBox.style.border = '1px solid #FDE68A';
+        iconSvg = `<svg class="w-5 h-5 text-[#023e84]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
+        textHtml = `Sie haben <strong>${estimatedAge} Jahre</strong> geschätzt. Die Statistik sagt jedoch <strong>${avgAge} Jahre</strong>. Das sind <strong>${diff} Jahre länger</strong>, für die Ihre Vorsorge reichen muss!`;
       } else if (diff < -1) {
-        compBox.innerHTML = `Sie haben <strong>${estimatedAge} Jahre</strong> geschätzt. Die Statistik geht im Durchschnitt von <strong>${avgAge} Jahren</strong> aus. Sie planen also bereits mit einem sehr guten Puffer!`;
-        compBox.style.backgroundColor = '#D1FAE5';
-        compBox.style.color = '#065F46';
-        compBox.style.border = '1px solid #A7F3D0';
+        iconSvg = `<svg class="w-5 h-5 text-[#023e84]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>`;
+        textHtml = `Sie haben <strong>${estimatedAge} Jahre</strong> geschätzt. Die Statistik geht im Durchschnitt von <strong>${avgAge} Jahren</strong> aus. Sie planen also bereits mit einem sehr guten Puffer!`;
       } else {
-        compBox.innerHTML = `Punktlandung! Ihre Schätzung von <strong>${estimatedAge} Jahren</strong> entspricht exakt dem statistischen Durchschnitt.`;
-        compBox.style.backgroundColor = '#DBEAFE';
-        compBox.style.color = '#1E40AF';
-        compBox.style.border = '1px solid #BFDBFE';
+        iconSvg = `<svg class="w-5 h-5 text-[#023e84]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`;
+        textHtml = `Punktlandung! Ihre Schätzung von <strong>${estimatedAge} Jahren</strong> entspricht exakt dem statistischen Durchschnitt.`;
       }
-      compBox.style.display = 'block';
+
+      compBox.innerHTML = `
+        <div class="w-10 h-10 rounded-xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5 sm:mt-0">
+            ${iconSvg}
+        </div>
+        <div class="text-[15px] text-[#023e84] leading-relaxed">
+            ${textHtml}
+        </div>
+      `;
+      compBox.style.display = 'flex';
       document.getElementById('result-80').textContent = r.p80;
       document.getElementById('result-50').textContent = r.p50;
       document.getElementById('result-20').textContent = r.p20;
@@ -532,6 +538,8 @@
       document.getElementById('input-section').style.display = 'block';
       document.getElementById('loading-section').classList.remove('visible');
       document.getElementById('result-section').classList.remove('visible');
+      const compBox = document.getElementById('comparison-box');
+      if (compBox) compBox.style.display = 'none';
       document.getElementById('female').checked = false;
       document.getElementById('male').checked = false;
       updateGenderBtns(); // Update the visual state of the gender cards
