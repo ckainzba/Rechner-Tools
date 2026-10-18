@@ -65,7 +65,7 @@
             
             <!-- Step 1 Dot -->
             <button type="button" onclick="goToStep(1)" id="step-dot-1" class="relative z-10 flex flex-col items-center group cursor-pointer focus:outline-none">
-                <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm bg-[#023e84] text-white shadow-md transition-all scale-105 ring-4 ring-[#e8f0fa]">1</div>
+                <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm bg-[#023e84] text-white shadow-md transition-all scale-105 ring-4 ring-[#b6d4f0]">1</div>
                 <span class="text-xs font-bold text-[#023e84] mt-2 hidden sm:block">Wunschalter</span>
             </button>
             
@@ -502,16 +502,16 @@ Beste Grüße,
                 const label = dotBtn.querySelector('span');
                 
                 if (i < step) {
-                    // Erledigter Schritt: Grün mit Haken
+                    // Erledigter Schritt: Marken-Dunkelblau mit weißem Haken
                     if (circle) {
-                        circle.className = 'w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm bg-emerald-600 text-white shadow-sm transition-all';
-                        circle.innerHTML = '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                        circle.className = 'w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm bg-[#023e84] text-white shadow-sm transition-all';
+                        circle.innerHTML = '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>';
                     }
-                    if (label) label.className = 'text-xs font-semibold text-emerald-700 mt-2 hidden sm:block';
+                    if (label) label.className = 'text-xs font-semibold text-[#006fb9] mt-2 hidden sm:block';
                 } else if (i === step) {
-                    // Aktiver Schritt: Brand-Blau mit Ring
+                    // Aktiver Schritt: Brand-Dunkelblau mit Hellblau-Ring (#b6d4f0)
                     if (circle) {
-                        circle.className = 'w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm bg-[#023e84] text-white shadow-md transition-all scale-105 ring-4 ring-[#e8f0fa]';
+                        circle.className = 'w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm bg-[#023e84] text-white shadow-md transition-all scale-105 ring-4 ring-[#b6d4f0]';
                         circle.innerHTML = i.toString();
                     }
                     if (label) label.className = 'text-xs font-bold text-[#023e84] mt-2 hidden sm:block';
