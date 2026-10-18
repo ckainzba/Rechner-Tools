@@ -752,16 +752,21 @@ Beste Grüße,
             localStorage.setItem('rechner_adv_phone', phone);
             localStorage.setItem('rechner_adv_calendly', calendly);
 
-            const currentHost = window.location.hostname.toLowerCase();
+            const isFile = window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null';
             let clientBase = '';
-            if (currentHost.includes('renteneintritt') || currentHost.includes('renteneintrittsrechner')) {
-                clientBase = window.location.origin;
+            if (isFile) {
+                clientBase = window.location.href.split('?')[0].split('#')[0];
             } else {
-                clientBase = window.location.origin + window.location.pathname;
+                const currentHost = (window.location.hostname || '').toLowerCase();
+                if (currentHost.includes('renteneintritt') || currentHost.includes('renteneintrittsrechner')) {
+                    clientBase = window.location.origin;
+                } else {
+                    clientBase = window.location.origin + window.location.pathname;
+                }
             }
 
             let clientUrl = clientBase;
-            const isClientDom = currentHost.includes('renteneintritt') || currentHost.includes('renteneintrittsrechner');
+            const isClientDom = !isFile && ((window.location.hostname || '').toLowerCase().includes('renteneintritt') || (window.location.hostname || '').toLowerCase().includes('renteneintrittsrechner'));
             let params = [];
             if (!isClientDom) {
                 params.push('mode=client');
