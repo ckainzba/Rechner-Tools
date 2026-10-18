@@ -941,21 +941,17 @@ Beste Grüße,
             localStorage.setItem('rechner_adv_phone', phone);
             localStorage.setItem('rechner_adv_calendly', calendly);
 
-            const isFile = window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null';
+            // Basis-URL für Kunden: Immer die eigenständige Vercel-Domain verwenden
             let clientBase = '';
-            if (isFile) {
-                clientBase = window.location.href.split('?')[0].split('#')[0];
+            const currentHost = (window.location.hostname || '').toLowerCase();
+            if (currentHost.includes('renteneintrittsrechner') || currentHost.includes('renteneintritt')) {
+                clientBase = window.location.origin;
             } else {
-                const currentHost = (window.location.hostname || '').toLowerCase();
-                if (currentHost.includes('renteneintritt') || currentHost.includes('renteneintrittsrechner')) {
-                    clientBase = window.location.origin;
-                } else {
-                    clientBase = window.location.origin + window.location.pathname;
-                }
+                clientBase = 'https://renteneintrittsrechner.vercel.app';
             }
 
             let clientUrl = clientBase;
-            const isClientDom = !isFile && ((window.location.hostname || '').toLowerCase().includes('renteneintritt') || (window.location.hostname || '').toLowerCase().includes('renteneintrittsrechner'));
+            const isClientDom = clientBase.toLowerCase().includes('renteneintrittsrechner') || clientBase.toLowerCase().includes('renteneintritt');
             let params = [];
             if (!isClientDom) {
                 params.push('mode=client');
