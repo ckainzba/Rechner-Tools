@@ -132,8 +132,31 @@
             <!-- Right Column: Results -->
             <div class="min-w-0">
                 
-                <!-- New Hero Results: Desired vs Regular -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 mt-2">
+                <!-- Hero Banner: Rente zum gewünschten Renteneintritt -->
+                <div class="bg-white p-6 md:p-7 rounded-3xl shadow-[0_2px_14px_rgba(2,62,132,0.06)] border border-slate-100 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5 relative overflow-hidden group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 shadow-sm">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <span class="text-sm font-semibold text-slate-500 block mb-1">Rente zum gewünschten Renteneintritt</span>
+                            <div class="text-3xl sm:text-4xl font-extrabold text-[#023e84] flex items-baseline gap-1">
+                                <span id="hero-desired-pension">0 €</span>
+                            </div>
+                            <div class="text-xs text-[#006fb9] mt-1 font-medium">bei Rentenbeginn mit <span id="hero-desired-age">63</span> Jahren</div>
+                        </div>
+                    </div>
+                    <div class="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100 gap-1.5">
+                        <span class="text-xs text-slate-400 font-medium">Differenz zur Regelaltersgrenze</span>
+                        <div id="hero-gap-pill" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#fef2f2] text-[#991b1b]">
+                            <span id="hero-gap-mini">- 0 €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3 Sub-Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
+                    <!-- Card 1: Rente regulär -->
                     <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden group">
                         <div class="flex justify-between items-start mb-1">
                             <span class="text-sm font-medium text-slate-500">Rente regulär</span>
@@ -144,22 +167,10 @@
                         <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
                             <span id="hero-regular-pension">0 €</span>
                         </div>
-                        <div class="text-xs text-[#006fb9] mt-1 font-medium">mit <span id="hero-rag-age">67</span> Jahren</div>
+                        <div class="text-xs text-[#006fb9] mt-1 font-medium">ohne Abschläge mit <span id="hero-rag-age">67</span> Jahren</div>
                     </div>
-                    
-                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden group">
-                        <div class="flex justify-between items-start mb-1">
-                            <span class="text-sm font-medium text-slate-500">Rente zum gewünschten Renteneintritt</span>
-                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg transition-transform group-hover:scale-110">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                        </div>
-                        <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
-                            <span id="hero-desired-pension">0 €</span>
-                        </div>
-                        <div class="text-xs text-[#006fb9] mt-1 font-medium">mit <span id="hero-desired-age">63</span> Jahren</div>
-                    </div>
-                    
+
+                    <!-- Card 2: Monatlicher Abschlag / Zuschlag -->
                     <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden group" id="hero-gap-card">
                         <div class="flex justify-between items-start mb-1">
                             <span class="text-sm font-medium text-slate-500" id="hero-gap-label">Ihr monatlicher Abschlag</span>
@@ -172,17 +183,12 @@
                         </div>
                         <div class="text-xs mt-1 font-medium text-[#991b1b]" id="hero-gap-sub">Lebenslang jeden Monat</div>
                     </div>
-                </div>
 
-                <div class="mb-6 border-t border-slate-100 pt-8">
-                    <h3 class="text-[#023e84] font-bold text-lg mb-2">Details & Auswirkung bei anderen Alternativen:</h3>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
-                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
+                    <!-- Card 3: Gesamter Kapitalbedarf -->
+                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden group">
                         <div class="flex justify-between items-start mb-1">
                             <span class="text-sm font-medium text-slate-500">Gesamter Kapitalbedarf</span>
-                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
+                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg transition-transform group-hover:scale-110">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10h12"/><path stroke-linecap="round" stroke-linejoin="round" d="M4 14h9"/><path stroke-linecap="round" stroke-linejoin="round" d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
                             </div>
                         </div>
@@ -190,32 +196,6 @@
                             <span id="out-capital-need">0 €</span>
                         </div>
                         <div class="text-xs text-[#006fb9] mt-1 font-medium" id="out-capital-sub">zum Rentenbeginn</div>
-                    </div>
-                    
-                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
-                        <div class="flex justify-between items-start mb-1">
-                            <span class="text-sm font-medium text-slate-500">Regelaltersgrenze</span>
-                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            </div>
-                        </div>
-                        <div class="text-2xl font-bold text-[#023e84] flex items-baseline gap-1 mt-1">
-                            <span id="out-rag">mit 67 Jahren</span>
-                        </div>
-                        <div class="text-xs text-[#006fb9] mt-1 font-medium" id="out-birthyear">Jahrgang 1990</div>
-                    </div>
-                    
-                    <div class="bg-white p-5 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
-                        <div class="flex justify-between items-start mb-1">
-                            <span class="text-sm font-medium text-slate-500">Abschlag / Zuschlag</span>
-                            <div class="p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                            </div>
-                        </div>
-                        <div class="text-2xl font-bold text-[#991b1b] flex items-baseline gap-1 mt-1">
-                            <span id="out-penalty">- 7,53 €</span>
-                        </div>
-                        <div class="text-xs text-[#006fb9] mt-1 font-medium" id="out-bonus">Zuschlag + 10,53 € je Monat später</div>
                     </div>
                 </div>
 
@@ -545,11 +525,20 @@ Ihr Berater</div>
                 gapIcon.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"></path></svg>';
             }
 
-            // UI
-            document.getElementById('out-rag').innerText = ragText;
-            document.getElementById('out-birthyear').innerText = `Jahrgang ${birthYear}`;
-            document.getElementById('out-penalty').innerText = `- ${fmt.format(penaltyPerMonth)}`;
-            document.getElementById('out-bonus').innerText = `Zuschlag + ${fmt.format(bonusPerMonth)} je Monat später`;
+            const gapMini = document.getElementById('hero-gap-mini');
+            const gapPill = document.getElementById('hero-gap-pill');
+            if (gapMini && gapPill) {
+                if (gap > 0) {
+                    gapMini.innerText = "- " + fmtHero.format(gap) + " / Monat";
+                    gapPill.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#fef2f2] text-[#991b1b]";
+                } else if (gap < 0) {
+                    gapMini.innerText = "+ " + fmtHero.format(Math.abs(gap)) + " / Monat";
+                    gapPill.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#f0fdf4] text-[#16a34a]";
+                } else {
+                    gapMini.innerText = "0 € (Keine Differenz)";
+                    gapPill.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#e8f0fa] text-[#023e84]";
+                }
+            }
             
             const monthsEarly = Math.max(0, -monthsDiff);
             const capitalNeedPerMonth = penaltyPerMonth * FAKTOR_KAPITALBEDARF;
