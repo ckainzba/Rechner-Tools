@@ -54,8 +54,8 @@
     </header>
 
     <!-- Master hidden inputs for compatibility -->
-    <input type="hidden" id="input-desired-age" value="63">
-    <span id="out-desired-age-val" class="hidden">63 Jahre</span>
+    <input type="hidden" id="input-desired-age" value="67">
+    <span id="out-desired-age-val" class="hidden">67 Jahre</span>
 
     <!-- Step Progress Bar -->
     <div class="max-w-xl mx-auto mb-8 px-4" id="step-indicator-bar">
@@ -102,24 +102,21 @@
                 </p>
 
                 <div class="bg-slate-50/80 p-6 md:p-8 rounded-2xl border border-slate-100 mb-8 max-w-md mx-auto">
-                    <div class="text-5xl md:text-6xl font-black text-[#023e84] mb-2 tracking-tight">
-                        <span id="step1-desired-age-val">63</span> <span class="text-2xl font-bold text-slate-400">Jahre</span>
-                    </div>
-                    <div id="step1-age-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#e8f0fa] text-[#023e84] mb-6">
-                        <span>Frühestmöglicher Renteneintritt</span>
+                    <div class="text-5xl md:text-6xl font-black text-[#023e84] mb-6 tracking-tight">
+                        <span id="step1-desired-age-val">67</span> <span class="text-2xl font-bold text-slate-400">Jahre</span>
                     </div>
 
-                    <input type="range" id="step1-desired-age" min="63" max="70" step="1" value="63" class="slider w-full mb-2" oninput="syncDesiredAge(this.value)">
+                    <input type="range" id="step1-desired-age" min="63" max="70" step="1" value="67" class="slider w-full mb-2" oninput="syncDesiredAge(this.value)">
                     <div class="flex justify-between text-xs text-slate-400 font-semibold px-1 mt-1">
                         <span>63 Jahre</span>
-                        <span>67 Jahre (Regulär)</span>
+                        <span>67 Jahre</span>
                         <span>70 Jahre</span>
                     </div>
                 </div>
 
-                <button type="button" onclick="goToStep(2)" class="w-full sm:w-auto min-w-[240px] bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-4 px-8 rounded-2xl shadow-[0_8px_20px_rgba(2,62,132,0.25)] transition-all duration-300 transform hover:-translate-y-0.5 inline-flex items-center justify-center gap-3 text-base">
+                <button type="button" onclick="goToStep(2)" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#023e84] hover:bg-[#012a5e] text-white font-semibold text-sm py-3 px-7 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 group">
                     <span>Weiter zu Ihren Angaben</span>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </button>
             </div>
         </div>
@@ -191,9 +188,9 @@
                 </div>
 
                 <div class="mt-8 pt-6 border-t border-slate-100 flex justify-end">
-                    <button type="button" onclick="goToStep(3)" class="w-full sm:w-auto bg-[#023e84] hover:bg-[#012a5e] text-white font-bold py-4 px-8 rounded-2xl shadow-[0_8px_20px_rgba(2,62,132,0.25)] transition-all duration-300 transform hover:-translate-y-0.5 inline-flex items-center justify-center gap-3 text-base">
+                    <button type="button" onclick="goToStep(3)" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#023e84] hover:bg-[#012a5e] text-white font-semibold text-sm py-3 px-7 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 group">
                         <span>Ergebnis & Kapitalbedarf berechnen</span>
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </div>
             </div>
@@ -228,13 +225,13 @@
                 <div class="mt-6 pt-5 border-t border-slate-100 max-w-md mx-auto">
                     <div class="flex justify-between items-center mb-2">
                         <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Wunschalter live anpassen:</label>
-                        <div class="font-extrabold text-[#023e84] bg-[#e8f0fa] px-2.5 py-0.5 rounded text-xs" id="step3-desired-age-val">63 Jahre</div>
+                        <div class="font-extrabold text-[#023e84] bg-[#e8f0fa] px-2.5 py-0.5 rounded text-xs" id="step3-desired-age-val">67 Jahre</div>
                     </div>
-                    <input type="range" id="step3-desired-age" min="63" max="70" step="1" value="63" class="slider w-full mb-1" oninput="syncDesiredAge(this.value)">
+                    <input type="range" id="step3-desired-age" min="63" max="70" step="1" value="67" class="slider w-full mb-1" oninput="syncDesiredAge(this.value)">
                     <div class="flex justify-between text-[11px] text-slate-400 font-medium px-1">
                         <span>63 J</span>
                         <span>65 J</span>
-                        <span>67 J (Regulär)</span>
+                        <span>67 J</span>
                         <span>70 J</span>
                     </div>
                 </div>
@@ -542,7 +539,7 @@ Beste Grüße,
 
         function syncDesiredAge(val) {
             val = parseInt(val, 10);
-            if (isNaN(val)) val = 63;
+            if (isNaN(val)) val = 67;
             
             // Master Input synchronisieren
             const masterInput = document.getElementById('input-desired-age');
@@ -556,23 +553,6 @@ Beste Grüße,
             }
             const s1Val = document.getElementById('step1-desired-age-val');
             if (s1Val) s1Val.innerText = val;
-            
-            const badge = document.getElementById('step1-age-badge');
-            if (badge) {
-                if (val === 63) {
-                    badge.innerHTML = '<span>Frühestmöglicher Renteneintritt (mit Abschlägen)</span>';
-                    badge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#e8f0fa] text-[#023e84] mb-6';
-                } else if (val < 67) {
-                    badge.innerHTML = '<span>Vorzeitiger Ruhestand (mit Abschlägen)</span>';
-                    badge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200 mb-6';
-                } else if (val === 67) {
-                    badge.innerHTML = '<span>Regelaltersgrenze (ohne Abschläge)</span>';
-                    badge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 mb-6';
-                } else {
-                    badge.innerHTML = '<span>Späterer Ruhestand (mit Rentenzuschlag)</span>';
-                    badge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-800 border border-blue-200 mb-6';
-                }
-            }
             
             // Step 3 UI (Live-Slider in Hero-Card)
             const s3Input = document.getElementById('step3-desired-age');
@@ -1094,7 +1074,7 @@ Beste Grüße,
             }
             updateClientCta();
             setKnowsPension(false);
-            syncDesiredAge(63);
+            syncDesiredAge(67);
             goToStep(1);
         });
 
