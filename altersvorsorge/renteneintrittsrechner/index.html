@@ -132,25 +132,16 @@
             <!-- Right Column: Results -->
             <div class="min-w-0">
                 
-                <!-- Hero Banner: Rente zum gewünschten Renteneintritt -->
-                <div class="bg-white p-6 md:p-7 rounded-3xl shadow-[0_2px_14px_rgba(2,62,132,0.06)] border border-slate-100 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5 relative overflow-hidden group">
-                    <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 rounded-2xl bg-[#e8f0fa] text-[#023e84] flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 shadow-sm">
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <div>
-                            <span class="text-sm font-semibold text-slate-500 block mb-1">Rente zum gewünschten Renteneintritt</span>
-                            <div class="text-3xl sm:text-4xl font-extrabold text-[#023e84] flex items-baseline gap-1">
-                                <span id="hero-desired-pension">0 €</span>
-                            </div>
-                            <div class="text-xs text-[#006fb9] mt-1 font-medium">bei Rentenbeginn mit <span id="hero-desired-age">63</span> Jahren</div>
-                        </div>
+                <!-- Hero Banner: Rente zum gewünschten Renteneintritt (Zentriert) -->
+                <div class="bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_12px_rgba(2,62,132,0.05)] border border-slate-100 mb-6 text-center">
+                    <h3 class="text-[#023e84] font-bold text-lg mb-2">Rente zum gewünschten Renteneintritt:</h3>
+                    <div class="text-4xl md:text-5xl font-extrabold text-[#023e84] mb-4">
+                        <span id="hero-desired-pension">0 €</span>
                     </div>
-                    <div class="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100 gap-1.5">
-                        <span class="text-xs text-slate-400 font-medium">Differenz zur Regelaltersgrenze</span>
-                        <div id="hero-gap-pill" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#fef2f2] text-[#991b1b]">
-                            <span id="hero-gap-mini">- 0 €</span>
-                        </div>
+                    
+                    <div class="bg-[#e8f0fa] border border-[#b6d4f0] rounded-xl px-4 py-2.5 inline-flex items-center gap-2">
+                        <svg class="w-5 h-5 text-[#006fb9] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span class="text-sm font-semibold text-[#023e84]">bei Rentenbeginn mit <span id="hero-desired-age">63</span> Jahren</span>
                     </div>
                 </div>
 
@@ -523,21 +514,6 @@ Ihr Berater</div>
                 gapSub.style.color = "#006fb9";
                 gapIcon.className = "p-2 bg-[#e8f0fa] text-[#023e84] rounded-lg transition-transform group-hover:scale-110";
                 gapIcon.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"></path></svg>';
-            }
-
-            const gapMini = document.getElementById('hero-gap-mini');
-            const gapPill = document.getElementById('hero-gap-pill');
-            if (gapMini && gapPill) {
-                if (gap > 0) {
-                    gapMini.innerText = "- " + fmtHero.format(gap) + " / Monat";
-                    gapPill.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#fef2f2] text-[#991b1b]";
-                } else if (gap < 0) {
-                    gapMini.innerText = "+ " + fmtHero.format(Math.abs(gap)) + " / Monat";
-                    gapPill.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#f0fdf4] text-[#16a34a]";
-                } else {
-                    gapMini.innerText = "0 € (Keine Differenz)";
-                    gapPill.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#e8f0fa] text-[#023e84]";
-                }
             }
             
             const monthsEarly = Math.max(0, -monthsDiff);
