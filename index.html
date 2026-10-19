@@ -399,27 +399,42 @@
       <div class="space-y-4" onkeydown="if(event.key === 'Enter') saveGlobalSettings(event)">
         <div>
           <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihr Name</label>
-          <input type="text" id="global-adv-name" placeholder="Max Mustermann" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
+          <input type="text" id="global-adv-name" placeholder="Max Mustermann" oninput="checkGlobalPrivacyValidation()" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihre WhatsApp-Nummer</label>
-          <input type="tel" id="global-adv-phone" placeholder="0171 1234567" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
+          <input type="tel" id="global-adv-phone" placeholder="0171 1234567" oninput="checkGlobalPrivacyValidation()" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihre E-Mail-Adresse</label>
-          <input type="email" id="global-adv-email" placeholder="max.mustermann@email.de" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
+          <input type="email" id="global-adv-email" placeholder="max.mustermann@email.de" oninput="checkGlobalPrivacyValidation()" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Ihr Calendly-Link (optional)</label>
-          <input type="url" id="global-adv-calendly" placeholder="calendly.com/max-mustermann" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
+          <input type="url" id="global-adv-calendly" placeholder="calendly.com/max-mustermann" oninput="checkGlobalPrivacyValidation()" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-[#006fb9] focus:border-[#006fb9] px-4 py-3 outline-none transition-colors">
         </div>
       </div>
+
+      <!-- Datenschutz Checkbox -->
+      <div class="mt-5 pt-4 border-t border-slate-100 flex items-start gap-3">
+        <input type="checkbox" id="global-adv-privacy" onchange="checkGlobalPrivacyValidation()" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-[#023e84] focus:ring-[#006fb9] cursor-pointer">
+        <label for="global-adv-privacy" class="text-xs text-slate-500 leading-snug cursor-pointer select-none">
+          Ich willige ein, dass meine Kontaktdaten lokal im Browser gespeichert und zur Personalisierung von Mandanten-Links verwendet werden. Details siehe <a href="#" onclick="return false;" class="text-[#006fb9] underline hover:text-[#023e84]">Datenschutz</a>.
+        </label>
+      </div>
       
-      <div class="mt-8 pt-6 border-t border-slate-100 flex justify-end gap-3">
-        <button onclick="closeGlobalSettings()" class="px-5 py-2.5 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors cursor-pointer">Abbrechen</button>
-        <button id="btn-save-global" onclick="saveGlobalSettings(event)" class="px-5 py-2.5 text-sm font-bold text-white bg-[#023e84] hover:bg-[#012a5e] rounded-xl transition-colors shadow-sm flex items-center gap-2 cursor-pointer">
-          <span>Speichern</span>
+      <!-- Modal Footer -->
+      <div class="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between gap-3">
+        <button id="btn-clear-global" onclick="clearGlobalSettings()" class="text-xs font-semibold text-rose-500 hover:text-rose-700 transition-colors flex items-center gap-1.5 cursor-pointer py-2 px-1">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          <span>Daten löschen</span>
         </button>
+        <div class="flex items-center gap-2">
+          <button onclick="closeGlobalSettings()" class="px-4 py-2.5 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors cursor-pointer">Abbrechen</button>
+          <button id="btn-save-global" onclick="saveGlobalSettings(event)" class="px-5 py-2.5 text-sm font-bold text-white bg-[#023e84] hover:bg-[#012a5e] rounded-xl transition-all shadow-sm flex items-center gap-2 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+            <span>Speichern</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -477,12 +492,40 @@
     });
 
     // Global Settings Logic
+    function checkGlobalPrivacyValidation() {
+      const name = (document.getElementById('global-adv-name') || {}).value || '';
+      const phone = (document.getElementById('global-adv-phone') || {}).value || '';
+      const email = (document.getElementById('global-adv-email') || {}).value || '';
+      const calendly = (document.getElementById('global-adv-calendly') || {}).value || '';
+      const privacy = (document.getElementById('global-adv-privacy') || {}).checked;
+      const saveBtn = document.getElementById('btn-save-global');
+      if (!saveBtn) return;
+
+      const hasData = Boolean(name.trim() || phone.trim() || email.trim() || calendly.trim());
+      // Speichern nur aktiv, wenn mindestens ein Feld ausgefüllt ist UND Datenschutz bestätigt ist
+      saveBtn.disabled = !hasData || !privacy;
+    }
+
     function openGlobalSettings() {
-      document.getElementById('global-adv-name').value = localStorage.getItem('rechner_adv_name') || '';
-      document.getElementById('global-adv-phone').value = localStorage.getItem('rechner_adv_phone') || '';
-      document.getElementById('global-adv-email').value = localStorage.getItem('rechner_adv_email') || '';
-      document.getElementById('global-adv-calendly').value = localStorage.getItem('rechner_adv_calendly') || '';
+      const name = localStorage.getItem('rechner_adv_name') || '';
+      const phone = localStorage.getItem('rechner_adv_phone') || '';
+      const email = localStorage.getItem('rechner_adv_email') || '';
+      const calendly = localStorage.getItem('rechner_adv_calendly') || '';
+      const privacy = localStorage.getItem('rechner_privacy_accepted') === 'true';
+
+      document.getElementById('global-adv-name').value = name;
+      document.getElementById('global-adv-phone').value = phone;
+      document.getElementById('global-adv-email').value = email;
+      document.getElementById('global-adv-calendly').value = calendly;
+      document.getElementById('global-adv-privacy').checked = privacy;
       
+      const hasStoredData = Boolean(name || phone || email || calendly);
+      const clearBtn = document.getElementById('btn-clear-global');
+      if (clearBtn) {
+        clearBtn.style.visibility = hasStoredData ? 'visible' : 'hidden';
+      }
+
+      checkGlobalPrivacyValidation();
       document.getElementById('global-settings-overlay').classList.remove('hidden');
     }
 
@@ -491,18 +534,27 @@
     }
 
     function saveGlobalSettings(event) {
+      const saveBtn = document.getElementById('btn-save-global');
+      if (saveBtn && saveBtn.disabled) return;
+
       const name = document.getElementById('global-adv-name').value.trim();
       const phone = document.getElementById('global-adv-phone').value.trim();
       const email = document.getElementById('global-adv-email').value.trim();
       const calendly = document.getElementById('global-adv-calendly').value.trim();
-      
+      const privacy = document.getElementById('global-adv-privacy').checked;
+
+      if (!privacy) return;
+
       if(name) localStorage.setItem('rechner_adv_name', name); else localStorage.removeItem('rechner_adv_name');
       if(phone) localStorage.setItem('rechner_adv_phone', phone); else localStorage.removeItem('rechner_adv_phone');
       if(email) localStorage.setItem('rechner_adv_email', email); else localStorage.removeItem('rechner_adv_email');
       if(calendly) localStorage.setItem('rechner_adv_calendly', calendly); else localStorage.removeItem('rechner_adv_calendly');
       
+      localStorage.setItem('rechner_privacy_accepted', 'true');
+      localStorage.setItem('rechner_privacy_date', new Date().toISOString());
+
       // Visual feedback
-      const btn = (event && event.currentTarget && event.currentTarget.tagName === 'BUTTON') ? event.currentTarget : document.getElementById('btn-save-global');
+      const btn = (event && event.currentTarget && event.currentTarget.tagName === 'BUTTON') ? event.currentTarget : saveBtn;
       if (btn) {
         const originalHtml = btn.innerHTML;
         btn.innerHTML = '<span>Gespeichert!</span>';
@@ -517,6 +569,36 @@
             btn.classList.replace('hover:bg-green-700', 'hover:bg-[#012a5e]');
           }, 300);
         }, 700);
+      } else {
+        closeGlobalSettings();
+      }
+    }
+
+    function clearGlobalSettings() {
+      // Remove all advisor and privacy data from localStorage
+      localStorage.removeItem('rechner_adv_name');
+      localStorage.removeItem('rechner_adv_phone');
+      localStorage.removeItem('rechner_adv_email');
+      localStorage.removeItem('rechner_adv_calendly');
+      localStorage.removeItem('rechner_privacy_accepted');
+      localStorage.removeItem('rechner_privacy_date');
+
+      // Clear input fields and reset checkbox
+      document.getElementById('global-adv-name').value = '';
+      document.getElementById('global-adv-phone').value = '';
+      document.getElementById('global-adv-email').value = '';
+      document.getElementById('global-adv-calendly').value = '';
+      document.getElementById('global-adv-privacy').checked = false;
+
+      // Visual feedback on clear button
+      const clearBtn = document.getElementById('btn-clear-global');
+      if (clearBtn) {
+        const originalHtml = clearBtn.innerHTML;
+        clearBtn.innerHTML = '<span>✓ Gelöscht</span>';
+        setTimeout(() => {
+          closeGlobalSettings();
+          clearBtn.innerHTML = originalHtml;
+        }, 500);
       } else {
         closeGlobalSettings();
       }
